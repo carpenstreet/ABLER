@@ -72,6 +72,13 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         update=scenes.loadScene,
     )
 
+    hdri: bpy.props.EnumProperty(
+        name="HDRI Background",
+        description="Choose HDRI Background",
+        items=scenes.add_hdri_items,
+        update=scenes.loadHdri,
+    )
+
     toggle_toon_edge: bpy.props.BoolProperty(
         name="Toon Style Edge",
         description="Toggle toon style edge expression",

@@ -125,6 +125,9 @@ class Acon3dScenesPanel(bpy.types.Panel):
         row.operator("acon3d.create_scene", text="", icon="ADD")
         row.operator("acon3d.delete_scene", text="", icon="REMOVE")
 
+        row = layout.row(align=True)
+        row.prop(scene.ACON_prop, "hdri", text="")
+
 
 classes = (
     CreateSceneOperator,

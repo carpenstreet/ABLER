@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-import bpy
+import bpy, os
 from . import shadow, layers, objects
 from .materials import materials_handler
 from types import SimpleNamespace
@@ -40,15 +40,76 @@ def genSceneName(name, i=1):
 
 
 # items should be a global variable due to a bug in EnumProperty
-items = []
+scene_items = []
 
 
 def add_scene_items(self, context):
-    items.clear()
-    for item in bpy.data.scenes:
-        items.append((item.name, item.name, ""))
+    scene_items.clear()
+    for scene in bpy.data.scenes:
+        scene_items.append((scene.name, scene.name, ""))
 
-    return items
+    return scene_items
+
+
+hdri_items = []
+
+
+def add_hdri_items(self, context):
+
+    hdri_items.clear()
+    hdri_items.append(("None", "None", ""))
+
+    path_abler = bpy.utils.preset_paths("abler")[0]
+    path_hdri = os.path.join(path_abler, "hdri")
+
+    for file in os.listdir(path_hdri):
+
+        if not file.lower().endswith((".jpg", ".png", ".tif", ".hdr")):
+            continue
+
+        path_hdri_image = os.path.join(path_hdri, file)
+        if os.path.isfile(path_hdri_image):
+            hdri_items.append((path_hdri_image, file, ""))
+
+    return hdri_items
+
+
+def loadHdri(self, context):
+
+    scene = context.scene
+
+    image_path = scene.ACON_prop.hdri
+
+    if image_path == "None":
+        scene.render.film_transparent = True
+        scene.world.use_nodes = False
+        return
+
+    scene.render.film_transparent = False
+    scene.world.use_nodes = True
+
+    node_tree = scene.world.node_tree
+    nodes = node_tree.nodes
+
+    for node in nodes:
+        nodes.remove(node)
+
+    node_background = nodes.new("ShaderNodeBackground")
+    node_output = nodes.new("ShaderNodeOutputWorld")
+    node_tree.links.new(node_background.outputs[0], node_output.inputs[0])
+    node_texture = nodes.new("ShaderNodeTexEnvironment")
+
+    image = None
+    for item in bpy.data.images:
+        if item.filepath == image_path:
+            image = item
+
+    if not image:
+        image = bpy.data.images.load(image_path)
+
+    node_texture.image = image
+
+    node_tree.links.new(node_texture.outputs[0], node_background.inputs[0])
 
 
 def loadScene(self, context):
