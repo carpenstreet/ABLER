@@ -13,3 +13,6 @@
 	url = https://github.com/blender/blender-dev-tools.git
 	branch = blender-v2.93-release
 	ignore = all
+[submodule "release/scripts/startup/abler/converter"]
+	path = release/scripts/startup/abler/converter
+	url = https://acontainer@dev.azure.com/acontainer/acon3d-V2/_git/RND_skpConverter
