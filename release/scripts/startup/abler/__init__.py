@@ -50,6 +50,7 @@ from . import render_control
 from . import pref
 from . import operators
 from .lib.tracker import tracker
+from .converter import skp_converter
 
 
 # =========================================================================
