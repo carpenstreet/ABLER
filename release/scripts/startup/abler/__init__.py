@@ -49,6 +49,7 @@ from . import layer_control
 from . import render_control
 from . import pref
 from .lib.tracker import tracker
+from .converter import skp_converter
 
 
 # =========================================================================
@@ -69,6 +70,7 @@ importedLibrary = [
     layer_control,
     render_control,
     pref,
+    skp_converter,
 ]
 
 
