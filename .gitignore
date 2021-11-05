@@ -74,3 +74,6 @@ CmakeFiles/
 
 build/AblerLauncher
 dist
+
+**/mixpanel_token
+AblerLauncher.spec
