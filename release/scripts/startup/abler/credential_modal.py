@@ -159,8 +159,12 @@ class Acon3dModalOperator(bpy.types.Operator):
         if userInfo and userInfo.ACON_prop.login_status == "SUCCESS":
             return {"FINISHED"}
 
+        if event.type == "RET":
+            bpy.ops.acon3d.login()
+
         if event.type == "LEFTMOUSE":
             bpy.ops.wm.splash("INVOKE_DEFAULT")
+
         if event.type in self.pass_key:
             if platform.system() == "Windows":
                 if event.type == "BACK_SPACE":
