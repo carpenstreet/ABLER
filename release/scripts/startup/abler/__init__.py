@@ -52,7 +52,6 @@ from . import operators
 from .lib.tracker import tracker
 
 
-
 # =========================================================================
 # Registration:
 # =========================================================================
@@ -74,6 +73,7 @@ importedLibrary = [
 ]
 if "--background" not in sys.argv and "-b" not in sys.argv:
     from . import credential_modal
+
     importedLibrary.append(credential_modal)
 
 
