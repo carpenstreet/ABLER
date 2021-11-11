@@ -76,4 +76,8 @@ build/AblerLauncher
 dist
 
 **/mixpanel_token
+**/sentry_dsn
 AblerLauncher.spec
+
+/build
+
