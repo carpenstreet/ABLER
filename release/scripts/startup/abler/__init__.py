@@ -70,7 +70,6 @@ importedLibrary = [
     layer_control,
     render_control,
     pref,
-    skp_converter,
 ]
 
 
