@@ -19,8 +19,27 @@
 
 import bpy
 from math import radians
-from .lib import cameras, shadow, scenes, objects
+from .lib import scenes, cameras, shadow, objects
 from .lib.materials import materials_handler
+
+
+class AconWindowManagerProperty(bpy.types.PropertyGroup):
+    @classmethod
+    def register(cls):
+        bpy.types.WindowManager.ACON_prop = bpy.props.PointerProperty(
+            type=AconWindowManagerProperty
+        )
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.ACON_prop
+
+    scene: bpy.props.EnumProperty(
+        name="Scene",
+        description="Change scene",
+        items=scenes.add_scene_items,
+        update=scenes.loadScene,
+    )
 
 
 class CollectionLayerExcludeProperties(bpy.types.PropertyGroup):
@@ -64,20 +83,6 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     @classmethod
     def unregister(cls):
         del bpy.types.Scene.ACON_prop
-
-    scene: bpy.props.EnumProperty(
-        name="Scene",
-        description="Change scene",
-        items=scenes.add_scene_items,
-        update=scenes.loadScene,
-    )
-
-    hdri: bpy.props.EnumProperty(
-        name="HDRI Background",
-        description="Choose HDRI Background",
-        items=scenes.add_hdri_items,
-        update=scenes.loadHdri,
-    )
 
     toggle_toon_edge: bpy.props.BoolProperty(
         name="Toon Style Edge",
@@ -292,6 +297,42 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     selected_objects_str: bpy.props.StringProperty(name="Selected Objects")
 
 
+class AconWorldProperty(bpy.types.PropertyGroup):
+    @classmethod
+    def register(cls):
+        bpy.types.World.ACON_prop = bpy.props.PointerProperty(type=AconWorldProperty)
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.World.ACON_prop
+
+    hdr: bpy.props.EnumProperty(
+        name="HDR Background",
+        description="Choose HDR Background",
+        items=scenes.add_hdr_items,
+        update=scenes.loadHdr,
+    )
+
+    clouds_height: bpy.props.FloatProperty(
+        name="Clouds Height",
+        description="Adjust clouds height",
+        default=300,
+        min=100,
+        max=500,
+        step=10,
+        update=scenes.changeCloudsHeight,
+    )
+
+    clouds_rotation: bpy.props.FloatProperty(
+        name="Clouds Rotation",
+        description="Adjust clouds rotation",
+        subtype="ANGLE",
+        unit="ROTATION",
+        default=radians(60),
+        update=scenes.changeCloudsRotation,
+    )
+
+
 class AconMaterialProperty(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):
@@ -357,6 +398,9 @@ class AconMeshProperty(bpy.types.PropertyGroup):
         name="Show Password", default=False, update=toggle_show_password
     )
 
+    # TODO: description 달기
+    remember_username: bpy.props.BoolProperty(name="Remember Username", default=True)
+
     login_status: bpy.props.StringProperty(
         name="Login Status",
         description="Login Status",
@@ -366,6 +410,17 @@ class AconMeshProperty(bpy.types.PropertyGroup):
 class AconObjectGroupProperty(bpy.types.PropertyGroup):
 
     name: bpy.props.StringProperty(name="Group", description="Group", default="")
+
+
+class AconObjectStateProperty(bpy.types.PropertyGroup):
+
+    location: bpy.props.FloatVectorProperty(
+        name="location", description="location", subtype="TRANSLATION", unit="LENGTH"
+    )
+    rotation_euler: bpy.props.FloatVectorProperty(
+        name="rotation", description="rotation", subtype="EULER", unit="ROTATION"
+    )
+    scale: bpy.props.FloatVectorProperty(name="scale", description="scale")
 
 
 class AconObjectProperty(bpy.types.PropertyGroup):
@@ -383,13 +438,38 @@ class AconObjectProperty(bpy.types.PropertyGroup):
         name="Look at me", default=False, update=objects.toggleConstraintToCamera
     )
 
+    use_state: bpy.props.BoolProperty(
+        name="Use State", default=False, update=objects.toggleUseState
+    )
+
+    state_exists: bpy.props.BoolProperty(
+        name="Determine if state is created", default=False
+    )
+
+    state_slider: bpy.props.FloatProperty(
+        name="State Slider",
+        description="Move between begin and end of the state",
+        default=0,
+        min=0,
+        max=1,
+        step=1,
+        update=objects.moveState,
+    )
+
+    state_begin: bpy.props.PointerProperty(type=AconObjectStateProperty)
+
+    state_end: bpy.props.PointerProperty(type=AconObjectStateProperty)
+
 
 classes = (
+    AconWindowManagerProperty,
     CollectionLayerExcludeProperties,
     AconSceneProperty,
+    AconWorldProperty,
     AconMaterialProperty,
     AconMeshProperty,
     AconObjectGroupProperty,
+    AconObjectStateProperty,
     AconObjectProperty,
 )
 

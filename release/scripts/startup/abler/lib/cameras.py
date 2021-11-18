@@ -20,8 +20,30 @@
 import bpy
 
 
+def genCameraName(name, i=1):
+    found = None
+    combinedName = name + str(i)
+
+    collection = bpy.data.collections.get("ACON_col_cameras")
+
+    if collection:
+        for object in collection.objects:
+            if object.name == combinedName:
+                found = True
+                break
+
+    if found:
+        return genCameraName(name, i + 1)
+    else:
+        return name + str(i)
+
+
+# items should be a global variable due to a bug in EnumProperty
+items = []
+
+
 def add_view_items_from_collection(self, context):
-    items = []
+    items.clear()
     collection = bpy.data.collections.get("ACON_col_cameras")
 
     if collection:

@@ -4090,6 +4090,10 @@ def km_object_mode(params):
         *_template_items_proportional_editing(
             params, connected=False, toggle_data_path='tool_settings.use_proportional_edit_objects'),
         *_template_items_select_actions(params, "object.select_all"),
+        ("acon3d.state_action", {"type": 'E', "value": 'PRESS'},
+         {"properties": [("step", 0.25)]}),
+        ("acon3d.state_action", {"type": 'E', "value": 'PRESS', "shift": True},
+         {"properties": [("step", 1)]}),
         ("object.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("object.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("object.select_linked", {"type": 'L', "value": 'PRESS', "shift": True}, None),

@@ -31,6 +31,14 @@ def changeSunRotation(self, context):
     acon_sun.rotation_euler.y = 0
     acon_sun.rotation_euler.z = prop.sun_rotation_z
 
+    world_sun = context.scene.world.node_tree.nodes.get("ACON_node_sunVector")
+
+    if world_sun:
+        world_sun_rotation = world_sun.inputs.get("Rotation").default_value
+        world_sun_rotation.x = acon_sun.rotation_euler.x
+        world_sun_rotation.y = acon_sun.rotation_euler.y
+        world_sun_rotation.z = acon_sun.rotation_euler.z
+
 
 def toggleSun(self, context):
     acon_sun = bpy.data.objects.get("ACON_sun")

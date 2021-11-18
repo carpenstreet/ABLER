@@ -22,7 +22,9 @@ from bpy.app.handlers import persistent
 
 
 def handleLayerVisibilityOnSceneChange(oldScene, newScene):
+
     if not oldScene or not newScene:
+        print("Invalid oldScene / newScene given")
         return
 
     i = 0
@@ -67,8 +69,7 @@ def selectByGroup():
 def checkObjectSelectionChange(dummy):
 
     depsgraph = bpy.context.evaluated_depsgraph_get()
-    test = depsgraph.id_type_updated("SCENE")
-    if not test:
+    if not depsgraph.id_type_updated("SCENE"):
         return
 
     new_selected_objects_str = ""

@@ -20,7 +20,6 @@
 import bpy, os
 from . import shadow, layers, objects
 from .materials import materials_handler
-from types import SimpleNamespace
 from math import radians
 
 
@@ -39,7 +38,7 @@ def genSceneName(name, i=1):
         return combinedName
 
 
-# items should be a global variable due to a bug in EnumProperty
+# scene_items should be a global variable due to a bug in EnumProperty
 scene_items = []
 
 
@@ -51,34 +50,29 @@ def add_scene_items(self, context):
     return scene_items
 
 
-hdri_items = []
+hdr_items = []
 
 
-def add_hdri_items(self, context):
+def add_hdr_items(self, context):
 
-    hdri_items.clear()
-    hdri_items.append(("None", "None", ""))
+    hdr_items.clear()
+    hdr_items.append(("None", "None", ""))
 
     path_abler = bpy.utils.preset_paths("abler")[0]
-    path_hdri = os.path.join(path_abler, "hdri")
+    path_hdr = os.path.join(path_abler, "hdr")
 
-    for file in os.listdir(path_hdri):
+    for file in os.listdir(path_hdr):
+        path_item = os.path.join(path_hdr, file)
+        hdr_items.append((path_item, file, ""))
 
-        if not file.lower().endswith((".jpg", ".png", ".tif", ".hdr")):
-            continue
-
-        path_hdri_image = os.path.join(path_hdri, file)
-        if os.path.isfile(path_hdri_image):
-            hdri_items.append((path_hdri_image, file, ""))
-
-    return hdri_items
+    return hdr_items
 
 
-def loadHdri(self, context):
+def loadHdr(self, context):
 
     scene = context.scene
 
-    image_path = scene.ACON_prop.hdri
+    image_path = scene.world.ACON_prop.hdr
 
     if image_path == "None":
         scene.render.film_transparent = True
@@ -91,65 +85,64 @@ def loadHdri(self, context):
     node_tree = scene.world.node_tree
     nodes = node_tree.nodes
 
-    for node in nodes:
-        nodes.remove(node)
+    node_texture_diffuse = nodes.get("ACON_node_hdrDiffuse")
+    node_texture_normal = nodes.get("ACON_node_hdrNormal")
 
-    node_background = nodes.new("ShaderNodeBackground")
-    node_output = nodes.new("ShaderNodeOutputWorld")
-    node_tree.links.new(node_background.outputs[0], node_output.inputs[0])
-    node_texture = nodes.new("ShaderNodeTexEnvironment")
+    image_diffuse = None
+    image_normal = None
 
-    image = None
+    image_path_diffuse = os.path.join(image_path, "diffuse.png")
+    image_path_normal = os.path.join(image_path, "normal.png")
+
     for item in bpy.data.images:
-        if item.filepath == image_path:
-            image = item
+        if item.filepath == image_path_diffuse:
+            image_diffuse = item
+        if item.filepath == image_path_normal:
+            image_normal = item
 
-    if not image:
-        image = bpy.data.images.load(image_path)
+    if not image_diffuse:
+        image_diffuse = bpy.data.images.load(image_path_diffuse)
+    if not image_normal:
+        image_normal = bpy.data.images.load(image_path_normal)
 
-    node_texture.image = image
-
-    node_tree.links.new(node_texture.outputs[0], node_background.inputs[0])
+    node_texture_diffuse.image = image_diffuse
+    node_texture_normal.image = image_normal
 
 
 def loadScene(self, context):
-    current_scene = context.scene
-    target_scene = bpy.data.scenes[current_scene.ACON_prop.scene]
 
-    if current_scene is not target_scene:
-        loadScene_helper(self, context)
+    if not context:
+        context = bpy.context
 
+    if not self:
+        self = context.window_manager.ACON_prop
 
-def loadScene_helper(self, context):
-    current_scene = context.scene
-    target_scene = bpy.data.scenes[current_scene.ACON_prop.scene]
+    newScene = bpy.data.scenes.get(self.scene)
+    oldScene = context.scene
+    context.window.scene = newScene
 
-    override = SimpleNamespace()
-    override.scene = target_scene
+    materials_handler.toggleToonEdge(self, context)
+    materials_handler.changeLineProps(self, context)
+    materials_handler.toggleToonFace(self, context)
+    materials_handler.toggleTexture(self, context)
+    materials_handler.toggleShading(self, context)
+    materials_handler.changeToonDepth(self, context)
+    materials_handler.changeToonShadingBrightness(self, context)
+    materials_handler.changeImageAdjustBrightness(self, context)
+    materials_handler.changeImageAdjustContrast(self, context)
+    materials_handler.changeImageAdjustColor(self, context)
+    materials_handler.changeImageAdjustHue(self, context)
+    materials_handler.changeImageAdjustSaturation(self, context)
 
-    materials_handler.toggleToonEdge(self, override)
-    materials_handler.changeLineProps(self, override)
-    materials_handler.toggleToonFace(self, override)
-    materials_handler.toggleTexture(self, override)
-    materials_handler.toggleShading(self, override)
-    materials_handler.changeToonDepth(self, override)
-    materials_handler.changeToonShadingBrightness(self, override)
-    shadow.toggleSun(self, override)
-    shadow.changeSunStrength(self, override)
-    shadow.toggleShadow(self, override)
-    shadow.changeSunRotation(self, override)
-    materials_handler.changeImageAdjustBrightness(self, override)
-    materials_handler.changeImageAdjustContrast(self, override)
-    materials_handler.changeImageAdjustColor(self, override)
-    materials_handler.changeImageAdjustHue(self, override)
-    materials_handler.changeImageAdjustSaturation(self, override)
-    layers.handleLayerVisibilityOnSceneChange(current_scene, target_scene)
+    layers.handleLayerVisibilityOnSceneChange(oldScene, newScene)
+
+    shadow.toggleSun(self, context)
+    shadow.changeSunStrength(self, context)
+    shadow.toggleShadow(self, context)
+    shadow.changeSunRotation(self, context)
+
     for obj in bpy.data.objects:
-        objects.setConstraintToCameraByObject(obj, override)
-
-    context.window.scene = target_scene
-
-    target_scene.ACON_prop.scene = current_scene.ACON_prop.scene
+        objects.setConstraintToCameraByObject(obj, context)
 
 
 def createScene(old_scene, type, name):
@@ -373,3 +366,27 @@ def createScene(old_scene, type, name):
         new_scene.render.resolution_y = 2700
 
     return new_scene
+
+
+def changeCloudsHeight(self, context):
+
+    prop = context.scene.world.ACON_prop
+    world_node_cloudVector = context.scene.world.node_tree.nodes.get(
+        "ACON_node_cloudVector"
+    )
+
+    if world_node_cloudVector:
+        world_node_cloudVector.inputs.get("B").default_value = prop.clouds_height
+
+
+def changeCloudsRotation(self, context):
+
+    prop = context.scene.world.ACON_prop
+    world_node_cloudRotation = context.scene.world.node_tree.nodes.get(
+        "ACON_node_cloudRotation"
+    )
+
+    if world_node_cloudRotation:
+        world_node_cloudRotation.inputs.get(
+            "Rotation"
+        ).default_value.z = prop.clouds_rotation

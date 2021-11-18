@@ -20,31 +20,50 @@
 import bpy
 
 
-def setupBackgroundImagesCompositor(scene=None):
+def setupSnipCompositor(
+    node_left=None, node_right=None, snip_layer=None, shade_image=None
+):
+
+    if not node_left or not node_right:
+        node_left, node_right = clearCompositor()
 
     context = bpy.context
+    scene = context.scene
 
-    if not scene:
-        scene = context.scene
-
-    scene.render.film_transparent = True
-    scene.use_nodes = True
     tree = scene.node_tree
     nodes = tree.nodes
 
-    for node in nodes:
-        nodes.remove(node)
-
-    node_composite = nodes.new("CompositorNodeComposite")
     node_rlayer = nodes.new("CompositorNodeRLayers")
+    node_rlayer.layer = snip_layer.name
+
+    node_setAlpha = nodes.new("CompositorNodeSetAlpha")
+    tree.links.new(node_left, node_setAlpha.inputs[0])
+    tree.links.new(node_rlayer.outputs[1], node_setAlpha.inputs[1])
+
+    node_image = nodes.new("CompositorNodeImage")
+    node_image.image = shade_image
+
+    node_multiply = nodes.new("CompositorNodeMixRGB")
+    node_multiply.blend_type = "MULTIPLY"
+    tree.links.new(node_setAlpha.outputs[0], node_multiply.inputs[1])
+    tree.links.new(node_image.outputs[0], node_multiply.inputs[2])
+    tree.links.new(node_multiply.outputs[0], node_right)
+
+
+def setupBackgroundImagesCompositor(node_left=None, node_right=None, scene=None):
+
+    if not node_left or not node_right:
+        node_left, node_right = clearCompositor()
+
+    context = bpy.context
+    if not scene:
+        scene = context.scene
+
+    tree = scene.node_tree
+    nodes = tree.nodes
 
     cam = scene.camera.data
     background_images = cam.background_images
-
-    node_entry_left_out = node_rlayer.outputs[0]
-    node_entry_right_in = node_composite.inputs[0]
-    tree.links.new(node_entry_left_out, node_entry_right_in)
-
     toggle_texture = context.scene.ACON_prop.toggle_texture
 
     if not cam.show_background_images or not toggle_texture:
@@ -93,24 +112,25 @@ def setupBackgroundImagesCompositor(scene=None):
         tree.links.new(node_conditional.outputs[0], node_transform.inputs[0])
 
         node_alphaOver = nodes.new("CompositorNodeAlphaOver")
-        tree.links.new(node_alphaOver.outputs[0], node_entry_right_in)
+        tree.links.new(node_alphaOver.outputs[0], node_right)
 
         if background_image.display_depth == "BACK":
             tree.links.new(node_transform.outputs[0], node_alphaOver.inputs[1])
-            tree.links.new(node_entry_left_out, node_alphaOver.inputs[2])
-            node_entry_left_out = node_alphaOver.outputs[0]
+            tree.links.new(node_left, node_alphaOver.inputs[2])
+            node_left = node_alphaOver.outputs[0]
         else:
             tree.links.new(node_transform.outputs[0], node_alphaOver.inputs[2])
-            tree.links.new(node_entry_left_out, node_alphaOver.inputs[1])
-            node_entry_right_in = node_alphaOver.inputs[1]
+            tree.links.new(node_left, node_alphaOver.inputs[1])
+            node_right = node_alphaOver.inputs[1]
 
 
-def clearCompositor():
+def clearCompositor(scene=None):
 
     context = bpy.context
-    scene = context.scene
 
-    scene.render.film_transparent = True
+    if not scene:
+        scene = context.scene
+
     scene.use_nodes = True
     tree = scene.node_tree
     nodes = tree.nodes
@@ -121,9 +141,11 @@ def clearCompositor():
     node_composite = nodes.new("CompositorNodeComposite")
     node_rlayer = nodes.new("CompositorNodeRLayers")
 
-    node_entry_left_out = node_rlayer.outputs[0]
-    node_entry_right_in = node_composite.inputs[0]
-    tree.links.new(node_entry_left_out, node_entry_right_in)
+    node_left = node_rlayer.outputs[0]
+    node_right = node_composite.inputs[0]
+    tree.links.new(node_left, node_right)
+
+    return node_left, node_right
 
 
 def matchObjectVisibility():

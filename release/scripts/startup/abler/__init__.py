@@ -41,13 +41,17 @@ from . import general
 from . import scene_control
 from . import edge_control
 from . import face_control
+from . import object_control
 from . import image_adjustment
-from . import shadow_control
-from . import view_control
+from . import world_control
+from . import camera_control
 from . import layer_control
 from . import render_control
 from . import pref
+from .lib.tracker import tracker
 
+
+tracker.opened_abler()
 
 # =========================================================================
 # Registration:
@@ -60,9 +64,10 @@ importedLibrary = [
     scene_control,
     edge_control,
     face_control,
+    object_control,
     image_adjustment,
-    shadow_control,
-    view_control,
+    world_control,
+    camera_control,
     layer_control,
     render_control,
     pref,

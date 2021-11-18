@@ -2,6 +2,12 @@
 # .*
 .gitignore
 
+# Mixpanel
+release/scripts/startup/abler/lib/tracker/mixpanel_token
+
+# Sentry
+release/scripts/startup/abler/lib/tracker/sentry_dsn
+
 # python temp paths
 __pycache__/
 *.py[cod]
@@ -56,6 +62,8 @@ waveletNoiseTile.bin
 /launcher_abler/__pycache__
 
 update.xml
+*.spec
+/build
 /launch_abler/config.ini
 
 .DS_STORE

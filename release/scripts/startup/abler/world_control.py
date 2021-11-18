@@ -34,16 +34,15 @@ bl_info = {
 import bpy
 
 
-class Acon3dShadowPanel(bpy.types.Panel):
+class Acon3dWorldPanel(bpy.types.Panel):
     """Creates a Panel in the scene context of the properties editor"""
 
-    bl_idname = "ACON3D_PT_shadow"
-    bl_label = "Shadow / Light Control"
+    bl_idname = "ACON3D_PT_world"
+    bl_label = "World Control"
     bl_category = "ACON3D"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_options = {"DEFAULT_CLOSED"}
-    COMPAT_ENGINES = {"BLENDER_RENDER", "BLENDER_EEVEE", "BLENDER_WORKBENCH"}
 
     def draw_header(self, context):
         layout = self.layout
@@ -53,10 +52,33 @@ class Acon3dShadowPanel(bpy.types.Panel):
         return
 
 
+class Acon3dCloudControlPanel(bpy.types.Panel):
+    bl_label = "Background"
+    bl_parent_id = "ACON3D_PT_world"
+    bl_idname = "ACON_PT_world_cloud"
+    bl_category = "ACON3D"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_options = {"DEFAULT_CLOSED"}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_decorate = False  # No animation.
+        layout.use_property_split = True
+        row = layout.row(align=True)
+        row.prop(context.scene.world.ACON_prop, "hdr", text="")
+        row = layout.row(align=True)
+        row.prop(context.scene.world.ACON_prop, "clouds_height", text="Clouds Height")
+        row = layout.row(align=True)
+        row.prop(
+            context.scene.world.ACON_prop, "clouds_rotation", text="Clouds Rotation"
+        )
+
+
 class Acon3dSunControlPanel(bpy.types.Panel):
     bl_label = "Sun Light"
-    bl_idname = "ACON3D_PT_shadow_sub_1"
-    bl_parent_id = "ACON3D_PT_shadow"
+    bl_parent_id = "ACON3D_PT_world"
+    bl_idname = "ACON_PT_world_sun"
     bl_category = "ACON3D"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -76,8 +98,8 @@ class Acon3dSunControlPanel(bpy.types.Panel):
 
 class Acon3dShadowControlPanel(bpy.types.Panel):
     bl_label = "Shadow"
-    bl_idname = "ACON3D_PT_shadow_sub_2"
-    bl_parent_id = "ACON3D_PT_shadow"
+    bl_parent_id = "ACON3D_PT_world"
+    bl_idname = "ACON_PT_world_shadow"
     bl_category = "ACON3D"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -98,7 +120,8 @@ class Acon3dShadowControlPanel(bpy.types.Panel):
 
 
 classes = (
-    Acon3dShadowPanel,
+    Acon3dWorldPanel,
+    Acon3dCloudControlPanel,
     Acon3dSunControlPanel,
     Acon3dShadowControlPanel,
 )

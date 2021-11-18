@@ -93045,6 +93045,10 @@ msgid "Please login with your ACON3D account."
 msgstr "에이콘3D 계정으로 로그인해주세요."
 
 
+msgid "Remember Username"
+msgstr "아이디 기억하기"
+
+
 msgid "Username"
 msgstr "아이디"
 
@@ -93291,3 +93295,21 @@ msgstr "씬 연속 렌더"
 
 msgid "Render all scenes with full render settings"
 msgstr "모든 씬을 고급렌더 설정으로 렌더합니다."
+
+
+msgid "Snip Render"
+msgstr "오려내기 렌더"
+
+
+msgid "Render selected objects isolatedly from background"
+msgstr "선택한 오브젝트들을 오려낸 렌더 이미지를 전체 렌더 이미지와 함께 저장합니다."
+
+
+msgid "Show in folder on completion"
+msgstr "완료 후 폴더 열기"
+
+
+msgctxt "Operator"
+msgid "New Camera"
+msgstr "새로운 카메라"
+

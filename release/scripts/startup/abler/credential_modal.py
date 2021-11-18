@@ -22,6 +22,13 @@ import ctypes
 import platform
 from bpy.app.handlers import persistent
 import requests, webbrowser, pickle, os
+from .lib.remember_username import (
+    delete_remembered_username,
+    read_remembered_checkbox,
+    remember_username,
+    read_remembered_username,
+)
+from .lib.tracker import tracker
 
 
 class Acon3dAlertOperator(bpy.types.Operator):
@@ -228,12 +235,17 @@ def requestLogin():
             )
 
         if response.status_code == 200:
-
+            tracker.logged_in(prop.username)
             prop.login_status = "SUCCESS"
 
             cookiesFile = open(path_cookiesFile, "wb")
             pickle.dump(cookie_final, cookiesFile)
             cookiesFile.close()
+
+            if prop.remember_username:
+                remember_username(prop.username)
+            else:
+                delete_remembered_username()
 
             prop.username = ""
             prop.password = ""
@@ -300,7 +312,8 @@ def open_credential_modal(dummy):
     prefs.view.show_splash = True
 
     userInfo = bpy.data.meshes.new("ACON_userInfo")
-    userInfo.ACON_prop.login_status = "IDLE"
+    prop = userInfo.ACON_prop
+    prop.login_status = "IDLE"
 
     try:
         path = bpy.utils.resource_path("USER")
@@ -312,6 +325,7 @@ def open_credential_modal(dummy):
 
         if not os.path.exists(path_cookiesFile):
             raise
+        prop.remember_username = read_remembered_checkbox()
 
         cookiesFile = open(path_cookiesFile, "rb")
         cookies = pickle.load(cookiesFile)
@@ -324,13 +338,16 @@ def open_credential_modal(dummy):
         token = responseData["accessToken"]
 
         if token:
-            userInfo.ACON_prop.login_status = "SUCCESS"
+            prop.login_status = "SUCCESS"
 
     except:
         print("Failed to load cookies")
 
     if userInfo.ACON_prop.login_status != "SUCCESS":
         bpy.ops.acon3d.modal_operator("INVOKE_DEFAULT")
+
+    if prop.remember_username:
+        prop.username = read_remembered_username()
 
 
 @persistent

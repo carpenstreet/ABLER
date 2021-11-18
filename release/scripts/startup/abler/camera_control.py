@@ -35,38 +35,19 @@ import bpy
 from .lib import cameras
 
 
-def genCameraName(name, i=1):
-    found = None
-    combinedName = name + str(i)
-
-    collection = bpy.data.collections.get("ACON_col_cameras")
-
-    if collection:
-        for object in collection.objects:
-            if object.name == combinedName:
-                found = True
-                break
-
-    if found:
-        return genCameraName(name, i + 1)
-    else:
-        return name + str(i)
-
-
 class CreateCameraOperator(bpy.types.Operator):
     bl_idname = "acon3d.create_camera"
-    bl_label = "Create New Camera"
-    bl_translation_context = "*"
+    bl_label = "New Camera"
+
+    name: bpy.props.StringProperty(name="Name")
 
     def execute(self, context):
         cameras.makeSureCameraExists()
 
-        cameraName = genCameraName("ACON_Camera_")
-
         # duplicate camera
         viewCameraObject = context.scene.camera
         camera_object = viewCameraObject.copy()
-        camera_object.name = cameraName
+        camera_object.name = self.name
         camera_object.hide_viewport = True
 
         # add camera to designated collection (create one if not exists)
@@ -82,33 +63,27 @@ class CreateCameraOperator(bpy.types.Operator):
         context.scene.ACON_prop.view = camera_object.name
         return {"FINISHED"}
 
+    def invoke(self, context, event):
+        self.name = cameras.genCameraName("ACON_Camera_")
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
 
-class UpdateCustomCameraOperator(bpy.types.Operator):
-    bl_idname = "acon3d.update_custom_camera"
-    bl_label = "Update"
-    bl_translation_context = "*"
-
-    def execute(self, context):
-        cameras.makeSureCameraExists()
-        viewCamera = context.scene.camera
-        targetCamera = bpy.data.objects[context.scene.ACON_prop.view]
-        targetCamera.location[0] = viewCamera.location[0]
-        targetCamera.location[1] = viewCamera.location[1]
-        targetCamera.location[2] = viewCamera.location[2]
-        targetCamera.rotation_mode = viewCamera.rotation_mode
-        targetCamera.rotation_euler[0] = viewCamera.rotation_euler[0]
-        targetCamera.rotation_euler[1] = viewCamera.rotation_euler[1]
-        targetCamera.rotation_euler[2] = viewCamera.rotation_euler[2]
-        targetCamera.scale[0] = viewCamera.scale[0]
-        targetCamera.scale[1] = viewCamera.scale[1]
-        targetCamera.scale[2] = viewCamera.scale[2]
-        return {"FINISHED"}
+    def draw(self, context):
+        layout = self.layout
+        layout.separator()
+        layout.prop(self, "name")
+        layout.separator()
 
 
 class DeleteCameraOperator(bpy.types.Operator):
     bl_idname = "acon3d.delete_camera"
     bl_label = "Delete"
     bl_translation_context = "*"
+
+    @classmethod
+    def poll(self, context):
+        collection = bpy.data.collections.get("ACON_col_cameras")
+        return len(collection.objects) > 1
 
     def execute(self, context):
         currentCameraName = context.scene.ACON_prop.view
@@ -134,7 +109,20 @@ class Acon3dViewPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
         layout.operator("view3d.walk", text="Fly (shift + `)", text_ctxt="*")
+
+        cam = context.scene.camera
+        if cam is not None:
+            row = layout.row()
+            col = row.column()
+            col.scale_x = 3
+            col.separator()
+            col = row.column()
+            row = col.row()
+            row.prop(cam.data, "lens")
+
         return
 
 
@@ -153,25 +141,14 @@ class Acon3dCameraPanel(bpy.types.Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        row = layout.row()
-        row.scale_y = 1.0
-        row.operator("acon3d.create_camera", text="Create New Camera")
-
         scene = context.scene
         collection = bpy.data.collections.get("ACON_col_cameras")
 
         if collection is not None and len(collection.objects):
-            row = layout.row()
-            row.prop(scene.ACON_prop, "view")
-
-            row = layout.row()
-            row.operator("acon3d.update_custom_camera", text="Update")
-            row.operator("acon3d.delete_camera", text="Delete")
-
-        if bpy.context.scene.camera is not None:
-            cam = bpy.context.scene.camera.data
-            row = layout.row()
-            row.prop(cam, "lens")
+            row = layout.row(align=True)
+            row.prop(scene.ACON_prop, "view", text="")
+            row.operator("acon3d.create_camera", text="", icon="ADD")
+            row.operator("acon3d.delete_camera", text="", icon="REMOVE")
 
 
 def scene_mychosenobject_poll(self, object):
@@ -310,7 +287,6 @@ classes = (
     Acon3dViewPanel,
     Acon3dCameraPanel,
     CreateCameraOperator,
-    UpdateCustomCameraOperator,
     DeleteCameraOperator,
     Acon3dDOFPanel,
     RemoveBackgroundOperator,

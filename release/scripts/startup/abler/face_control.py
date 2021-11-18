@@ -107,11 +107,7 @@ class MaterialPanel(bpy.types.Panel):
             col.scale_x = 3
             col.separator()
             col = row.column()
-            col.prop(obj.ACON_prop, "constraint_to_camera_rotation_z")
-            row = col.row()
-            row.separator()
-            row = col.row()
-            row.template_list(
+            col.template_list(
                 "MATERIAL_UL_List",
                 "",
                 obj,
