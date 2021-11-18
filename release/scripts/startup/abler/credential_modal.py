@@ -274,6 +274,8 @@ class LoginTask(AsyncTask):
         bpy.context.window.cursor_set("DEFAULT")
 
     def _on_failure(self, e: BaseException):
+        tracker.logged_fail()
+
         self.prop.login_status = "FAIL"
         print("Login request has failed.")
         print(e)
@@ -342,6 +344,7 @@ def open_credential_modal(dummy):
         token = responseData["accessToken"]
 
         if token:
+            tracker.logged_auto()
             prop.login_status = "SUCCESS"
 
     except:

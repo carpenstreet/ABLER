@@ -5,6 +5,8 @@ import enum
 class EventKind(enum.Enum):
     run = "Run"
     login = "Login"
+    login_fail = "Login Fail"
+    login_auto = "Login Auto"
     render_quick = "Render Quick"
 
 
@@ -49,6 +51,12 @@ class Tracker(metaclass=ABCMeta):
     def logged_in(self, email: str):
         if self._track(EventKind.login.value):
             self._enqueue_email_update(email)
+
+    def logged_fail(self):
+        self._track(EventKind.login_fail.value)
+
+    def logged_auto(self):
+        self._track(EventKind.login_auto.value)
 
     def rendered_quickly(self):
         self._track(EventKind.render_quick.value)
