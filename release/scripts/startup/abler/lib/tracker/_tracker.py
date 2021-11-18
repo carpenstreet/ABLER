@@ -3,7 +3,6 @@ import enum
 
 
 class EventKind(enum.Enum):
-    run = "Run"
     login = "Login"
     login_fail = "Login Fail"
     login_auto = "Login Auto"
@@ -44,9 +43,6 @@ class Tracker(metaclass=ABCMeta):
             return False
         else:
             return True
-
-    def opened_abler(self):
-        self._track(EventKind.run.value)
 
     def logged_in(self, email: str):
         if self._track(EventKind.login.value):
