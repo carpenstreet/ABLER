@@ -242,7 +242,7 @@ class LoginTask(AsyncTask):
             raise Exception("status code is not 200")
 
     def _on_success(self):
-        tracker.logged_in(self.username)
+        tracker.login(self.username)
 
         prop = self.prop
         path = bpy.utils.resource_path("USER")
@@ -274,7 +274,7 @@ class LoginTask(AsyncTask):
         bpy.context.window.cursor_set("DEFAULT")
 
     def _on_failure(self, e: BaseException):
-        tracker.logged_fail()
+        tracker.login_fail()
 
         self.prop.login_status = "FAIL"
         print("Login request has failed.")
@@ -344,7 +344,7 @@ def open_credential_modal(dummy):
         token = responseData["accessToken"]
 
         if token:
-            tracker.logged_auto()
+            tracker.login_auto()
             prop.login_status = "SUCCESS"
 
     except:

@@ -44,17 +44,17 @@ class Tracker(metaclass=ABCMeta):
         else:
             return True
 
-    def logged_in(self, email: str):
+    def login(self, email: str):
         if self._track(EventKind.login.value):
             self._enqueue_email_update(email)
 
-    def logged_fail(self):
+    def login_fail(self):
         self._track(EventKind.login_fail.value)
 
-    def logged_auto(self):
+    def login_auto(self):
         self._track(EventKind.login_auto.value)
 
-    def rendered_quickly(self):
+    def render_quick(self):
         self._track(EventKind.render_quick.value)
 
 
