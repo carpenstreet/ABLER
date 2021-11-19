@@ -211,6 +211,11 @@ if(WITH_XR_OPENXR)
   )
 endif()
 
+list(APPEND LIB
+        sentry
+        )
+include_directories(../../../extern/sentry-native/include)
+
 blender_add_lib_nolist(bf_windowmanager "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
 # Needed so we can use dna_type_offsets.h for defaults initialization.

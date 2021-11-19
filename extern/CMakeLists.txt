@@ -113,3 +113,5 @@ endif()
 if (WITH_COMPOSITOR)
 	add_subdirectory(smaa_areatex)
 endif()
+
+add_subdirectory(sentry-native)
