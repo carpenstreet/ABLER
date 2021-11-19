@@ -131,10 +131,11 @@ class ObjectSubPanel(bpy.types.Panel):
 
     def draw_header(self, context):
         obj = context.object
-        layout = self.layout
-        layout.active = bool(len(context.selected_objects))
-        layout.enabled = layout.active
-        layout.prop(obj.ACON_prop, "use_state", text="")
+        if obj:
+            layout = self.layout
+            layout.active = bool(len(context.selected_objects))
+            layout.enabled = layout.active
+            layout.prop(obj.ACON_prop, "use_state", text="")
 
     def draw(self, context):
         layout = self.layout

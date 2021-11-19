@@ -48,6 +48,10 @@ def handleLayerVisibilityOnSceneChange(oldScene, newScene):
 def selectByGroup():
 
     selected_object = bpy.context.active_object
+
+    if not selected_object:
+        return
+
     group_props = selected_object.ACON_prop.group
 
     group_length = len(group_props)
