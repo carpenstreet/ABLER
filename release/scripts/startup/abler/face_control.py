@@ -49,7 +49,10 @@ class MATERIAL_UL_List(bpy.types.UIList):
             layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
             layout.prop(ma.ACON_prop, "type", text="")
 
-            toonNode = ma.node_tree.nodes["ACON_nodeGroup_combinedToon"]
+            toonNode = ma.node_tree.nodes.get("ACON_nodeGroup_combinedToon")
+
+            if not toonNode:
+                return
 
             if ma.ACON_prop.type == "Diffuse":
                 layout.label(text="", translate=False)
