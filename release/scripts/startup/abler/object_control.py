@@ -114,8 +114,10 @@ class Acon3dObjectPanel(bpy.types.Panel):
         col.scale_x = 3
         col.separator()
         col = row.column()
-        row = col.row()
-        row.prop(context.object.ACON_prop, "constraint_to_camera_rotation_z")
+
+        if context.object:
+            row = col.row()
+            row.prop(context.object.ACON_prop, "constraint_to_camera_rotation_z")
 
 
 class ObjectSubPanel(bpy.types.Panel):
