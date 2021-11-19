@@ -42,12 +42,11 @@ class Acon3dStateUpdateOperator(bpy.types.Operator):
     bl_label = "Update State"
     bl_translation_context = "*"
 
+    @classmethod
+    def poll(cls, context):
+        return context.selected_objects
+
     def execute(self, context):
-
-        x = context.object.ACON_prop.state_slider
-
-        if not 0 < x <= 1:
-            return {"FINISHED"}
 
         for obj in context.selected_objects:
 
@@ -58,12 +57,36 @@ class Acon3dStateUpdateOperator(bpy.types.Operator):
 
             for att in ["location", "rotation_euler", "scale"]:
 
-                vector_begin = getattr(prop.state_begin, att)
-                vector_mid = getattr(obj, att)
-                vector_end = objects.step(vector_begin, vector_mid, 1 / x)
-                setattr(prop.state_end, att, vector_end)
+                vector = getattr(obj, att)
+                setattr(prop.state_end, att, vector)
+
+            prop.state_slider = 1
 
         return {"FINISHED"}
+
+
+class Acon3dStateRemoveOperator(bpy.types.Operator):
+    # This operation acutally does not include removing state data.
+    # Although state data gets lost when being initiated by toggling 'use_state' on.
+    # Hence toggling 'use_state' off means users can not access to state data any more.
+    """Remove object's state data"""
+
+    bl_idname = "acon3d.state_remove"
+    bl_label = "Do you want to remove state data of selected object(s)?"
+    bl_translation_context = "*"
+    bl_options = {"REGISTER", "INTERNAL"}
+
+    def execute(self, context):
+
+        for obj in context.selected_objects:
+            prop = obj.ACON_prop
+            prop.state_slider = 0
+            prop.use_state = False
+
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_confirm(self, event)
 
 
 class Acon3dStateActionOperator(bpy.types.Operator):
@@ -152,6 +175,7 @@ class ObjectSubPanel(bpy.types.Panel):
 classes = (
     Acon3dStateActionOperator,
     Acon3dStateUpdateOperator,
+    Acon3dStateRemoveOperator,
     Acon3dObjectPanel,
     ObjectSubPanel,
 )

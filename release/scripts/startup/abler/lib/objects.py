@@ -48,13 +48,13 @@ def step(edge0: tuple[float], edge1: tuple[float], x: float) -> tuple[float]:
 
 def toggleUseState(self, context):
 
-    use_state = context.object.ACON_prop.use_state
+    use_state = self.use_state
 
-    for obj in context.selected_objects:
+    if use_state:
 
-        prop = obj.ACON_prop
+        for obj in context.selected_objects:
 
-        if use_state:
+            prop = obj.ACON_prop
 
             if obj == context.object or not prop.use_state:
 
@@ -64,21 +64,18 @@ def toggleUseState(self, context):
                     setattr(prop.state_begin, att, vector)
                     setattr(prop.state_end, att, vector)
 
-        elif obj == context.object or prop.use_state:
+                prop.state_slider = 1
 
-            for att in ["location", "rotation_euler", "scale"]:
+            prop.use_state = True
 
-                vector = getattr(prop.state_begin, att)
-                setattr(obj, att, vector)
-                setattr(prop.state_end, att, vector)
+    else:
 
-        if prop.use_state != use_state:
-            prop.use_state = use_state
+        bpy.ops.acon3d.state_remove("INVOKE_DEFAULT")
 
 
 def moveState(self, context):
 
-    state_slider = context.object.ACON_prop.state_slider
+    state_slider = self.state_slider
 
     for obj in context.selected_objects:
 
