@@ -32,11 +32,10 @@ bl_info = {
 
 
 import bpy
-from .lib import objects
 
 
 class Acon3dStateUpdateOperator(bpy.types.Operator):
-    """Update object's state using current state position and location / rotation / scale values"""
+    """Save object's current location / rotation / scale values to state data"""
 
     bl_idname = "acon3d.state_update"
     bl_label = "Update State"
@@ -60,33 +59,9 @@ class Acon3dStateUpdateOperator(bpy.types.Operator):
                 vector = getattr(obj, att)
                 setattr(prop.state_end, att, vector)
 
-            prop.state_slider = 1
+        context.object.ACON_prop.state_slider = 1
 
         return {"FINISHED"}
-
-
-class Acon3dStateRemoveOperator(bpy.types.Operator):
-    # This operation acutally does not include removing state data.
-    # Although state data gets lost when being initiated by toggling 'use_state' on.
-    # Hence toggling 'use_state' off means users can not access to state data any more.
-    """Remove object's state data"""
-
-    bl_idname = "acon3d.state_remove"
-    bl_label = "Do you want to remove state data of selected object(s)?"
-    bl_translation_context = "*"
-    bl_options = {"REGISTER", "INTERNAL"}
-
-    def execute(self, context):
-
-        for obj in context.selected_objects:
-            prop = obj.ACON_prop
-            prop.state_slider = 0
-            prop.use_state = False
-
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        return context.window_manager.invoke_confirm(self, event)
 
 
 class Acon3dStateActionOperator(bpy.types.Operator):
@@ -175,7 +150,6 @@ class ObjectSubPanel(bpy.types.Panel):
 classes = (
     Acon3dStateActionOperator,
     Acon3dStateUpdateOperator,
-    Acon3dStateRemoveOperator,
     Acon3dObjectPanel,
     ObjectSubPanel,
 )

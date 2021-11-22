@@ -58,19 +58,33 @@ def toggleUseState(self, context):
 
             if obj == context.object or not prop.use_state:
 
-                for att in ["location", "rotation_euler", "scale"]:
+                if not prop.state_exists:
 
-                    vector = getattr(obj, att)
-                    setattr(prop.state_begin, att, vector)
-                    setattr(prop.state_end, att, vector)
+                    for att in ["location", "rotation_euler", "scale"]:
 
-                prop.state_slider = 1
+                        vector = getattr(obj, att)
+                        setattr(prop.state_begin, att, vector)
+                        setattr(prop.state_end, att, vector)
 
-            prop.use_state = True
+                    prop.state_exists = True
+
+            if not prop.use_state:
+
+                prop.use_state = True
+
+        prop.state_slider = 1
 
     else:
 
-        bpy.ops.acon3d.state_remove("INVOKE_DEFAULT")
+        context.object.ACON_prop.state_slider = 0
+
+        for obj in context.selected_objects:
+
+            prop = obj.ACON_prop
+
+            if prop.use_state:
+
+                prop.use_state = False
 
 
 def moveState(self, context):
@@ -81,7 +95,7 @@ def moveState(self, context):
 
         prop = obj.ACON_prop
 
-        if not prop.use_state:
+        if obj != context.object and not prop.use_state:
             continue
 
         for att in ["location", "rotation_euler", "scale"]:
