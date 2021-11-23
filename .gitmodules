@@ -15,4 +15,4 @@
 	ignore = all
 [submodule "release/scripts/addons_abler/io_skp"]
 	path = release/scripts/addons_abler/io_skp
-	url = https://github.com/ACON3D/SKP_Converter.git
+	url = git@github.com:ACON3D/SKP_Converter.git
