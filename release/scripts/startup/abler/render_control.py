@@ -366,7 +366,7 @@ class Acon3dRenderQuickOperator(Acon3dRenderOperator):
     initial_selected_objects = []
 
     def execute(self, context):
-        tracker.rendered_quickly()
+        tracker.render_quick()
         return super().execute(context)
 
     def prepare_queue(self, context):
