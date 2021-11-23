@@ -15,4 +15,4 @@
 	ignore = all
 [submodule "release/scripts/addons_abler/io_skp"]
 	path = release/scripts/addons_abler/io_skp
-	url = https://acontainer@dev.azure.com/acontainer/acon3d-V2/_git/RND_skpConverter
+	url = https://github.com/ACON3D/SKP_Converter.git
