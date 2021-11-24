@@ -114,8 +114,10 @@ class Acon3dObjectPanel(bpy.types.Panel):
         col.scale_x = 3
         col.separator()
         col = row.column()
-        row = col.row()
-        row.prop(context.object.ACON_prop, "constraint_to_camera_rotation_z")
+
+        if context.object:
+            row = col.row()
+            row.prop(context.object.ACON_prop, "constraint_to_camera_rotation_z")
 
 
 class ObjectSubPanel(bpy.types.Panel):
@@ -129,10 +131,11 @@ class ObjectSubPanel(bpy.types.Panel):
 
     def draw_header(self, context):
         obj = context.object
-        layout = self.layout
-        layout.active = bool(len(context.selected_objects))
-        layout.enabled = layout.active
-        layout.prop(obj.ACON_prop, "use_state", text="")
+        if obj:
+            layout = self.layout
+            layout.active = bool(len(context.selected_objects))
+            layout.enabled = layout.active
+            layout.prop(obj.ACON_prop, "use_state", text="")
 
     def draw(self, context):
         layout = self.layout

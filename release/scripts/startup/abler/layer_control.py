@@ -108,7 +108,12 @@ class Acon3dLayerPanel(bpy.types.Panel):
         for child in collection.children:
             index += 1
 
-            target = bpy.context.scene.l_exclude[findex]
+            l_exclude = bpy.context.scene.l_exclude
+
+            if findex > len(l_exclude - 1):
+                break
+
+            target = l_exclude[findex]
 
             icon = "OUTLINER_COLLECTION"
             icon_vis = "HIDE_ON"
