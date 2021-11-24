@@ -19,8 +19,7 @@
 
 import bpy
 from math import radians
-from .lib import scenes, cameras, shadow, objects
-from .lib.materials import materials_handler
+from .lib import scenes, cameras, shadow, objects, materials
 
 
 class AconWindowManagerProperty(bpy.types.PropertyGroup):
@@ -88,7 +87,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         name="Toon Style Edge",
         description="Toggle toon style edge expression",
         default=True,
-        update=materials_handler.toggleToonEdge,
+        update=materials.toggleToonEdge,
     )
 
     edge_min_line_width: bpy.props.FloatProperty(
@@ -99,7 +98,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=0,
         max=5,
         step=1,
-        update=materials_handler.changeLineProps,
+        update=materials.changeLineProps,
     )
 
     edge_max_line_width: bpy.props.FloatProperty(
@@ -110,7 +109,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=0,
         max=5,
         step=1,
-        update=materials_handler.changeLineProps,
+        update=materials.changeLineProps,
     )
 
     edge_line_detail: bpy.props.FloatProperty(
@@ -121,35 +120,35 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=0,
         max=20,
         step=10,
-        update=materials_handler.changeLineProps,
+        update=materials.changeLineProps,
     )
 
     toggle_toon_face: bpy.props.BoolProperty(
         name="Toon Style Face",
         description="Toggle toon style face expression",
         default=True,
-        update=materials_handler.toggleToonFace,
+        update=materials.toggleToonFace,
     )
 
     toggle_texture: bpy.props.BoolProperty(
         name="Texture",
         description="Toggle material texture",
         default=True,
-        update=materials_handler.toggleTexture,
+        update=materials.toggleTexture,
     )
 
     toggle_shading: bpy.props.BoolProperty(
         name="Shading",
         description="Toggle shading",
         default=True,
-        update=materials_handler.toggleShading,
+        update=materials.toggleShading,
     )
 
     toon_shading_depth: bpy.props.EnumProperty(
         name="Toon Color Depth",
         description="Change number of colors used for shading",
         items=[("2", "2 depth", ""), ("3", "3 depth", "")],
-        update=materials_handler.changeToonDepth,
+        update=materials.changeToonDepth,
     )
 
     toon_shading_brightness_1: bpy.props.FloatProperty(
@@ -160,7 +159,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=0,
         max=10,
         step=1,
-        update=materials_handler.changeToonShadingBrightness,
+        update=materials.changeToonShadingBrightness,
     )
 
     toon_shading_brightness_2: bpy.props.FloatProperty(
@@ -171,7 +170,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=0,
         max=10,
         step=1,
-        update=materials_handler.changeToonShadingBrightness,
+        update=materials.changeToonShadingBrightness,
     )
 
     view: bpy.props.EnumProperty(
@@ -225,7 +224,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=-1,
         max=1,
         step=1,
-        update=materials_handler.changeImageAdjustBrightness,
+        update=materials.changeImageAdjustBrightness,
     )
 
     image_adjust_contrast: bpy.props.FloatProperty(
@@ -236,7 +235,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=-1,
         max=1,
         step=1,
-        update=materials_handler.changeImageAdjustContrast,
+        update=materials.changeImageAdjustContrast,
     )
 
     image_adjust_color_r: bpy.props.FloatProperty(
@@ -247,7 +246,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=0,
         max=2,
         step=1,
-        update=materials_handler.changeImageAdjustColor,
+        update=materials.changeImageAdjustColor,
     )
 
     image_adjust_color_g: bpy.props.FloatProperty(
@@ -258,7 +257,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=0,
         max=2,
         step=1,
-        update=materials_handler.changeImageAdjustColor,
+        update=materials.changeImageAdjustColor,
     )
 
     image_adjust_color_b: bpy.props.FloatProperty(
@@ -269,7 +268,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=0,
         max=2,
         step=1,
-        update=materials_handler.changeImageAdjustColor,
+        update=materials.changeImageAdjustColor,
     )
 
     image_adjust_hue: bpy.props.FloatProperty(
@@ -280,7 +279,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=0,
         max=1,
         step=1,
-        update=materials_handler.changeImageAdjustHue,
+        update=materials.changeImageAdjustHue,
     )
 
     image_adjust_saturation: bpy.props.FloatProperty(
@@ -291,7 +290,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         min=0,
         max=2,
         step=1,
-        update=materials_handler.changeImageAdjustSaturation,
+        update=materials.changeImageAdjustSaturation,
     )
 
     selected_objects_str: bpy.props.StringProperty(name="Selected Objects")
@@ -353,19 +352,19 @@ class AconMaterialProperty(bpy.types.PropertyGroup):
             ("Glow", "Emission", ""),
             ("Clear", "Transparent", ""),
         ],
-        update=materials_handler.changeMaterialType,
+        update=materials.changeMaterialType,
     )
 
     toggle_shadow: bpy.props.BoolProperty(
-        name="Shadow", default=True, update=materials_handler.toggleEachShadow
+        name="Shadow", default=True, update=materials.toggleEachShadow
     )
 
     toggle_shading: bpy.props.BoolProperty(
-        name="Shading", default=True, update=materials_handler.toggleEachShading
+        name="Shading", default=True, update=materials.toggleEachShading
     )
 
     toggle_edge: bpy.props.BoolProperty(
-        name="Edges", default=True, update=materials_handler.toggleEachEdge
+        name="Edges", default=True, update=materials.toggleEachEdge
     )
 
 

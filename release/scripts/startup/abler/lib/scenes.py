@@ -18,8 +18,7 @@
 
 
 import bpy, os
-from . import shadow, layers, objects
-from .materials import materials_handler
+from . import shadow, layers, objects, materials
 from math import radians
 
 
@@ -82,31 +81,37 @@ def loadHdr(self, context):
     scene.render.film_transparent = False
     scene.world.use_nodes = True
 
-    node_tree = scene.world.node_tree
-    nodes = node_tree.nodes
+    try:
 
-    node_texture_diffuse = nodes.get("ACON_node_hdrDiffuse")
-    node_texture_normal = nodes.get("ACON_node_hdrNormal")
+        nodes = scene.world.node_tree.nodes
 
-    image_diffuse = None
-    image_normal = None
+        node_texture_diffuse = nodes.get("ACON_node_env_diffuse")
+        node_texture_normal = nodes.get("ACON_node_env_normal")
 
-    image_path_diffuse = os.path.join(image_path, "diffuse.png")
-    image_path_normal = os.path.join(image_path, "normal.png")
+        image_diffuse = None
+        image_normal = None
 
-    for item in bpy.data.images:
-        if item.filepath == image_path_diffuse:
-            image_diffuse = item
-        if item.filepath == image_path_normal:
-            image_normal = item
+        image_diffuse_path = os.path.join(image_path, "diffuse.png")
+        image_normal_path = os.path.join(image_path, "normal.png")
 
-    if not image_diffuse:
-        image_diffuse = bpy.data.images.load(image_path_diffuse)
-    if not image_normal:
-        image_normal = bpy.data.images.load(image_path_normal)
+        for item in bpy.data.images:
+            if item.filepath == image_diffuse_path:
+                image_diffuse = item
+            if item.filepath == image_normal_path:
+                image_normal = item
 
-    node_texture_diffuse.image = image_diffuse
-    node_texture_normal.image = image_normal
+        if not image_diffuse:
+            image_diffuse = bpy.data.images.load(image_diffuse_path)
+        if not image_normal:
+            image_normal = bpy.data.images.load(image_normal_path)
+
+        node_texture_diffuse.image = image_diffuse
+        node_texture_normal.image = image_normal
+
+    except Exception as e:
+        scene.render.film_transparent = True
+        scene.world.use_nodes = False
+        raise e
 
 
 def loadScene(self, context):
@@ -121,18 +126,18 @@ def loadScene(self, context):
     oldScene = context.scene
     context.window.scene = newScene
 
-    materials_handler.toggleToonEdge(self, context)
-    materials_handler.changeLineProps(self, context)
-    materials_handler.toggleToonFace(self, context)
-    materials_handler.toggleTexture(self, context)
-    materials_handler.toggleShading(self, context)
-    materials_handler.changeToonDepth(self, context)
-    materials_handler.changeToonShadingBrightness(self, context)
-    materials_handler.changeImageAdjustBrightness(self, context)
-    materials_handler.changeImageAdjustContrast(self, context)
-    materials_handler.changeImageAdjustColor(self, context)
-    materials_handler.changeImageAdjustHue(self, context)
-    materials_handler.changeImageAdjustSaturation(self, context)
+    materials.toggleToonEdge(self, context)
+    materials.changeLineProps(self, context)
+    materials.toggleToonFace(self, context)
+    materials.toggleTexture(self, context)
+    materials.toggleShading(self, context)
+    materials.changeToonDepth(self, context)
+    materials.changeToonShadingBrightness(self, context)
+    materials.changeImageAdjustBrightness(self, context)
+    materials.changeImageAdjustContrast(self, context)
+    materials.changeImageAdjustColor(self, context)
+    materials.changeImageAdjustHue(self, context)
+    materials.changeImageAdjustSaturation(self, context)
 
     layers.handleLayerVisibilityOnSceneChange(oldScene, newScene)
 
@@ -370,23 +375,19 @@ def createScene(old_scene, type, name):
 
 def changeCloudsHeight(self, context):
 
-    prop = context.scene.world.ACON_prop
-    world_node_cloudVector = context.scene.world.node_tree.nodes.get(
-        "ACON_node_cloudVector"
-    )
+    nodes = context.scene.world.node_tree.nodes
+    node_world_surface = nodes.get("ACON_nodeGroup_world_surface")
 
-    if world_node_cloudVector:
-        world_node_cloudVector.inputs.get("B").default_value = prop.clouds_height
+    if node_world_surface:
+        node_world_surface.inputs.get("Cloud Height").default_value = self.clouds_height
 
 
 def changeCloudsRotation(self, context):
 
-    prop = context.scene.world.ACON_prop
-    world_node_cloudRotation = context.scene.world.node_tree.nodes.get(
-        "ACON_node_cloudRotation"
-    )
+    nodes = context.scene.world.node_tree.nodes
+    node_world_surface = nodes.get("ACON_nodeGroup_world_surface")
 
-    if world_node_cloudRotation:
-        world_node_cloudRotation.inputs.get(
-            "Rotation"
-        ).default_value.z = prop.clouds_rotation
+    if node_world_surface:
+        node_world_surface.inputs.get(
+            "Cloud Rotation"
+        ).default_value = self.clouds_rotation

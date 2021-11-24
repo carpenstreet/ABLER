@@ -1,7 +1,6 @@
 import bpy
 from bpy.app.handlers import persistent
-from .lib import cameras, shadow, render
-from .lib.materials import materials_setup
+from .lib import cameras, shadow, render, materials
 
 
 def init_setting(dummy):
@@ -43,7 +42,8 @@ def load_handler(dummy):
     cameras.turnOnCameraView(False)
     shadow.setupSharpShadow()
     render.setupBackgroundImagesCompositor()
-    materials_setup.applyAconToonStyle()
+    materials.applyAconToonStyle()
+    materials.applyAconWorldShader()
 
 
 def register():

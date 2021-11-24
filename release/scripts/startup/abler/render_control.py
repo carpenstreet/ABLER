@@ -19,8 +19,7 @@
 
 import bpy, platform, os, subprocess
 from bpy_extras.io_utils import ImportHelper
-from .lib import render, cameras
-from .lib.materials import materials_handler
+from .lib import render, cameras, materials
 from .lib.tracker import tracker
 
 
@@ -242,7 +241,7 @@ class Acon3dRenderTempSceneOperator(Acon3dRenderOperator):
     def on_render_finish(self, context):
 
         for mat in bpy.data.materials:
-            materials_handler.setMaterialParametersByType(mat)
+            materials.setMaterialParametersByType(mat)
 
         for scene in self.temp_scenes:
             bpy.data.scenes.remove(scene)
@@ -311,7 +310,7 @@ class Acon3dRenderSnipOperator(Acon3dRenderTempSceneOperator):
             self.temp_image = bpy.data.images.load(image_path)
 
             for mat in bpy.data.materials:
-                materials_handler.setMaterialParametersByType(mat)
+                materials.setMaterialParametersByType(mat)
 
             compNodes = render.clearCompositor()
             render.setupBackgroundImagesCompositor(*compNodes)

@@ -33,7 +33,7 @@ bl_info = {
 
 import bpy
 from bpy_extras.io_utils import ImportHelper
-from .lib.materials import materials_setup
+from .lib import materials
 
 
 class ImportOperator(bpy.types.Operator, ImportHelper):
@@ -99,7 +99,7 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
             else:
                 data_to.objects.remove(obj)
 
-        materials_setup.applyAconToonStyle()
+        materials.applyAconToonStyle()
 
         for area in context.screen.areas:
             if area.type == "VIEW_3D":
