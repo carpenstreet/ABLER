@@ -110,7 +110,7 @@ class Acon3dLayerPanel(bpy.types.Panel):
 
             l_exclude = bpy.context.scene.l_exclude
 
-            if findex > len(l_exclude - 1):
+            if findex > len(l_exclude) - 1:
                 break
 
             target = l_exclude[findex]
