@@ -80,3 +80,4 @@ class MixpanelTracker(Tracker):
     def _enqueue_email_update(self, email: str):
         self._ensure_resource()
         self._r.mp.people_set_once(self._r.tid, {"$email": email})
+        self._r.mp.alias(self._r.tid, email)
