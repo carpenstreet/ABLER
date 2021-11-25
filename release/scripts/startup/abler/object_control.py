@@ -32,22 +32,20 @@ bl_info = {
 
 
 import bpy
-from .lib import objects
 
 
 class Acon3dStateUpdateOperator(bpy.types.Operator):
-    """Update object's state using current state position and location / rotation / scale values"""
+    """Save object's current location / rotation / scale values to state data"""
 
     bl_idname = "acon3d.state_update"
     bl_label = "Update State"
     bl_translation_context = "*"
 
+    @classmethod
+    def poll(cls, context):
+        return context.selected_objects
+
     def execute(self, context):
-
-        x = context.object.ACON_prop.state_slider
-
-        if not 0 < x <= 1:
-            return {"FINISHED"}
 
         for obj in context.selected_objects:
 
@@ -58,10 +56,10 @@ class Acon3dStateUpdateOperator(bpy.types.Operator):
 
             for att in ["location", "rotation_euler", "scale"]:
 
-                vector_begin = getattr(prop.state_begin, att)
-                vector_mid = getattr(obj, att)
-                vector_end = objects.step(vector_begin, vector_mid, 1 / x)
-                setattr(prop.state_end, att, vector_end)
+                vector = getattr(obj, att)
+                setattr(prop.state_end, att, vector)
+
+        context.object.ACON_prop.state_slider = 1
 
         return {"FINISHED"}
 

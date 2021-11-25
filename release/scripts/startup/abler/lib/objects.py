@@ -48,43 +48,54 @@ def step(edge0: tuple[float], edge1: tuple[float], x: float) -> tuple[float]:
 
 def toggleUseState(self, context):
 
-    use_state = context.object.ACON_prop.use_state
+    use_state = self.use_state
 
-    for obj in context.selected_objects:
+    if use_state:
 
-        prop = obj.ACON_prop
+        for obj in context.selected_objects:
 
-        if use_state:
+            prop = obj.ACON_prop
 
             if obj == context.object or not prop.use_state:
 
-                for att in ["location", "rotation_euler", "scale"]:
+                if not prop.state_exists:
 
-                    vector = getattr(obj, att)
-                    setattr(prop.state_begin, att, vector)
-                    setattr(prop.state_end, att, vector)
+                    for att in ["location", "rotation_euler", "scale"]:
 
-        elif obj == context.object or prop.use_state:
+                        vector = getattr(obj, att)
+                        setattr(prop.state_begin, att, vector)
+                        setattr(prop.state_end, att, vector)
 
-            for att in ["location", "rotation_euler", "scale"]:
+                    prop.state_exists = True
 
-                vector = getattr(prop.state_begin, att)
-                setattr(obj, att, vector)
-                setattr(prop.state_end, att, vector)
+            if not prop.use_state:
 
-        if prop.use_state != use_state:
-            prop.use_state = use_state
+                prop.use_state = True
+
+        prop.state_slider = 1
+
+    else:
+
+        context.object.ACON_prop.state_slider = 0
+
+        for obj in context.selected_objects:
+
+            prop = obj.ACON_prop
+
+            if prop.use_state:
+
+                prop.use_state = False
 
 
 def moveState(self, context):
 
-    state_slider = context.object.ACON_prop.state_slider
+    state_slider = self.state_slider
 
     for obj in context.selected_objects:
 
         prop = obj.ACON_prop
 
-        if not prop.use_state:
+        if obj != context.object and not prop.use_state:
             continue
 
         for att in ["location", "rotation_euler", "scale"]:
