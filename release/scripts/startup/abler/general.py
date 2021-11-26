@@ -178,7 +178,7 @@ class Acon3dImportPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("acon3d.context_toggle")
         row = layout.row()
-        row.operator("acon3d.flymode1", text_ctxt="*")
+        row.operator("acon3d.flymode1")
 
 
 classes = (
