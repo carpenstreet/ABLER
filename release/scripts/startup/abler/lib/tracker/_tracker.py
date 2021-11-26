@@ -7,6 +7,7 @@ class EventKind(enum.Enum):
     login_fail = "Login Fail"
     login_auto = "Login Auto"
     render_quick = "Render Quick"
+    import_ = "Import"
 
 
 class Tracker(metaclass=ABCMeta):
@@ -56,6 +57,9 @@ class Tracker(metaclass=ABCMeta):
 
     def render_quick(self):
         self._track(EventKind.render_quick.value)
+
+    def import_(self):
+        self._track(EventKind.import_.value)
 
 
 class DummyTracker(Tracker):
