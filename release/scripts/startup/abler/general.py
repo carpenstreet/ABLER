@@ -132,6 +132,22 @@ class ToggleToolbarOperator(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class FlyOperator(bpy.types.Operator):
+    """Fly Mode"""
+
+    bl_idname = "acon3d.flymode1"
+    bl_label = "Fly (shift + `)"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        tracker.fly_in_general()
+
+        if context.space_data.type == "VIEW_3D":
+            bpy.ops.view3d.walk("INVOKE_DEFAULT")
+
+        return {"FINISHED"}
+
+
 class Acon3dImportPanel(bpy.types.Panel):
     bl_idname = "ACON3D_PT_import"
     bl_label = "General"
@@ -162,13 +178,14 @@ class Acon3dImportPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("acon3d.context_toggle")
         row = layout.row()
-        row.operator("view3d.walk", text="Fly (shift + `)", text_ctxt="*")
+        row.operator("acon3d.flymode1", text_ctxt="*")
 
 
 classes = (
     Acon3dImportPanel,
     ToggleToolbarOperator,
     ImportOperator,
+    FlyOperator,
 )
 
 
