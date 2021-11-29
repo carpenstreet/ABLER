@@ -135,7 +135,7 @@ class ToggleToolbarOperator(bpy.types.Operator):
 class FlyOperator(bpy.types.Operator):
     """Fly Mode"""
 
-    bl_idname = "acon3d.flymode1"
+    bl_idname = "acon3d.fly_in_general"
     bl_label = "Fly (shift + `)"
     bl_translation_context = "*"
 
@@ -178,7 +178,7 @@ class Acon3dImportPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("acon3d.context_toggle")
         row = layout.row()
-        row.operator("acon3d.flymode1")
+        row.operator("acon3d.fly_in_general")
 
 
 classes = (
