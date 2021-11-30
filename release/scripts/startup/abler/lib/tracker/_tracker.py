@@ -1,12 +1,40 @@
 from abc import *
 import enum
 
+import bpy
+
 
 class EventKind(enum.Enum):
     login = "Login"
     login_fail = "Login Fail"
     login_auto = "Login Auto"
     render_quick = "Render Quick"
+    look_at_me = "Look At Me"
+
+
+def accumulate(interval=0):
+    def deco(f):
+        accumulating = False
+
+        def wrapper(*args, **kwargs):
+            nonlocal accumulating
+
+            if not accumulating:
+                accumulating = True
+
+                def unregister_timer_and_run():
+                    nonlocal accumulating
+                    f(*args, **kwargs)
+                    bpy.app.timers.unregister(unregister_timer_and_run)
+                    accumulating = False
+
+                bpy.app.timers.register(
+                    unregister_timer_and_run, first_interval=interval
+                )
+
+        return wrapper
+
+    return deco
 
 
 class Tracker(metaclass=ABCMeta):
@@ -56,6 +84,10 @@ class Tracker(metaclass=ABCMeta):
 
     def render_quick(self):
         self._track(EventKind.render_quick.value)
+
+    @accumulate()
+    def look_at_me(self):
+        self._track(EventKind.look_at_me.value)
 
 
 class DummyTracker(Tracker):
