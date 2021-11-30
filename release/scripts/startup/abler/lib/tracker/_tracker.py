@@ -13,6 +13,12 @@ class EventKind(enum.Enum):
 
 
 def accumulate(interval=0):
+    """
+    동시에 여러 번 실행되는 이벤트를 한 번만 트래킹하고 싶을 때 사용할 수 있는 데코레이터
+
+    첫 호출 이후 다음 이벤트 루프(interval 주어진 경우는 해당 시간이 지나기 전)까지의 호출은 무시
+    """
+
     def deco(f):
         accumulating = False
 
