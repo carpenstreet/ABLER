@@ -20,6 +20,8 @@
 # ------------------------------------------------------------------------------
 # Configurable Parameters
 
+# fmt: off
+
 class Params:
     __slots__ = (
         "apple",
