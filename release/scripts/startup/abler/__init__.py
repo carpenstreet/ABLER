@@ -72,7 +72,7 @@ importedLibrary = [
     pref,
     operators,
 ]
-if "--background" not in sys.argv:
+if "--background" not in sys.argv and "-b" not in sys.argv:
     from . import credential_modal
     importedLibrary.append(credential_modal)
 
