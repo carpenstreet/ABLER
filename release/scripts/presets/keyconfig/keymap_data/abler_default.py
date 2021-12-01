@@ -1088,7 +1088,7 @@ def km_view3d(params):
         ),
         *(() if not params.use_pie_click_drag else
           (("view3d.navigate", {"type": 'ACCENT_GRAVE', "value": 'CLICK'}, None),)),
-        ("view3d.navigate", {"type": 'ACCENT_GRAVE', "value": 'PRESS', "shift": True}, None),
+        ("acon3d.fly_mode", {"type": 'ACCENT_GRAVE', "value": 'PRESS', "shift": True}, None),
         # Numpad views.
         ("view3d.view_camera", {"type": 'NUMPAD_0', "value": 'PRESS'}, None),
         ("view3d.view_axis", {"type": 'NUMPAD_1', "value": 'PRESS'},
@@ -1619,11 +1619,6 @@ def km_graph_editor(params):
         ("marker.rename", {"type": 'M', "value": 'PRESS', "ctrl": True}, None),
         *_template_items_context_menu("GRAPH_MT_context_menu", params.context_menu_event),
     ])
-            (
-                "acon3d.fly_mode",
-                {"type": "ACCENT_GRAVE", "value": "PRESS", "shift": True},
-                None,
-            ),
 
     if not params.legacy:
         items.extend([
