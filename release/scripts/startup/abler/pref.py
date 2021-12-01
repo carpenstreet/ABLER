@@ -12,7 +12,7 @@ def init_setting(dummy):
     prefs_view = prefs.view
     prefs_paths = prefs.filepaths
 
-    if "--background" not in sys.argv:
+    if "--background" not in sys.argv and "-b" not in sys.argv:
         try:
             init_screen = bpy.data.screens["ACON3D"].areas[0].spaces[0]
             init_screen.shading.type = "RENDERED"
