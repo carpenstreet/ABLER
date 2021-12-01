@@ -10,6 +10,7 @@ class EventKind(enum.Enum):
     login_auto = "Login Auto"
     render_quick = "Render Quick"
     import_blend = "Import *.blend"
+    scene_add = "Scene Add"
     look_at_me = "Look At Me"
 
 
@@ -94,6 +95,9 @@ class Tracker(metaclass=ABCMeta):
       
     def import_blend(self):
         self._track(EventKind.import_blend.value)
+        
+    def scene_add(self):
+        self._track(EventKind.scene_add.value)
 
     @accumulate()
     def look_at_me(self):
