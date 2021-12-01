@@ -1620,7 +1620,7 @@ def km_graph_editor(params):
         *_template_items_context_menu("GRAPH_MT_context_menu", params.context_menu_event),
     ])
             (
-                "acon3d.fly_in_general",
+                "acon3d.fly_mode",
                 {"type": "ACCENT_GRAVE", "value": "PRESS", "shift": True},
                 None,
             ),

@@ -10,7 +10,7 @@ class EventKind(enum.Enum):
     login_auto = "Login Auto"
     render_quick = "Render Quick"
     import_blend = "Import *.blend"
-    fly_in_general = "Fly in General"
+    fly_mode = "Fly Mode"
     scene_add = "Scene Add"
     look_at_me = "Look At Me"
 
@@ -44,7 +44,6 @@ def accumulate(interval=0):
         return wrapper
 
     return deco
-    
 
 
 class Tracker(metaclass=ABCMeta):
@@ -94,10 +93,10 @@ class Tracker(metaclass=ABCMeta):
 
     def render_quick(self):
         self._track(EventKind.render_quick.value)
-      
+
     def import_blend(self):
         self._track(EventKind.import_blend.value)
-        
+
     def scene_add(self):
         self._track(EventKind.scene_add.value)
 
@@ -105,8 +104,8 @@ class Tracker(metaclass=ABCMeta):
     def look_at_me(self):
         self._track(EventKind.look_at_me.value)
 
-    def fly_in_general(self):
-        self._track(EventKind.fly_in_general.value)
+    def fly_mode(self):
+        self._track(EventKind.fly_mode.value)
 
 
 class DummyTracker(Tracker):
