@@ -1,4 +1,5 @@
 import bpy
+import sys
 from bpy.app.handlers import persistent
 from .lib import cameras, shadow, render, scenes
 from .lib.materials import materials_setup
@@ -12,21 +13,22 @@ def init_setting(dummy):
     prefs_view = prefs.view
     prefs_paths = prefs.filepaths
 
-    try:
-        init_screen = bpy.data.screens["ACON3D"].areas[0].spaces[0]
-        init_screen.shading.type = "RENDERED"
-        init_screen.show_region_header = False
-        init_screen.show_region_tool_header = False
-        init_screen.show_gizmo = True
-        init_screen.show_gizmo_object_translate = True
-        init_screen.show_gizmo_object_rotate = True
-        init_screen.show_gizmo_object_scale = True
-        init_screen.show_gizmo_navigate = False
-        init_screen.show_gizmo_tool = True
-        init_screen.show_gizmo_context = True
+    if "--background" not in sys.argv:
+        try:
+            init_screen = bpy.data.screens["ACON3D"].areas[0].spaces[0]
+            init_screen.shading.type = "RENDERED"
+            init_screen.show_region_header = False
+            init_screen.show_region_tool_header = False
+            init_screen.show_gizmo = True
+            init_screen.show_gizmo_object_translate = True
+            init_screen.show_gizmo_object_rotate = True
+            init_screen.show_gizmo_object_scale = True
+            init_screen.show_gizmo_navigate = False
+            init_screen.show_gizmo_tool = True
+            init_screen.show_gizmo_context = True
 
-    except:
-        print("Failed to find screen 'ACON3D'")
+        except:
+            print("Failed to find screen 'ACON3D'")
 
     prefs_sys.use_region_overlap = False
     prefs_view.show_layout_ui = True
