@@ -1619,6 +1619,11 @@ def km_graph_editor(params):
         ("marker.rename", {"type": 'M', "value": 'PRESS', "ctrl": True}, None),
         *_template_items_context_menu("GRAPH_MT_context_menu", params.context_menu_event),
     ])
+            (
+                "acon3d.fly_in_general",
+                {"type": "ACCENT_GRAVE", "value": "PRESS", "shift": True},
+                None,
+            ),
 
     if not params.legacy:
         items.extend([
