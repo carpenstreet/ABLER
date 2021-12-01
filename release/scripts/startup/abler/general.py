@@ -34,6 +34,7 @@ bl_info = {
 import bpy
 from bpy_extras.io_utils import ImportHelper
 from .lib.materials import materials_setup
+from .lib.tracker import tracker
 
 
 class ImportOperator(bpy.types.Operator, ImportHelper):
@@ -46,6 +47,7 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
     filter_glob: bpy.props.StringProperty(default="*.blend", options={"HIDDEN"})
 
     def execute(self, context):
+        tracker.import_blend()
 
         for obj in bpy.data.objects:
             obj.select_set(False)
