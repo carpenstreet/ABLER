@@ -35,8 +35,8 @@ env:
   NODE_VERSION: '16.x'                # set this to the node version to use
 
 jobs:
-  build-and-deploy:
-    name: Build and Deploy
+  sync-github-notion:
+    name: Sync Github and Notion
     runs-on: ubuntu-latest
     environment: production
     steps:
