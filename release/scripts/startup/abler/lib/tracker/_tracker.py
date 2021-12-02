@@ -8,6 +8,7 @@ class EventKind(enum.Enum):
     login = "Login"
     login_fail = "Login Fail"
     login_auto = "Login Auto"
+    file_open = "File Open"
     render_quick = "Render Quick"
     import_blend = "Import *.blend"
     toggle_toolbar = "Toggle Toolbar"
@@ -91,12 +92,15 @@ class Tracker(metaclass=ABCMeta):
     def login_auto(self):
         self._track(EventKind.login_auto.value)
 
+    def file_open(self):
+        self._track(EventKind.file_open.value)
+
     def render_quick(self):
         self._track(EventKind.render_quick.value)
-      
+
     def import_blend(self):
         self._track(EventKind.import_blend.value)
-        
+
     def scene_add(self):
         self._track(EventKind.scene_add.value)
 
