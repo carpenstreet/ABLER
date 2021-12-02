@@ -121,6 +121,8 @@ class ToggleToolbarOperator(bpy.types.Operator):
     bl_translation_context = "*"
 
     def execute(self, context):
+        tracker.toggle_toolbar()
+
         context.scene.render.engine = "BLENDER_EEVEE"
         for area in context.screen.areas:
             if area.type == "VIEW_3D":

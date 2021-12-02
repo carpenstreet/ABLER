@@ -193,7 +193,7 @@ def _template_space_region_type_toggle(*, toolbar_key=None, sidebar_key=None):
     items = []
     if toolbar_key is not None:
         items.append(
-            ("wm.context_toggle", toolbar_key,
+            ("acon3d.context_toggle", toolbar_key,
              {"properties": [("data_path", 'space_data.show_region_toolbar')]})
         )
     if sidebar_key is not None:
