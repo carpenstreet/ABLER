@@ -10,6 +10,7 @@ class EventKind(enum.Enum):
     login_auto = "Login Auto"
     render_quick = "Render Quick"
     import_blend = "Import *.blend"
+    toggle_toolbar = "Toggle Toolbar"
     scene_add = "Scene Add"
     look_at_me = "Look At Me"
 
@@ -102,6 +103,9 @@ class Tracker(metaclass=ABCMeta):
     @accumulate()
     def look_at_me(self):
         self._track(EventKind.look_at_me.value)
+
+    def toggle_toolbar(self):
+        self._track(EventKind.toggle_toolbar.value)
 
 
 class DummyTracker(Tracker):
