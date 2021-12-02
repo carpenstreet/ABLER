@@ -47,6 +47,7 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
     filter_glob: bpy.props.StringProperty(default="*.blend", options={"HIDDEN"})
 
     def execute(self, context):
+        tracker.import_blend()
 
         for obj in bpy.data.objects:
             obj.select_set(False)
