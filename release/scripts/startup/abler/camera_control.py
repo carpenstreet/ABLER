@@ -83,7 +83,7 @@ class DeleteCameraOperator(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         collection = bpy.data.collections.get("ACON_col_cameras")
-        return len(collection.objects) > 1
+        return collection and len(collection.objects) > 1
 
     def execute(self, context):
         currentCameraName = context.scene.ACON_prop.view
