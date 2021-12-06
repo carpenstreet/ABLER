@@ -89,8 +89,9 @@ def toggleTexture(self, context: Context) -> None:
     toggle_texture: BoolProperty = context.scene.ACON_prop.toggle_texture
     textureFactorValue: int = int(not toggle_texture)
 
-    for image in context.scene.camera.data.background_images:
-        image.show_background_image = toggle_texture
+    if context.scene.camera:
+        for image in context.scene.camera.data.background_images:
+            image.show_background_image = toggle_texture
 
     node_group: Optional[NodeTree] = bpy.data.node_groups.get(
         "ACON_nodeGroup_combinedToon"
