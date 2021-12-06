@@ -3,6 +3,8 @@ from typing import Optional
 import os
 from uuid import uuid4
 import threading
+from dotenv import load_dotenv
+
 
 from mixpanel import Mixpanel, BufferedConsumer
 import bpy
@@ -45,7 +47,7 @@ class MixpanelResource:
             self.tid = "anonymous"
 
         self.flush_repeatedly()
-        print(f"Mixpanel Initialized")
+        print("Mixpanel Initialized")
 
     def flush_repeatedly(self):
         # 현재는 cleanup 로직을 두지 않음
@@ -61,11 +63,9 @@ class MixpanelTracker(Tracker):
     _r: Optional[MixpanelResource] = None
     _mixpanel_token: str
 
-    def __init__(self):
+    def __init__(self, mixpanel_token: str):
         super().__init__()
-        mixpanel_token_path = os.path.join(os.path.dirname(__file__), "mixpanel_token")
-        with open(mixpanel_token_path, "r") as f:
-            self._mixpanel_token = f.readline()
+        self._mixpanel_token = mixpanel_token
 
     def _ensure_resource(self):
         if self._r is None:
