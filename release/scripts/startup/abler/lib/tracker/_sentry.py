@@ -4,7 +4,6 @@ import time
 
 import bpy
 import sentry_sdk
-from dotenv import load_dotenv
 
 from ._tracker import Tracker
 

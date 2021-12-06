@@ -3,8 +3,6 @@ from typing import Optional
 import os
 from uuid import uuid4
 import threading
-from dotenv import load_dotenv
-
 
 from mixpanel import Mixpanel, BufferedConsumer
 import bpy
