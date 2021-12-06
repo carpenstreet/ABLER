@@ -32,6 +32,7 @@ bl_info = {
 
 
 import bpy
+from .lib.tracker import tracker
 
 
 class Acon3dStateUpdateOperator(bpy.types.Operator):
@@ -93,6 +94,36 @@ class Acon3dStateActionOperator(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class TurnOffLookAtMeOperator(bpy.types.Operator):
+    """Turn Off"""
+
+    bl_idname = "acon3d.turn_off_look_at_me"
+    bl_label = "Look at me"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        for obj in context.selected_objects:
+            obj.ACON_prop.constraint_to_camera_rotation_z = False
+
+        return {"FINISHED"}
+
+
+class TurnOnLookAtMeOperator(bpy.types.Operator):
+    """Turn On"""
+
+    bl_idname = "acon3d.turn_on_look_at_me"
+    bl_label = "Look at me"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        tracker.look_at_me()
+
+        for obj in context.selected_objects:
+            obj.ACON_prop.constraint_to_camera_rotation_z = True
+
+        return {"FINISHED"}
+
+
 class Acon3dObjectPanel(bpy.types.Panel):
     bl_idname = "ACON_PT_Object_Main"
     bl_label = "Object Control"
@@ -115,7 +146,32 @@ class Acon3dObjectPanel(bpy.types.Panel):
 
         if context.object:
             row = col.row()
-            row.prop(context.object.ACON_prop, "constraint_to_camera_rotation_z")
+
+            if all(
+                map(
+                    lambda obj: obj.ACON_prop.constraint_to_camera_rotation_z,
+                    bpy.context.selected_objects,
+                )
+            ):
+                look_at_me = True
+            else:
+                look_at_me = False
+
+            if look_at_me:
+                row.operator(
+                    "acon3d.turn_off_look_at_me",
+                    text="",
+                    emboss=False,
+                    icon="CHECKBOX_HLT",
+                )
+            else:
+                row.operator(
+                    "acon3d.turn_on_look_at_me",
+                    text="",
+                    emboss=False,
+                    icon="CHECKBOX_DEHLT",
+                )
+            row.label(text="Look at me")
 
 
 class ObjectSubPanel(bpy.types.Panel):
@@ -155,6 +211,8 @@ classes = (
     Acon3dStateUpdateOperator,
     Acon3dObjectPanel,
     ObjectSubPanel,
+    TurnOffLookAtMeOperator,
+    TurnOnLookAtMeOperator,
 )
 
 
