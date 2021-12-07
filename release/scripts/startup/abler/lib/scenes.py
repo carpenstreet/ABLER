@@ -62,25 +62,25 @@ def loadScene(self, context):
     oldScene = context.scene
     context.window.scene = newScene
 
-    materials_handler.toggleToonEdge(self, context)
-    materials_handler.changeLineProps(self, context)
-    materials_handler.toggleToonFace(self, context)
-    materials_handler.toggleTexture(self, context)
-    materials_handler.toggleShading(self, context)
-    materials_handler.changeToonDepth(self, context)
-    materials_handler.changeToonShadingBrightness(self, context)
-    materials_handler.changeImageAdjustBrightness(self, context)
-    materials_handler.changeImageAdjustContrast(self, context)
-    materials_handler.changeImageAdjustColor(self, context)
-    materials_handler.changeImageAdjustHue(self, context)
-    materials_handler.changeImageAdjustSaturation(self, context)
+    materials_handler.toggleToonEdge(None, context)
+    materials_handler.changeLineProps(None, context)
+    materials_handler.toggleToonFace(None, context)
+    materials_handler.toggleTexture(None, context)
+    materials_handler.toggleShading(None, context)
+    materials_handler.changeToonDepth(None, context)
+    materials_handler.changeToonShadingBrightness(None, context)
+    materials_handler.changeImageAdjustBrightness(None, context)
+    materials_handler.changeImageAdjustContrast(None, context)
+    materials_handler.changeImageAdjustColor(None, context)
+    materials_handler.changeImageAdjustHue(None, context)
+    materials_handler.changeImageAdjustSaturation(None, context)
 
     layers.handleLayerVisibilityOnSceneChange(oldScene, newScene)
 
-    shadow.toggleSun(self, context)
-    shadow.changeSunStrength(self, context)
-    shadow.toggleShadow(self, context)
-    shadow.changeSunRotation(self, context)
+    shadow.toggleSun(None, context)
+    shadow.changeSunStrength(None, context)
+    shadow.toggleShadow(None, context)
+    shadow.changeSunRotation(None, context)
 
     for obj in bpy.data.objects:
         objects.setConstraintToCameraByObject(obj, context)
