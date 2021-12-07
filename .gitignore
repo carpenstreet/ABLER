@@ -82,3 +82,4 @@ AblerLauncher.spec
 /build
 
 /.vscode
+.env
