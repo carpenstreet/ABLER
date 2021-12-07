@@ -194,6 +194,12 @@ class Acon3dRenderAllOperator(Acon3dRenderOperator):
     bl_label = "Save"
     bl_translation_context = "*"
 
+    def prepare_queue(self, context):
+        tracker.render_all_scenes()
+
+        super().prepare_queue(context)
+        return {"RUNNING_MODAL"}
+
 
 class Acon3dRenderFullOperator(Acon3dRenderOperator):
     """Render according to the set pixel"""
@@ -203,6 +209,8 @@ class Acon3dRenderFullOperator(Acon3dRenderOperator):
     bl_translation_context = "*"
 
     def prepare_queue(self, context):
+        tracker.render_full()
+
         self.render_queue.append(context.scene)
         return {"RUNNING_MODAL"}
 
@@ -259,6 +267,12 @@ class Acon3dRenderShadowOperator(Acon3dRenderTempSceneOperator):
     bl_label = "Shadow Render"
     bl_translation_context = "*"
 
+    def prepare_queue(self, context):
+        tracker.render_shadow()
+
+        super().prepare_queue(context)
+        return {"RUNNING_MODAL"}
+
 
 class Acon3dRenderLineOperator(Acon3dRenderTempSceneOperator):
     """Renders only lines according to the set pixel"""
@@ -268,6 +282,7 @@ class Acon3dRenderLineOperator(Acon3dRenderTempSceneOperator):
     bl_translation_context = "*"
 
     def prepare_queue(self, context):
+        tracker.render_line()
 
         super().prepare_queue(context)
 
@@ -328,6 +343,7 @@ class Acon3dRenderSnipOperator(Acon3dRenderTempSceneOperator):
         render.matchObjectVisibility()
 
     def prepare_queue(self, context):
+        tracker.render_snip()
 
         super().prepare_queue(context)
 

@@ -9,6 +9,11 @@ class EventKind(enum.Enum):
     login_fail = "Login Fail"
     login_auto = "Login Auto"
     render_quick = "Render Quick"
+    render_full = "Render Full"
+    render_line = "Render Line"
+    render_shadow = "Render Shadow"
+    render_all_scenes = "Render All Scenes"
+    render_snip = "Render Snip"
     import_blend = "Import *.blend"
     toggle_toolbar = "Toggle Toolbar"
     fly_mode = "Fly Mode"
@@ -94,6 +99,21 @@ class Tracker(metaclass=ABCMeta):
 
     def render_quick(self):
         self._track(EventKind.render_quick.value)
+
+    def render_full(self):
+        self._track(EventKind.render_full.value)
+
+    def render_line(self):
+        self._track(EventKind.render_line.value)
+
+    def render_shadow(self):
+        self._track(EventKind.render_shadow.value)
+
+    def render_all_scenes(self):
+        self._track(EventKind.render_all_scenes.value)
+
+    def render_snip(self):
+        self._track(EventKind.render_snip.value)
 
     def import_blend(self):
         self._track(EventKind.import_blend.value)
