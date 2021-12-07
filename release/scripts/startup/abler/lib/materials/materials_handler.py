@@ -83,6 +83,7 @@ def toggleTexture(self, context):
     if not context:
         context = bpy.context
 
+
     if not self:
         self = context.scene.ACON_prop
 
