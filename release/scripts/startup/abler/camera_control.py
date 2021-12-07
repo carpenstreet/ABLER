@@ -83,7 +83,7 @@ class DeleteCameraOperator(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         collection = bpy.data.collections.get("ACON_col_cameras")
-        return len(collection.objects) > 1
+        return collection and len(collection.objects) > 1
 
     def execute(self, context):
         currentCameraName = context.scene.ACON_prop.view
@@ -142,13 +142,10 @@ class Acon3dCameraPanel(bpy.types.Panel):
         layout.use_property_decorate = False  # No animation.
 
         scene = context.scene
-        collection = bpy.data.collections.get("ACON_col_cameras")
-
-        if collection is not None and len(collection.objects):
-            row = layout.row(align=True)
-            row.prop(scene.ACON_prop, "view", text="")
-            row.operator("acon3d.create_camera", text="", icon="ADD")
-            row.operator("acon3d.delete_camera", text="", icon="REMOVE")
+        row = layout.row(align=True)
+        row.prop(scene.ACON_prop, "view", text="")
+        row.operator("acon3d.create_camera", text="", icon="ADD")
+        row.operator("acon3d.delete_camera", text="", icon="REMOVE")
 
 
 def scene_mychosenobject_poll(self, object):
