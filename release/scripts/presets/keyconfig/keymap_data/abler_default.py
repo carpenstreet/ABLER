@@ -395,7 +395,7 @@ def km_window(params):
         # Old shortcuts
         items.extend([
             ("wm.save_homefile", {"type": 'U', "value": 'PRESS', "ctrl": True}, None),
-            ("wm.open_mainfile", {"type": 'F1', "value": 'PRESS'}, None),
+            ("acon3d.file_open", {"type": 'F1', "value": 'PRESS'}, None),
             ("wm.link", {"type": 'O', "value": 'PRESS', "ctrl": True, "alt": True}, None),
             ("wm.append", {"type": 'F1', "value": 'PRESS', "shift": True}, None),
             ("wm.save_mainfile", {"type": 'W', "value": 'PRESS', "ctrl": True}, None),
@@ -414,7 +414,7 @@ def km_window(params):
         # File operations
         op_menu("TOPBAR_MT_file_new", {"type": 'N', "value": 'PRESS', "ctrl": True}),
         op_menu("TOPBAR_MT_file_open_recent", {"type": 'O', "value": 'PRESS', "shift": True, "ctrl": True}),
-        ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "ctrl": True}, None),
+        ("acon3d.file_open", {"type": 'O', "value": 'PRESS', "ctrl": True}, None),
         ("wm.save_mainfile", {"type": 'S', "value": 'PRESS', "ctrl": True}, None),
         ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "shift": True, "ctrl": True}, None),
         ("wm.quit_blender", {"type": 'Q', "value": 'PRESS', "ctrl": True}, None),

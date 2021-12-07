@@ -22,6 +22,7 @@ import ctypes
 import platform
 from bpy.app.handlers import persistent
 import requests, webbrowser, pickle, os
+from .lib.post_open import tracker_file_open
 from .lib.remember_username import (
     delete_remembered_username,
     read_remembered_checkbox,
@@ -314,6 +315,9 @@ class Acon3dAnchorOperator(bpy.types.Operator):
 
 @persistent
 def open_credential_modal(dummy):
+
+    tracker_file_open()
+
     prefs = bpy.context.preferences
     prefs.view.show_splash = True
 
