@@ -111,7 +111,7 @@ class Acon3dViewPanel(bpy.types.Panel):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
-        layout.operator("view3d.walk", text="Fly (shift + `)", text_ctxt="*")
+        layout.operator("acon3d.fly_mode")
 
         cam = context.scene.camera
         if cam is not None:
