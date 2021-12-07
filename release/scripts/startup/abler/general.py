@@ -33,6 +33,7 @@ bl_info = {
 
 import bpy
 from bpy_extras.io_utils import ImportHelper
+from .lib import scenes
 from .lib.materials import materials_setup
 from .lib.tracker import tracker
 
@@ -167,10 +168,25 @@ class Acon3dImportPanel(bpy.types.Panel):
         row.operator("view3d.walk", text="Fly (shift + `)", text_ctxt="*")
 
 
+class ApplyToonStyleOperator(bpy.types.Operator):
+    """Apply Toon Style"""
+
+    bl_idname = "acon3d.apply_toon_style"
+    bl_label = "Apply Toon Style"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        materials_setup.applyAconToonStyle()
+        scenes.loadScene(None, None)
+
+        return {"FINISHED"}
+
+
 classes = (
     Acon3dImportPanel,
     ToggleToolbarOperator,
     ImportOperator,
+    ApplyToonStyleOperator,
 )
 
 
