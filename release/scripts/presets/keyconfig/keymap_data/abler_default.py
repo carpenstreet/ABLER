@@ -193,7 +193,7 @@ def _template_space_region_type_toggle(*, toolbar_key=None, sidebar_key=None):
     items = []
     if toolbar_key is not None:
         items.append(
-            ("wm.context_toggle", toolbar_key,
+            ("acon3d.context_toggle", toolbar_key,
              {"properties": [("data_path", 'space_data.show_region_toolbar')]})
         )
     if sidebar_key is not None:
@@ -1090,7 +1090,7 @@ def km_view3d(params):
         ),
         *(() if not params.use_pie_click_drag else
           (("view3d.navigate", {"type": 'ACCENT_GRAVE', "value": 'CLICK'}, None),)),
-        ("view3d.navigate", {"type": 'ACCENT_GRAVE', "value": 'PRESS', "shift": True}, None),
+        ("acon3d.fly_mode", {"type": 'ACCENT_GRAVE', "value": 'PRESS', "shift": True}, None),
         # Numpad views.
         ("view3d.view_camera", {"type": 'NUMPAD_0', "value": 'PRESS'}, None),
         ("view3d.view_axis", {"type": 'NUMPAD_1', "value": 'PRESS'},

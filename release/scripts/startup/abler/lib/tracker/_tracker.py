@@ -15,6 +15,8 @@ class EventKind(enum.Enum):
     render_all_scenes = "Render All Scenes"
     render_snip = "Render Snip"
     import_blend = "Import *.blend"
+    toggle_toolbar = "Toggle Toolbar"
+    fly_mode = "Fly Mode"
     scene_add = "Scene Add"
     look_at_me = "Look At Me"
 
@@ -122,6 +124,12 @@ class Tracker(metaclass=ABCMeta):
     @accumulate()
     def look_at_me(self):
         self._track(EventKind.look_at_me.value)
+        
+    def toggle_toolbar(self):
+        self._track(EventKind.toggle_toolbar.value)
+      
+    def fly_mode(self):
+        self._track(EventKind.fly_mode.value)
 
 
 class DummyTracker(Tracker):

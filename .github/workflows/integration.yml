@@ -1,0 +1,50 @@
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  issues:
+  issue_comment:
+  workflow_dispatch:
+    inputs:
+        logLevel:
+          description: 'Log level'     
+          required: true
+          default: 'warning'
+        tags:
+          description: 'Test scenario tags'
+
+env:
+  NODE_VERSION: '16.x'                # set this to the node version to use
+
+jobs:
+  sync-github-notion:
+    name: Sync Github and Notion
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+    - uses: actions/checkout@v2
+    - name: Checkout integration
+      uses: actions/checkout@v2
+      with:
+        repository: ACON3D/github-notion-integration
+        token: ${{ secrets.GIT_KEY }} # `GH_PAT` is a secret that contains your PAT
+        path: github-notion-integration
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: npm install, build, and test
+      run: |
+        # go to sync folder and
+        # run sync js script.
+        cd github-notion-integration/examples/notion-github-sync
+        npm install
+        node index.js
+      env:
+          GIT_KEY: ${{ secrets.GIT_KEY }}
+          NOTION_KEY: ${{ secrets.NOTION_KEY }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          GIT_REPO_OWNER: ${{ secrets.GIT_REPO_OWNER }}
+          GIT_REPO_NAME: ${{ secrets.GIT_REPO_NAME }}

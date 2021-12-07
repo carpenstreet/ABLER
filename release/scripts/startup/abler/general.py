@@ -121,6 +121,8 @@ class ToggleToolbarOperator(bpy.types.Operator):
     bl_translation_context = "*"
 
     def execute(self, context):
+        tracker.toggle_toolbar()
+
         context.scene.render.engine = "BLENDER_EEVEE"
         for area in context.screen.areas:
             if area.type == "VIEW_3D":
@@ -128,6 +130,22 @@ class ToggleToolbarOperator(bpy.types.Operator):
                     if space.type == "VIEW_3D":
                         value = space.show_region_toolbar
                         space.show_region_toolbar = not value
+
+        return {"FINISHED"}
+
+
+class FlyOperator(bpy.types.Operator):
+    """Fly Mode"""
+
+    bl_idname = "acon3d.fly_mode"
+    bl_label = "Fly (shift + `)"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        tracker.fly_mode()
+
+        if context.space_data.type == "VIEW_3D":
+            bpy.ops.view3d.walk("INVOKE_DEFAULT")
 
         return {"FINISHED"}
 
@@ -162,13 +180,14 @@ class Acon3dImportPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("acon3d.context_toggle")
         row = layout.row()
-        row.operator("view3d.walk", text="Fly (shift + `)", text_ctxt="*")
+        row.operator("acon3d.fly_mode")
 
 
 classes = (
     Acon3dImportPanel,
     ToggleToolbarOperator,
     ImportOperator,
+    FlyOperator,
 )
 
 

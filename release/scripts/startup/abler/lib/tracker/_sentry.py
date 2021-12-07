@@ -9,15 +9,13 @@ from ._tracker import Tracker
 
 
 class SentryTracker(Tracker):
-    def __init__(self):
+    def __init__(self, sentry_dsn: str):
         super().__init__()
-        with open(os.path.join(os.path.dirname(__file__), "sentry_dsn")) as f:
-            sentry_dsn = f.readline()
-            sentry_sdk.init(
-                sentry_dsn,
-                release=make_release_version(),
-            )
-            print(f"Sentry Initialized")
+        sentry_sdk.init(
+            sentry_dsn,
+            release=make_release_version(),
+        )
+        print("Sentry Initialized")
 
     def _enqueue_event(self, event_name: str):
         sentry_sdk.add_breadcrumb(
