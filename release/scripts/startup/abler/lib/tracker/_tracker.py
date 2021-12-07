@@ -10,8 +10,14 @@ class EventKind(enum.Enum):
     login_auto = "Login Auto"
     file_open = "File Open"
     render_quick = "Render Quick"
+    render_full = "Render Full"
+    render_line = "Render Line"
+    render_shadow = "Render Shadow"
+    render_all_scenes = "Render All Scenes"
+    render_snip = "Render Snip"
     import_blend = "Import *.blend"
     toggle_toolbar = "Toggle Toolbar"
+    fly_mode = "Fly Mode"
     scene_add = "Scene Add"
     look_at_me = "Look At Me"
 
@@ -98,6 +104,21 @@ class Tracker(metaclass=ABCMeta):
     def render_quick(self):
         self._track(EventKind.render_quick.value)
 
+    def render_full(self):
+        self._track(EventKind.render_full.value)
+
+    def render_line(self):
+        self._track(EventKind.render_line.value)
+
+    def render_shadow(self):
+        self._track(EventKind.render_shadow.value)
+
+    def render_all_scenes(self):
+        self._track(EventKind.render_all_scenes.value)
+
+    def render_snip(self):
+        self._track(EventKind.render_snip.value)
+
     def import_blend(self):
         self._track(EventKind.import_blend.value)
 
@@ -107,9 +128,12 @@ class Tracker(metaclass=ABCMeta):
     @accumulate()
     def look_at_me(self):
         self._track(EventKind.look_at_me.value)
-
+        
     def toggle_toolbar(self):
         self._track(EventKind.toggle_toolbar.value)
+      
+    def fly_mode(self):
+        self._track(EventKind.fly_mode.value)
 
 
 class DummyTracker(Tracker):

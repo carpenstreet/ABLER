@@ -146,6 +146,22 @@ class FileOpenOperator(bpy.types.Operator, ImportHelper):
     def execute(self, context):
         FILEPATH = self.filepath
         bpy.ops.wm.open_mainfile(filepath=FILEPATH)
+        
+        return {"FINISHED"}
+
+        
+class FlyOperator(bpy.types.Operator):
+    """Fly Mode"""
+
+    bl_idname = "acon3d.fly_mode"
+    bl_label = "Fly (shift + `)"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        tracker.fly_mode()
+
+        if context.space_data.type == "VIEW_3D":
+            bpy.ops.view3d.walk("INVOKE_DEFAULT")
 
         return {"FINISHED"}
 
@@ -178,7 +194,7 @@ class Acon3dImportPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("acon3d.context_toggle")
         row = layout.row()
-        row.operator("view3d.walk", text="Fly (shift + `)", text_ctxt="*")
+        row.operator("acon3d.fly_mode")
 
 
 classes = (
@@ -186,6 +202,7 @@ classes = (
     ToggleToolbarOperator,
     ImportOperator,
     FileOpenOperator,
+    FlyOperator,
 )
 
 
