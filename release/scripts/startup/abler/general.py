@@ -144,10 +144,7 @@ class FileOpenOperator(bpy.types.Operator, ImportHelper):
     filter_glob: bpy.props.StringProperty(default="*.blend", options={"HIDDEN"})
 
     def execute(self, context):
-        # tracker.file_open()
-
         FILEPATH = self.filepath
-
         bpy.ops.wm.open_mainfile(filepath=FILEPATH)
 
         return {"FINISHED"}

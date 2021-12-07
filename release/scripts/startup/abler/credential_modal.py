@@ -22,6 +22,7 @@ import ctypes
 import platform
 from bpy.app.handlers import persistent
 import requests, webbrowser, pickle, os
+from .lib.post_open import tracker_file_open
 from .lib.remember_username import (
     delete_remembered_username,
     read_remembered_checkbox,
@@ -315,10 +316,7 @@ class Acon3dAnchorOperator(bpy.types.Operator):
 @persistent
 def open_credential_modal(dummy):
 
-    # 에이블러 런처로 실행시 파일명은 ""(빈 문자열).
-    # 에이블러용 블렌더 파일을 더블클릭해서 에이블러를 실행했을때는 파일명이 ""이 아니기 때문에 open이라고 간주
-    if bpy.data.filepath != "":
-        tracker.file_open()
+    tracker_file_open()
 
     prefs = bpy.context.preferences
     prefs.view.show_splash = True
