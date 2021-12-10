@@ -75,6 +75,57 @@ class Acon3dCreateGroupOperator(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class Acon3dDoubleClickOperator(bpy.types.Operator):
+    """Operator which runs its self from a timer"""
+
+    bl_idname = "wm.modal_timer_operator"
+    bl_label = "Modal Timer Operator"
+
+    click = False
+    current_depth = 0
+    current_root_collection = None
+
+    def renew_collection_flag(self):
+        collection_familytree = layers.get_root_collections_from_object(
+            bpy.context.active_object
+        )
+        selected_group = bpy.context.scene.ACON_selected_group
+        if (
+            collection_familytree
+            and selected_group.current_root_group != collection_familytree[-1].name
+        ):
+            selected_group.current_root_group = collection_familytree[-1]
+            selected_group.current_depth = 0
+        return collection_familytree
+
+    def modal(self, context, event):
+        selected_group = bpy.context.scene.ACON_selected_group
+
+        if event.type in {"LEFTMOUSE"} and event.value in {"RELEASE"}:
+            if not event.ctrl:
+                selected_group.direction = "TOP"
+            elif event.alt:
+                selected_group.direction = "BOTTOM" if event.shift else "UP"
+            else:
+                selected_group.direction = "DOWN"
+        return {"PASS_THROUGH"}
+
+    def invoke(self, context, event):
+        print("INVOKE")
+        self.execute(context)
+        return {"RUNNING_MODAL"}
+
+    def execute(self, context):
+        wm = context.window_manager
+        # self._timer = wm.event_timer_add(0.1, window=context.window)
+        wm.modal_handler_add(self)
+        return {"RUNNING_MODAL"}
+
+    def cancel(self, context):
+        wm = context.window_manager
+        # wm.event_timer_remove(self._timer)
+
+
 class Acon3dExplodeGroupOperator(bpy.types.Operator):
     """Explode Group"""
 
@@ -189,6 +240,7 @@ class Acon3dLayerPanel(bpy.types.Panel):
 
 
 classes = (
+    Acon3dDoubleClickOperator,
     Acon3dCreateGroupOperator,
     Acon3dExplodeGroupOperator,
     Acon3dLayerPanel,
@@ -202,6 +254,7 @@ def register():
         register_class(cls)
 
     layers.subscribeToGroupedObjects()
+    layers.subscribeToDoubleClick()
 
 
 def unregister():
@@ -210,4 +263,5 @@ def unregister():
     for cls in reversed(classes):
         unregister_class(cls)
 
+    layers.clearDoubleClickSubscribers()
     layers.clearSubscribers()
