@@ -173,9 +173,9 @@ def selectByGroup(direction: str) -> None:
             )
             if not selection:
                 return selectByGroup("TOP")
-            selected_group_prop.current_group = selection.name
             if selection == "object":
                 return
+            selected_group_prop.current_group = selection.name
             for obj in selection.all_objects:
                 obj.select_set(True)
 

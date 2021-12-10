@@ -102,12 +102,15 @@ class Acon3dDoubleClickOperator(bpy.types.Operator):
         selected_group = bpy.context.scene.ACON_selected_group
 
         if event.type in {"LEFTMOUSE"} and event.value in {"RELEASE"}:
-            if not event.ctrl:
+            if not event.ctrl and not event.shift:
                 selected_group.direction = "TOP"
-            elif event.alt:
-                selected_group.direction = "BOTTOM" if event.shift else "UP"
-            else:
+            elif event.ctrl and not event.shift:
                 selected_group.direction = "DOWN"
+            elif not event.ctrl:
+                selected_group.direction = "UP"
+            else:
+                selected_group.direction = "BOTTOM"
+
         return {"PASS_THROUGH"}
 
     def invoke(self, context, event):
@@ -117,13 +120,8 @@ class Acon3dDoubleClickOperator(bpy.types.Operator):
 
     def execute(self, context):
         wm = context.window_manager
-        # self._timer = wm.event_timer_add(0.1, window=context.window)
         wm.modal_handler_add(self)
         return {"RUNNING_MODAL"}
-
-    def cancel(self, context):
-        wm = context.window_manager
-        # wm.event_timer_remove(self._timer)
 
 
 class Acon3dExplodeGroupOperator(bpy.types.Operator):
