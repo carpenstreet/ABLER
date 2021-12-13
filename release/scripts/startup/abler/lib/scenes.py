@@ -17,15 +17,17 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+from typing import List, Union, Tuple
 import bpy
+from bpy.types import Scene
 from . import shadow, layers, objects
 from .materials import materials_handler
 from math import radians
 
 
-def genSceneName(name, i=1):
-    found = None
-    combinedName = name + str(i)
+def genSceneName(name: str, i: int = 1) -> str:
+    found: Union[bool, None] = None
+    combinedName: str = name + str(i)
 
     for scene in bpy.data.scenes:
         if scene.name == combinedName:
@@ -39,10 +41,10 @@ def genSceneName(name, i=1):
 
 
 # scene_items should be a global variable due to a bug in EnumProperty
-scene_items = []
+scene_items: List[Tuple[str, str, str]] = []
 
 
-def add_scene_items(self, context):
+def add_scene_items(self, context) -> List[Tuple[str, str, str]]:
     scene_items.clear()
     for scene in bpy.data.scenes:
         scene_items.append((scene.name, scene.name, ""))
@@ -50,7 +52,7 @@ def add_scene_items(self, context):
     return scene_items
 
 
-def loadScene(self, context):
+def loadScene(self, context) -> None:
 
     if not context:
         context = bpy.context
@@ -58,8 +60,8 @@ def loadScene(self, context):
     if not self:
         self = context.window_manager.ACON_prop
 
-    newScene = bpy.data.scenes.get(self.scene)
-    oldScene = context.scene
+    newScene: Union[Scene, None] = bpy.data.scenes.get(self.scene)
+    oldScene: Union[Scene, None] = context.scene
     context.window.scene = newScene
 
     materials_handler.toggleToonEdge(None, context)
@@ -86,7 +88,7 @@ def loadScene(self, context):
         objects.setConstraintToCameraByObject(obj, context)
 
 
-def createScene(old_scene, type, name):
+def createScene(old_scene: Scene, type: str, name: str) -> Union[Scene, None]:
 
     new_scene = old_scene.copy()
     new_scene.name = name
