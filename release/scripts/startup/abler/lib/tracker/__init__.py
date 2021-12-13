@@ -13,11 +13,10 @@ def _remote_tracker(mixpanel_token, sentry_dsn):
 load_dotenv(verbose=True)
 sentry_dsn = os.getenv("SENTRY_DSN")
 mixpanel_token = os.getenv("MIXPANEL_TOKEN")
-if sentry_dsn or mixpanel_token:
-    raise RuntimeError("You must set either SENTRY_DSN or MIXPANEL_TOKEN")
+disable_track = os.getenv("DISABLE_TRACK")
+if not disable_track and (not sentry_dsn or not mixpanel_token):
+    raise RuntimeError("You must set both SENTRY_DSN and MIXPANEL_TOKEN")
 
 tracker: Tracker = (
-    DummyTracker()
-    if os.environ.get("DISABLE_TRACK")
-    else _remote_tracker(mixpanel_token, sentry_dsn)
+    DummyTracker() if disable_track else _remote_tracker(mixpanel_token, sentry_dsn)
 )
