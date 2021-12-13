@@ -122,7 +122,7 @@ def get_root_collections_from_object(
 
 def selectByGroup(direction: str) -> None:
 
-    selected_object = bpy.context.active_object
+    selected_object: bpy.types.Object = bpy.context.active_object
     selected_group_prop = bpy.context.scene.ACON_selected_group
 
     if not selected_object:
@@ -238,7 +238,7 @@ def checkObjectSelectionChange(dummy):
 
 @persistent
 def initDoubleClick(dummy):
-    bpy.ops.wm.modal_timer_operator("INVOKE_DEFAULT")
+    bpy.ops.acon3d.group_selection("INVOKE_DEFAULT")
 
 
 def subscribeToDoubleClick():

@@ -75,11 +75,11 @@ class Acon3dCreateGroupOperator(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class Acon3dDoubleClickOperator(bpy.types.Operator):
+class Acon3dGroupSelectionOperator(bpy.types.Operator):
     """Operator which runs its self from a timer"""
 
-    bl_idname = "wm.modal_timer_operator"
-    bl_label = "Modal Timer Operator"
+    bl_idname = "acon3d.group_selection"
+    bl_label = "Modal group selection operator"
 
     click = False
     current_depth = 0
@@ -114,7 +114,6 @@ class Acon3dDoubleClickOperator(bpy.types.Operator):
         return {"PASS_THROUGH"}
 
     def invoke(self, context, event):
-        print("INVOKE")
         self.execute(context)
         return {"RUNNING_MODAL"}
 
@@ -238,7 +237,7 @@ class Acon3dLayerPanel(bpy.types.Panel):
 
 
 classes = (
-    Acon3dDoubleClickOperator,
+    Acon3dGroupSelectionOperator,
     Acon3dCreateGroupOperator,
     Acon3dExplodeGroupOperator,
     Acon3dLayerPanel,
