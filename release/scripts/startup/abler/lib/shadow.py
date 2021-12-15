@@ -17,13 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from typing import Union
+from typing import Optional
 import bpy, math
 from bpy.types import Object, Light
 
 
 def changeSunRotation(self, context) -> None:
-    acon_sun: Union[Object, None] = bpy.data.objects.get("ACON_sun")
+    acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
 
@@ -35,7 +35,7 @@ def changeSunRotation(self, context) -> None:
 
 
 def toggleSun(self, context) -> None:
-    acon_sun: Union[Object, None] = bpy.data.objects.get("ACON_sun")
+    acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
 
@@ -46,7 +46,7 @@ def toggleSun(self, context) -> None:
 
 
 def changeSunStrength(self, context):
-    acon_sun: Union[Object, None] = bpy.data.objects.get("ACON_sun")
+    acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
 
@@ -56,7 +56,7 @@ def changeSunStrength(self, context):
 
 
 def toggleShadow(self, context):
-    acon_sun: Union[Object, None] = bpy.data.objects.get("ACON_sun")
+    acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
 
@@ -70,7 +70,7 @@ def setupSharpShadow():
     bpy.context.scene.eevee.shadow_cascade_size = "4096"
     bpy.context.scene.eevee.use_soft_shadows = True
 
-    acon_sun: Union[Object, None] = bpy.data.objects.get("ACON_sun")
+    acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
 
     if not acon_sun:
         acon_sun = createAconSun()

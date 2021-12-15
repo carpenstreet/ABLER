@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from typing import List, Union, Tuple
+from typing import List, Tuple, Optional
 import bpy
 from bpy.types import Scene
 from . import shadow, layers, objects
@@ -26,7 +26,7 @@ from math import radians
 
 
 def genSceneName(name: str, i: int = 1) -> str:
-    found: Union[bool, None] = None
+    found: Optional[bool] = None
     combinedName: str = name + str(i)
 
     for scene in bpy.data.scenes:
@@ -60,8 +60,8 @@ def loadScene(self, context) -> None:
     if not self:
         self = context.window_manager.ACON_prop
 
-    newScene: Union[Scene, None] = bpy.data.scenes.get(self.scene)
-    oldScene: Union[Scene, None] = context.scene
+    newScene: Optional[Scene] = bpy.data.scenes.get(self.scene)
+    oldScene: Optional[Scene] = context.scene
     context.window.scene = newScene
 
     materials_handler.toggleToonEdge(None, context)
@@ -88,7 +88,7 @@ def loadScene(self, context) -> None:
         objects.setConstraintToCameraByObject(obj, context)
 
 
-def createScene(old_scene: Scene, type: str, name: str) -> Union[Scene, None]:
+def createScene(old_scene: Scene, type: str, name: str) -> Optional[Scene]:
 
     new_scene = old_scene.copy()
     new_scene.name = name

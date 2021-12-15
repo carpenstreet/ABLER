@@ -17,14 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from typing import Any, Dict, List, Union, Tuple
+from typing import Any, Dict, List, Union, Tuple, Optional
 import bpy
 from bpy.types import Collection, Object, Camera
 
 
 def genCameraName(name: str, i: int = 1) -> str:
-    found: Union[bool, None] = None
-    collection: Union[Collection, None] = bpy.data.collections.get("ACON_col_cameras")
+    found: Optional[bool] = None
+    collection: Optional[Collection] = bpy.data.collections.get("ACON_col_cameras")
 
     if collection:
         combinedName: str = name + str(i)
@@ -79,7 +79,7 @@ def makeSureCameraExists() -> None:
         return
 
     # get camera to set to context
-    camera_object: Union[Object, None] = bpy.data.objects.get("View_Camera")
+    camera_object: Optional[Object] = bpy.data.objects.get("View_Camera")
 
     # create camera if View_Camera does not exist
     if not camera_object or camera_object.type != "CAMERA":
