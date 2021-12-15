@@ -19,7 +19,8 @@
 
 import bpy
 from bpy.app.handlers import persistent
-from typing import List, Union
+from bpy.types import Collection, Object
+from typing import Any, List, Optional, Tuple, Union
 
 
 def handleLayerVisibilityOnSceneChange(oldScene, newScene):
@@ -28,8 +29,7 @@ def handleLayerVisibilityOnSceneChange(oldScene, newScene):
         print("Invalid oldScene / newScene given")
         return
 
-    i = 0
-    for oldProp in oldScene.l_exclude:
+    for i, oldProp in enumerate(oldScene.l_exclude):
         newProp = newScene.l_exclude[i]
 
         if oldProp.value is not newProp.value:
@@ -43,44 +43,40 @@ def handleLayerVisibilityOnSceneChange(oldScene, newScene):
             for objs in target_layer.objects:
                 objs.hide_select = newProp.lock
 
-        i += 1
 
-
-def get_parent_collection(
-    collection: bpy.types.Collection, parents: List[bpy.types.Collection]
-) -> None:
+def get_ancester_collections(collection: Collection, parents: List[Collection]) -> None:
     for parent_collection in bpy.data.collections:
         if collection.name in parent_collection.children.keys():
             parents.append(parent_collection)
-            get_parent_collection(parent_collection, parents)
+            get_ancester_collections(parent_collection, parents)
             return
 
 
-def get_single_parent_collection(
-    collection: bpy.types.Collection,
-) -> bpy.types.Collection:
+def get_parent_collection(
+    collection: Collection,
+) -> Collection:
     for parent_collection in bpy.data.collections:
         if collection.name in parent_collection.children.keys():
             return parent_collection
 
 
-def is_parent_collection(a: bpy.types.Collection, b: bpy.types.Collection) -> bool:
+def is_ancester_collection(a: Collection, b: Collection) -> bool:
     parents = []
-    get_parent_collection(a, parents)
+    get_ancester_collections(a, parents)
     return b in parents
 
 
 def quick_sort_by_hierarchy(
-    arr: List[bpy.types.Collection],
-) -> List[bpy.types.Collection]:
+    arr: List[Collection],
+) -> List[Collection]:
     if len(arr) <= 1:
         return arr
     pivot = arr[len(arr) // 2]
     lesser_arr, equal_arr, greater_arr = [], [], []
     for col in arr:
-        if is_parent_collection(col, pivot):
+        if is_ancester_collection(col, pivot):
             lesser_arr.append(col)
-        elif is_parent_collection(pivot, col):
+        elif is_ancester_collection(pivot, col):
             greater_arr.append(col)
         else:
             equal_arr.append(col)
@@ -91,20 +87,20 @@ def quick_sort_by_hierarchy(
     )
 
 
-def get_root_collections(
-    collection: bpy.types.Collection,
-) -> List[bpy.types.Collection]:
+def get_ordered_ancester_collections(
+    collection: Collection,
+) -> List[Collection]:
     parents = []
-    get_parent_collection(collection, parents)
+    get_ancester_collections(collection, parents)
     parents.pop()
     ret_list = list(reversed(quick_sort_by_hierarchy(parents)))
     ret_list.append(collection)
     return ret_list
 
 
-def get_root_collections_from_object(
-    obj: bpy.types.Object,
-) -> List[bpy.types.Collection]:
+def get_ordered_ancester_collections_from_object(
+    obj: Object,
+) -> List[Collection]:
     if not obj or not obj.ACON_prop or not obj.ACON_prop.group:
         return
 
@@ -117,12 +113,100 @@ def get_root_collections_from_object(
     last_group_prop = group_props[-1]
 
     selected_group = bpy.data.collections.get(last_group_prop.name)
-    return get_root_collections(selected_group)
+    return get_ordered_ancester_collections(selected_group)
 
 
-def selectByGroup(direction: str) -> None:
+def up(group_list: List[Collection], group_item: Collection) -> Optional[Collection]:
+    """
+    group_list: List of ancester collections
+    group_item: Collection to find upper item of
+    """
+    try:
+        idx: int = group_list.index(group_item)
+        if idx > 0:
+            return group_list[idx - 1]
+        else:
+            return group_list[0]
+    except:
+        return None
 
-    selected_object: bpy.types.Object = bpy.context.active_object
+
+def down(
+    group_list: List[Collection], group_item: Collection
+) -> Optional[Union[Collection, str]]:
+    """
+    group_list: List of ancester collections
+    group_item: Collection to find item below of
+    """
+    try:
+        idx = group_list.index(group_item)
+        if idx < len(group_list) - 1:
+            return group_list[idx + 1]
+        else:
+            return "object"
+    except:
+        return None
+
+
+def group_navigate_up(
+    selected_group_prop: Any,
+    root_ancester_collection: Collection,
+    ordered_ancester_collections: List[Collection],
+) -> None:
+    if selected_group_prop.current_root_group == root_ancester_collection.name:
+        selection = up(
+            ordered_ancester_collections,
+            bpy.data.collections[selected_group_prop.current_group],
+        )
+        if not selection:
+            return selectByGroup("TOP")
+        selected_group_prop.current_group = selection.name
+        for obj in selection.all_objects:
+            obj.select_set(True)
+
+
+def group_navigate_top(
+    selected_group_prop: Any,
+    root_ancester_collection: Collection,
+    ordered_ancester_collections: List[Collection],
+):
+    selected_group_prop.current_group = root_ancester_collection.name
+    for obj in root_ancester_collection.all_objects:
+        obj.select_set(True)
+
+
+def group_navigate_down(
+    selected_group_prop: Any,
+    root_ancester_collection: Collection,
+    ordered_ancester_collections: List[Collection],
+) -> None:
+    if selected_group_prop.current_root_group == root_ancester_collection.name:
+        selection = down(
+            ordered_ancester_collections,
+            bpy.data.collections[selected_group_prop.current_group],
+        )
+        if not selection:
+            return selectByGroup("TOP")
+        if selection == "object":
+            return
+        selected_group_prop.current_group = selection.name
+        for obj in selection.all_objects:
+            obj.select_set(True)
+
+
+def group_navigate_bottom(
+    selected_group_prop: Any,
+    root_ancester_collection: Collection,
+    ordered_ancester_collections: List[Collection],
+):
+    # Put last group in prop
+    selected_group_prop.current_group = ordered_ancester_collections[-1].name
+
+
+def init_group_navigation(
+    direction: str,
+) -> Optional[Tuple[Any, Collection, List[Collection]]]:
+    selected_object: Object = bpy.context.active_object
     selected_group_prop = bpy.context.scene.ACON_selected_group
 
     if not selected_object:
@@ -139,79 +223,42 @@ def selectByGroup(direction: str) -> None:
     last_group_prop = group_props[-1]
 
     selected_group = bpy.data.collections.get(last_group_prop.name)
-    ordered_parent_group = get_root_collections(selected_group)
-    if len(ordered_parent_group) > 0:
-        root_parent_group: bpy.types.Collection = ordered_parent_group[0]
+    ordered_ancester_collections = get_ordered_ancester_collections(selected_group)
+    if len(ordered_ancester_collections) > 0:
+        root_ancester_collection: Collection = ordered_ancester_collections[0]
+    else:
+        return
     if not selected_group:
         group_props.remove(group_length - 1)
         return selectByGroup(direction)
     # Put root group in prop
-    selected_group_prop.current_root_group = root_parent_group.name
-    if direction == "TOP":
-        selected_group_prop.current_group = root_parent_group.name
-        for obj in root_parent_group.all_objects:
-            obj.select_set(True)
-    elif direction == "BOTTOM":
-        # Put last group in prop
-        selected_group_prop.current_group = ordered_parent_group[-1].name
-    elif direction == "UP":
-        if selected_group_prop.current_root_group == root_parent_group.name:
-            selection = up(
-                ordered_parent_group,
-                bpy.data.collections[selected_group_prop.current_group],
-            )
-            if not selection:
-                return selectByGroup("TOP")
-            selected_group_prop.current_group = selection.name
-            for obj in selection.all_objects:
-                obj.select_set(True)
+    selected_group_prop.current_root_group = root_ancester_collection.name
+    return selected_group_prop, root_ancester_collection, ordered_ancester_collections
+
+
+def selectByGroup(direction: str) -> None:
+    (
+        selected_group_prop,
+        root_ancester_collection,
+        ordered_ancester_collections,
+    ) = init_group_navigation(direction)
+
+    if direction == "BOTTOM":
+        group_navigate_bottom(
+            selected_group_prop, root_ancester_collection, ordered_ancester_collections
+        )
     elif direction == "DOWN":
-        if selected_group_prop.current_root_group == root_parent_group.name:
-            selection = down(
-                ordered_parent_group,
-                bpy.data.collections[selected_group_prop.current_group],
-            )
-            if not selection:
-                return selectByGroup("TOP")
-            if selection == "object":
-                return
-            selected_group_prop.current_group = selection.name
-            for obj in selection.all_objects:
-                obj.select_set(True)
-
-
-def up(
-    group_list: List[bpy.types.Collection], group_item: bpy.types.Collection
-) -> Union[bpy.types.Collection, str]:
-    """
-    group_list: List of collections
-    group_item: Collection to find upper item of
-    """
-    try:
-        idx: int = group_list.index(group_item)
-        if idx > 0:
-            return group_list[idx - 1]
-        else:
-            return group_list[0]
-    except:
-        return None
-
-
-def down(
-    group_list: List[bpy.types.Collection], group_item: bpy.types.Collection
-) -> Union[bpy.types.Collection, str]:
-    """
-    group_list: List of collections
-    group_item: Collection to find item below of
-    """
-    try:
-        idx = group_list.index(group_item)
-        if idx < len(group_list) - 1:
-            return group_list[idx + 1]
-        else:
-            return "object"
-    except:
-        return None
+        group_navigate_down(
+            selected_group_prop, root_ancester_collection, ordered_ancester_collections
+        )
+    elif direction == "TOP":
+        group_navigate_top(
+            selected_group_prop, root_ancester_collection, ordered_ancester_collections
+        )
+    elif direction == "UP":
+        group_navigate_up(
+            selected_group_prop, root_ancester_collection, ordered_ancester_collections
+        )
 
 
 @persistent
