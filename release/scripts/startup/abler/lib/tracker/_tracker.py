@@ -95,6 +95,7 @@ class Tracker(metaclass=ABCMeta):
     def login_fail(self):
         self._track(EventKind.login_fail.value)
 
+    @accumulate()
     def login_auto(self):
         self._track(EventKind.login_auto.value)
 
