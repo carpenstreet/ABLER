@@ -316,7 +316,7 @@ class Acon3dAnchorOperator(bpy.types.Operator):
 @persistent
 def open_credential_modal(dummy):
 
-    tracker_file_open()
+    fileopen = tracker_file_open()
 
     prefs = bpy.context.preferences
     prefs.view.show_splash = True
@@ -348,7 +348,8 @@ def open_credential_modal(dummy):
         token = responseData["accessToken"]
 
         if token:
-            tracker.login_auto()
+            if not fileopen:
+                tracker.login_auto()
             prop.login_status = "SUCCESS"
 
     except:
