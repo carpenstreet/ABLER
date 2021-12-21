@@ -54,6 +54,7 @@ def step(edge0: tuple[float], edge1: tuple[float], x: float) -> tuple[float]:
 def toggleUseState(self, context):
 
     use_state = self.use_state
+    tracker.use_state()
 
     if use_state:
 
