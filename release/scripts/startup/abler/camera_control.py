@@ -166,9 +166,8 @@ class Acon3dDOFPanel(bpy.types.Panel):
 
     def draw_header(self, context):
         if bpy.context.scene.camera is not None:
-            cam = bpy.context.scene.camera.data
-            dof = cam.dof
-            self.layout.prop(dof, "use_dof", text="")
+            scene = context.scene
+            self.layout.prop(scene.ACON_prop, "use_dof", text="")
         else:
             self.layout.active = False
 

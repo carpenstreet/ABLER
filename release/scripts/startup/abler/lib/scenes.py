@@ -21,6 +21,12 @@ import bpy
 from . import shadow, layers, objects
 from .materials import materials_handler
 from math import radians
+from .tracker import tracker
+
+
+def change_dof(self, context):
+    tracker.depth_of_field()
+    context.scene.camera.data.dof.use_dof = context.scene.ACON_prop.use_dof
 
 
 def genSceneName(name, i=1):

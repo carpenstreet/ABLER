@@ -296,6 +296,10 @@ class AconSceneProperty(bpy.types.PropertyGroup):
 
     selected_objects_str: bpy.props.StringProperty(name="Selected Objects")
 
+    use_dof: bpy.props.BoolProperty(
+        name="Depth of Field", default=False, update=scenes.change_dof
+    )
+
 
 class AconMaterialProperty(bpy.types.PropertyGroup):
     @classmethod
