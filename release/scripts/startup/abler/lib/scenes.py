@@ -29,6 +29,13 @@ def change_dof(self, context):
     context.scene.camera.data.dof.use_dof = context.scene.ACON_prop.use_dof
 
 
+def change_background_images(self, context):
+    tracker.background_images()
+    context.scene.camera.data.show_background_images = (
+        context.scene.ACON_prop.show_background_images
+    )
+
+
 def genSceneName(name, i=1):
     found = None
     combinedName = name + str(i)

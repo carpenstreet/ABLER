@@ -300,6 +300,10 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         name="Depth of Field", default=False, update=scenes.change_dof
     )
 
+    show_background_images: bpy.props.BoolProperty(
+        name="Background Images", default=False, update=scenes.change_background_images
+    )
+
 
 class AconMaterialProperty(bpy.types.PropertyGroup):
     @classmethod
