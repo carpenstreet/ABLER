@@ -21,6 +21,12 @@ import bpy
 from . import shadow, layers, objects
 from .materials import materials_handler
 from math import radians
+from .tracker import tracker
+
+
+def change_bloom(self, context):
+    tracker.bloom()
+    context.scene.eevee.use_bloom = context.scene.ACON_prop.bloom
 
 
 def genSceneName(name, i=1):

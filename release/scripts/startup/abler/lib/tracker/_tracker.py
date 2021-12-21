@@ -25,6 +25,7 @@ class EventKind(enum.Enum):
     look_at_me = "Look At Me"
     use_state_on = "Use State On"
     use_state_off = "Use State Off"
+    bloom = "Bloom"
 
 
 def accumulate(interval=0):
@@ -158,6 +159,9 @@ class Tracker(metaclass=ABCMeta):
 
     def use_state_off(self):
         self._track(EventKind.use_state_off.value)
+        
+    def bloom(self):
+        self._track(EventKind.bloom.value)
 
 
 class DummyTracker(Tracker):
