@@ -10,7 +10,8 @@ def _remote_tracker(mixpanel_token, sentry_dsn):
     return AggregateTracker(MixpanelTracker(mixpanel_token), SentryTracker(sentry_dsn))
 
 
-load_dotenv(verbose=True)
+dir_path = os.path.dirname(os.path.realpath(__file__))
+load_dotenv(dotenv_path=os.path.join(dir_path, ".env"), override=True, verbose=True)
 sentry_dsn = os.getenv("SENTRY_DSN")
 mixpanel_token = os.getenv("MIXPANEL_TOKEN")
 disable_track = os.getenv("DISABLE_TRACK")
