@@ -1,7 +1,10 @@
 from abc import *
 import enum
+from typing import Any, Optional
 
 import bpy
+
+from ._versioning import get_version
 
 
 class EventKind(enum.Enum):
@@ -56,9 +59,16 @@ def accumulate(interval=0):
 class Tracker(metaclass=ABCMeta):
     def __init__(self):
         self._agreed = True
+        self._default_properties = {}
+
+        if v := get_version():
+            major, minor, patch = v
+            self._default_properties["version"] = f"{major}.{minor}.{patch}"
+        else:
+            self._default_properties["version"] = "development"
 
     @abstractmethod
-    def _enqueue_event(self, event_name: str):
+    def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         """
         Enqueue a user event to be tracked.
 
@@ -75,12 +85,18 @@ class Tracker(metaclass=ABCMeta):
         """
         pass
 
-    def _track(self, event_name: str) -> bool:
+    def _track(
+        self, event_name: str, properties: Optional[dict[str, Any]] = None
+    ) -> bool:
         if not self._agreed:
             return False
 
+        next_properties = {}
+        next_properties.update(self._default_properties)
+        if properties:
+            next_properties.update(properties)
         try:
-            self._enqueue_event(event_name)
+            self._enqueue_event(event_name, next_properties)
             print(f"TRACKING: {event_name}")
         except Exception as e:
             print(e)
@@ -128,10 +144,10 @@ class Tracker(metaclass=ABCMeta):
     @accumulate()
     def look_at_me(self):
         self._track(EventKind.look_at_me.value)
-        
+
     def toggle_toolbar(self):
         self._track(EventKind.toggle_toolbar.value)
-      
+
     def fly_mode(self):
         self._track(EventKind.fly_mode.value)
 
@@ -141,7 +157,7 @@ class DummyTracker(Tracker):
         super().__init__()
         self._agreed = False
 
-    def _enqueue_event(self, event_name: str):
+    def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         pass
 
     def _enqueue_email_update(self, email: str):
@@ -153,9 +169,9 @@ class AggregateTracker(Tracker):
         super().__init__()
         self.trackers = trackers
 
-    def _enqueue_event(self, event_name: str):
+    def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         for t in self.trackers:
-            t._enqueue_event(event_name)
+            t._enqueue_event(event_name, properties)
 
     def _enqueue_email_update(self, email: str):
         for t in self.trackers:

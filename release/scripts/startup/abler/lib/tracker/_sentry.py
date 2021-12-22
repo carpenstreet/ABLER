@@ -1,5 +1,5 @@
-import os
 import time
+from typing import Any
 
 import bpy
 import sentry_sdk
@@ -17,7 +17,7 @@ class SentryTracker(Tracker):
         )
         print("Sentry Initialized")
 
-    def _enqueue_event(self, event_name: str):
+    def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         sentry_sdk.add_breadcrumb(
             category="event", message=event_name, timestamp=time.time()
         )

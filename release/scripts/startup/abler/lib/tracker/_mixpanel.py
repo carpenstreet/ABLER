@@ -1,11 +1,12 @@
 import threading
-from typing import Optional
+from typing import Optional, Any
 import os
 from uuid import uuid4
 import threading
 
 from mixpanel import Mixpanel, BufferedConsumer
 import bpy
+
 from ._tracker import Tracker
 
 
@@ -70,9 +71,9 @@ class MixpanelTracker(Tracker):
             self._r = MixpanelResource(self._mixpanel_token)
 
     @_nonblock
-    def _enqueue_event(self, event_name: str):
+    def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         self._ensure_resource()
-        self._r.mp.track(self._r.tid, event_name)
+        self._r.mp.track(self._r.tid, event_name, properties)
 
     @_nonblock
     def _enqueue_email_update(self, email: str):
