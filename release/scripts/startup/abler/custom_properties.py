@@ -296,7 +296,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
 
     selected_objects_str: bpy.props.StringProperty(name="Selected Objects")
 
-    bloom: bpy.props.BoolProperty(
+    use_bloom: bpy.props.BoolProperty(
         name="Bloom", default=True, update=scenes.change_bloom
     )
 

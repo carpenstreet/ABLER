@@ -214,7 +214,7 @@ class Acon3dBloomPanel(bpy.types.Panel):
 
     def draw_header(self, context):
         scene = context.scene
-        self.layout.prop(scene.ACON_prop, "bloom", text="")
+        self.layout.prop(scene.ACON_prop, "use_bloom", text="")
 
     def draw(self, context):
         layout = self.layout

@@ -25,8 +25,12 @@ from .tracker import tracker
 
 
 def change_bloom(self, context):
-    tracker.bloom()
-    context.scene.eevee.use_bloom = context.scene.ACON_prop.bloom
+    prop = context.scene.ACON_prop
+    context.scene.eevee.use_bloom = prop.use_bloom
+    if prop.use_bloom:
+        tracker.bloom_on()
+    else:
+        tracker.bloom_off()
 
 
 def genSceneName(name, i=1):
