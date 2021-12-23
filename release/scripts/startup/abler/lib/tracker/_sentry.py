@@ -1,11 +1,11 @@
-import os
-import re
 import time
+from typing import Any
 
 import bpy
 import sentry_sdk
 
 from ._tracker import Tracker
+from ._versioning import get_version
 
 
 class SentryTracker(Tracker):
@@ -17,7 +17,7 @@ class SentryTracker(Tracker):
         )
         print("Sentry Initialized")
 
-    def _enqueue_event(self, event_name: str):
+    def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         sentry_sdk.add_breadcrumb(
             category="event", message=event_name, timestamp=time.time()
         )
@@ -34,12 +34,11 @@ def make_release_version():
     """
 
     package = "abler.devel"
-    # NOTE: 커밋되지 않은 변경사항이 있는 경우 "branch_name (modified)" 로 출력됨
-    branch = bpy.app.build_branch.decode("utf-8", "replace")
     version = bpy.app.build_hash.decode("ascii")
 
-    if m := re.match(r"release/v(\d+)\.(\d+)\.(\d+)", branch):
+    if v := get_version():
+        major, minor, patch = v
         package = "abler.release"
-        version = f"{m[1]}.{m[2]}.{m[3]}+{version}"
+        version = f"{major}.{minor}.{patch}+{version}"
 
     return package + "@" + version
