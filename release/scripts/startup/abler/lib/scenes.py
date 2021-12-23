@@ -25,15 +25,21 @@ from .tracker import tracker
 
 
 def change_dof(self, context):
-    tracker.depth_of_field()
-    context.scene.camera.data.dof.use_dof = context.scene.ACON_prop.use_dof
+    prop = context.scene.ACON_prop
+    context.scene.camera.data.dof.use_dof = prop.use_dof
+    if prop.use_dof:
+        tracker.depth_of_field_on()
+    else:
+        tracker.depth_of_field_off()
 
 
 def change_background_images(self, context):
-    tracker.background_images()
-    context.scene.camera.data.show_background_images = (
-        context.scene.ACON_prop.show_background_images
-    )
+    prop = context.scene.ACON_prop
+    context.scene.camera.data.show_background_images = prop.show_background_images
+    if prop.show_background_images:
+        tracker.background_images_on()
+    else:
+        tracker.background_images_off()
 
 
 def genSceneName(name, i=1):
