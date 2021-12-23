@@ -33,7 +33,6 @@ def init_setting(dummy):
     prefs_view.show_developer_ui = False
     prefs_view.show_tooltips_python = False
     prefs_paths.use_load_ui = False
-    bpy.context.scene.view_settings.view_transform = "Standard"
 
 
 @persistent
@@ -45,6 +44,8 @@ def load_handler(dummy):
     shadow.setupSharpShadow()
     render.setupBackgroundImagesCompositor()
     materials_setup.applyAconToonStyle()
+    for scene in bpy.data.scenes:
+        scene.view_settings.view_transform = "Standard"
 
 
 def register():
