@@ -1,16 +1,26 @@
 from abc import *
 import enum
+from typing import Any, Optional
 
 import bpy
+
+from ._versioning import get_version
 
 
 class EventKind(enum.Enum):
     login = "Login"
     login_fail = "Login Fail"
     login_auto = "Login Auto"
+    file_open = "File Open"
     render_quick = "Render Quick"
+    render_full = "Render Full"
+    render_line = "Render Line"
+    render_shadow = "Render Shadow"
+    render_all_scenes = "Render All Scenes"
+    render_snip = "Render Snip"
     import_blend = "Import *.blend"
     toggle_toolbar = "Toggle Toolbar"
+    fly_mode = "Fly Mode"
     scene_add = "Scene Add"
     look_at_me = "Look At Me"
 
@@ -49,9 +59,16 @@ def accumulate(interval=0):
 class Tracker(metaclass=ABCMeta):
     def __init__(self):
         self._agreed = True
+        self._default_properties = {}
+
+        if v := get_version():
+            major, minor, patch = v
+            self._default_properties["version"] = f"{major}.{minor}.{patch}"
+        else:
+            self._default_properties["version"] = "development"
 
     @abstractmethod
-    def _enqueue_event(self, event_name: str):
+    def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         """
         Enqueue a user event to be tracked.
 
@@ -68,12 +85,18 @@ class Tracker(metaclass=ABCMeta):
         """
         pass
 
-    def _track(self, event_name: str) -> bool:
+    def _track(
+        self, event_name: str, properties: Optional[dict[str, Any]] = None
+    ) -> bool:
         if not self._agreed:
             return False
 
+        next_properties = {}
+        next_properties.update(self._default_properties)
+        if properties:
+            next_properties.update(properties)
         try:
-            self._enqueue_event(event_name)
+            self._enqueue_event(event_name, next_properties)
             print(f"TRACKING: {event_name}")
         except Exception as e:
             print(e)
@@ -91,12 +114,30 @@ class Tracker(metaclass=ABCMeta):
     def login_auto(self):
         self._track(EventKind.login_auto.value)
 
+    def file_open(self):
+        self._track(EventKind.file_open.value)
+
     def render_quick(self):
         self._track(EventKind.render_quick.value)
-      
+
+    def render_full(self):
+        self._track(EventKind.render_full.value)
+
+    def render_line(self):
+        self._track(EventKind.render_line.value)
+
+    def render_shadow(self):
+        self._track(EventKind.render_shadow.value)
+
+    def render_all_scenes(self):
+        self._track(EventKind.render_all_scenes.value)
+
+    def render_snip(self):
+        self._track(EventKind.render_snip.value)
+
     def import_blend(self):
         self._track(EventKind.import_blend.value)
-        
+
     def scene_add(self):
         self._track(EventKind.scene_add.value)
 
@@ -107,13 +148,16 @@ class Tracker(metaclass=ABCMeta):
     def toggle_toolbar(self):
         self._track(EventKind.toggle_toolbar.value)
 
+    def fly_mode(self):
+        self._track(EventKind.fly_mode.value)
+
 
 class DummyTracker(Tracker):
     def __init__(self):
         super().__init__()
         self._agreed = False
 
-    def _enqueue_event(self, event_name: str):
+    def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         pass
 
     def _enqueue_email_update(self, email: str):
@@ -125,9 +169,9 @@ class AggregateTracker(Tracker):
         super().__init__()
         self.trackers = trackers
 
-    def _enqueue_event(self, event_name: str):
+    def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         for t in self.trackers:
-            t._enqueue_event(event_name)
+            t._enqueue_event(event_name, properties)
 
     def _enqueue_email_update(self, email: str):
         for t in self.trackers:

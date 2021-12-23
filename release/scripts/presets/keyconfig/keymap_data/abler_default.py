@@ -395,7 +395,7 @@ def km_window(params):
         # Old shortcuts
         items.extend([
             ("wm.save_homefile", {"type": 'U', "value": 'PRESS', "ctrl": True}, None),
-            ("wm.open_mainfile", {"type": 'F1', "value": 'PRESS'}, None),
+            ("acon3d.file_open", {"type": 'F1', "value": 'PRESS'}, None),
             ("wm.link", {"type": 'O', "value": 'PRESS', "ctrl": True, "alt": True}, None),
             ("wm.append", {"type": 'F1', "value": 'PRESS', "shift": True}, None),
             ("wm.save_mainfile", {"type": 'W', "value": 'PRESS', "ctrl": True}, None),
@@ -414,7 +414,7 @@ def km_window(params):
         # File operations
         op_menu("TOPBAR_MT_file_new", {"type": 'N', "value": 'PRESS', "ctrl": True}),
         op_menu("TOPBAR_MT_file_open_recent", {"type": 'O', "value": 'PRESS', "shift": True, "ctrl": True}),
-        ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "ctrl": True}, None),
+        ("acon3d.file_open", {"type": 'O', "value": 'PRESS', "ctrl": True}, None),
         ("wm.save_mainfile", {"type": 'S', "value": 'PRESS', "ctrl": True}, None),
         ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "shift": True, "ctrl": True}, None),
         ("wm.quit_blender", {"type": 'Q', "value": 'PRESS', "ctrl": True}, None),
@@ -526,9 +526,9 @@ def km_screen(params):
         ("ed.undo", {"type": 'Z', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
         ("ed.redo", {"type": 'Z', "value": 'PRESS', "shift": True, "ctrl": True, "repeat": True}, None),
         # Render
-        ("render.render", {"type": 'F12', "value": 'PRESS'},
+        ("acon3d.render_quick", {"type": 'F12', "value": 'PRESS'},
          {"properties": [("use_viewport", True)]}),
-        ("render.render", {"type": 'F12', "value": 'PRESS', "ctrl": True},
+        ("acon3d.render_quick", {"type": 'F12', "value": 'PRESS', "ctrl": True},
          {"properties": [("animation", True), ("use_viewport", True)]}),
         ("render.view_cancel", {"type": 'ESC', "value": 'PRESS'}, None),
         ("render.view_show", {"type": 'F11', "value": 'PRESS'}, None),
@@ -1090,7 +1090,7 @@ def km_view3d(params):
         ),
         *(() if not params.use_pie_click_drag else
           (("view3d.navigate", {"type": 'ACCENT_GRAVE', "value": 'CLICK'}, None),)),
-        ("view3d.navigate", {"type": 'ACCENT_GRAVE', "value": 'PRESS', "shift": True}, None),
+        ("acon3d.fly_mode", {"type": 'ACCENT_GRAVE', "value": 'PRESS', "shift": True}, None),
         # Numpad views.
         ("view3d.view_camera", {"type": 'NUMPAD_0', "value": 'PRESS'}, None),
         ("view3d.view_axis", {"type": 'NUMPAD_1', "value": 'PRESS'},

@@ -135,6 +135,38 @@ class ToggleToolbarOperator(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class FileOpenOperator(bpy.types.Operator, ImportHelper):
+    """File Open"""
+
+    bl_idname = "acon3d.file_open"
+    bl_label = "File Open"
+    bl_translation_context = "*"
+
+    filter_glob: bpy.props.StringProperty(default="*.blend", options={"HIDDEN"})
+
+    def execute(self, context):
+        FILEPATH = self.filepath
+        bpy.ops.wm.open_mainfile(filepath=FILEPATH)
+        
+        return {"FINISHED"}
+
+        
+class FlyOperator(bpy.types.Operator):
+    """Fly Mode"""
+
+    bl_idname = "acon3d.fly_mode"
+    bl_label = "Fly (shift + `)"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        tracker.fly_mode()
+
+        if context.space_data.type == "VIEW_3D":
+            bpy.ops.view3d.walk("INVOKE_DEFAULT")
+
+        return {"FINISHED"}
+
+
 class Acon3dImportPanel(bpy.types.Panel):
     bl_idname = "ACON3D_PT_import"
     bl_label = "General"
@@ -151,9 +183,7 @@ class Acon3dImportPanel(bpy.types.Panel):
 
         row = layout.row()
         row.scale_y = 1.0
-        row.operator(
-            "wm.open_mainfile", text="File Open", text_ctxt="*"
-        ).load_ui = False
+        row.operator("acon3d.file_open")
         row.operator("acon3d.import_blend", text="Import")
 
         row = layout.row()
@@ -165,7 +195,7 @@ class Acon3dImportPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("acon3d.context_toggle")
         row = layout.row()
-        row.operator("view3d.walk", text="Fly (shift + `)", text_ctxt="*")
+        row.operator("acon3d.fly_mode")
 
 
 class ApplyToonStyleOperator(bpy.types.Operator):
@@ -187,6 +217,8 @@ classes = (
     ToggleToolbarOperator,
     ImportOperator,
     ApplyToonStyleOperator,
+    FileOpenOperator,
+    FlyOperator,
 )
 
 

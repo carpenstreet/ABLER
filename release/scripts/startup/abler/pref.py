@@ -65,6 +65,8 @@ def save_pre_handler(dummy):
 def save_post_handler(dummy):
     materials_handler.toggleToonEdge(None, None)
     materials_handler.toggleToonFace(None, None)
+    for scene in bpy.data.scenes:
+        scene.view_settings.view_transform = "Standard"
 
 
 def register():
