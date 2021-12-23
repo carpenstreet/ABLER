@@ -44,6 +44,8 @@ def load_handler(dummy):
     shadow.setupSharpShadow()
     render.setupBackgroundImagesCompositor()
     materials_setup.applyAconToonStyle()
+    for scene in bpy.data.scenes:
+        scene.view_settings.view_transform = "Standard"
 
 
 def register():
