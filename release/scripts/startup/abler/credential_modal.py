@@ -29,6 +29,7 @@ from .lib.remember_username import (
     remember_username,
     read_remembered_username,
 )
+from .lib.login import is_first_open
 from .lib.tracker import tracker
 from .lib.async_task import AsyncTask
 
@@ -349,7 +350,8 @@ def open_credential_modal(dummy):
 
         if token:
             if not fileopen:
-                tracker.login_auto()
+                if is_first_open():
+                    tracker.login_auto()
             prop.login_status = "SUCCESS"
 
     except:
