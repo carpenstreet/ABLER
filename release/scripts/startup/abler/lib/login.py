@@ -1,6 +1,3 @@
-import re, os
-import subprocess
-import platform
 import psutil
 
 
