@@ -15,23 +15,15 @@ def is_first_open():
             m = re.match("(.+?) +(\d+) (.+?) +(\d+) +(\d+.* K).*", task)
             if m is not None:
                 p.append(m.group(1))
-        cnt = 0
-        for i in p:
-            if i.startswith("blender") or i.startswith("ABLER"):
-                cnt += 1
-        if cnt > 1:
-            return False
-        else:
-            return True
+
+        process_count = sum(
+            bool(i.startswith("blender") or i.startswith("ABLER") for i in p)
+        )
+        return process_count <= 1
 
     elif platform.system() == "Darwin":
-        tmp = os.popen("ps -Af").read()
-        proccount = tmp.count("ABLER")
-
-        if proccount > 2:
-            return False
-        else:
-            return True
+        process_count = os.popen("ps -Af").read().count("ABLER")
+        return process_count <= 2
 
     elif platform.system() == "Linux":
         print("Linux")

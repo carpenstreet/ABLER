@@ -349,9 +349,8 @@ def open_credential_modal(dummy):
         token = responseData["accessToken"]
 
         if token:
-            if not fileopen:
-                if is_first_open():
-                    tracker.login_auto()
+            if not fileopen and is_first_open():
+                tracker.login_auto()
             prop.login_status = "SUCCESS"
 
     except:
