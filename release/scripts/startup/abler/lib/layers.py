@@ -139,7 +139,7 @@ def down(
     group_item: Collection to find item below of
     """
     try:
-        idx = group_list.index(group_item)
+        idx: int = group_list.index(group_item)
         if idx < len(group_list) - 1:
             return group_list[idx + 1]
         else:
