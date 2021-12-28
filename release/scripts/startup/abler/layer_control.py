@@ -43,7 +43,6 @@ class Acon3dCreateGroupOperator(bpy.types.Operator):
     bl_translation_context = "*"
 
     def execute(self, context):
-
         collection = bpy.data.collections.get("Groups")
         if not collection:
             collection = bpy.data.collections.new("Groups")
@@ -55,11 +54,10 @@ class Acon3dCreateGroupOperator(bpy.types.Operator):
         collection.children.link(col_group)
 
         for obj in context.selected_objects:
-
             group_props = obj.ACON_prop.group
             last_group = None
             if len(group_props):
-                last_group_prop = group_props[len(group_props) - 1]
+                last_group_prop = group_props[-1]
                 last_group = bpy.data.collections.get(last_group_prop.name)
 
             if last_group:
@@ -92,7 +90,7 @@ class Acon3dExplodeGroupOperator(bpy.types.Operator):
             if not len(group_props):
                 continue
 
-            last_group_prop = group_props[len(group_props) - 1]
+            last_group_prop = group_props[-1]
 
             root_group = bpy.data.collections.get("Groups")
             if not root_group:
