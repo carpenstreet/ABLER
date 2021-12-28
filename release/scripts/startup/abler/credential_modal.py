@@ -29,6 +29,7 @@ from .lib.remember_username import (
     remember_username,
     read_remembered_username,
 )
+from .lib.login import is_first_open
 from .lib.tracker import tracker
 from .lib.async_task import AsyncTask
 
@@ -316,7 +317,7 @@ class Acon3dAnchorOperator(bpy.types.Operator):
 @persistent
 def open_credential_modal(dummy):
 
-    tracker_file_open()
+    fileopen = tracker_file_open()
 
     prefs = bpy.context.preferences
     prefs.view.show_splash = True
@@ -348,7 +349,8 @@ def open_credential_modal(dummy):
         token = responseData["accessToken"]
 
         if token:
-            tracker.login_auto()
+            if not fileopen and is_first_open():
+                tracker.login_auto()
             prop.login_status = "SUCCESS"
 
     except:

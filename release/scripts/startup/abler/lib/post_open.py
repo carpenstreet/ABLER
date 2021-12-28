@@ -7,3 +7,4 @@ def tracker_file_open():
     # tracking file_open
     if bpy.data.filepath != "":
         tracker.file_open()
+        return True
