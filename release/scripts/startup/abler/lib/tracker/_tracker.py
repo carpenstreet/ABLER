@@ -23,6 +23,8 @@ class EventKind(enum.Enum):
     fly_mode = "Fly Mode"
     scene_add = "Scene Add"
     look_at_me = "Look At Me"
+    use_state_on = "Use State On"
+    use_state_off = "Use State Off"
 
 
 def accumulate(interval=0):
@@ -150,6 +152,12 @@ class Tracker(metaclass=ABCMeta):
 
     def fly_mode(self):
         self._track(EventKind.fly_mode.value)
+
+    def use_state_on(self):
+        self._track(EventKind.use_state_on.value)
+
+    def use_state_off(self):
+        self._track(EventKind.use_state_off.value)
 
 
 class DummyTracker(Tracker):
