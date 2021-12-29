@@ -29,6 +29,8 @@ class EventKind(enum.Enum):
     depth_of_field_off = "Depth of Field Off"
     background_images_on = "Background Images On"
     background_images_off = "Background Images Off"
+    bloom_on = "Bloom On"
+    bloom_off = "Bloom Off"
 
 
 def accumulate(interval=0):
@@ -174,6 +176,12 @@ class Tracker(metaclass=ABCMeta):
 
     def background_images_off(self):
         self._track(EventKind.background_images_off.value)
+
+    def bloom_on(self):
+        self._track(EventKind.bloom_on.value)
+
+    def bloom_off(self):
+        self._track(EventKind.bloom_off.value)
 
 
 class DummyTracker(Tracker):

@@ -41,6 +41,15 @@ def change_background_images(self, context):
     else:
         tracker.background_images_off()
 
+        
+def change_bloom(self, context):
+    prop = context.scene.ACON_prop
+    context.scene.eevee.use_bloom = prop.use_bloom
+    if prop.use_bloom:
+        tracker.bloom_on()
+    else:
+        tracker.bloom_off()
+
 
 def genSceneName(name, i=1):
     found = None
