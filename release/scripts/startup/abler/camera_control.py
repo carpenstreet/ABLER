@@ -166,9 +166,8 @@ class Acon3dDOFPanel(bpy.types.Panel):
 
     def draw_header(self, context):
         if bpy.context.scene.camera is not None:
-            cam = bpy.context.scene.camera.data
-            dof = cam.dof
-            self.layout.prop(dof, "use_dof", text="")
+            scene = context.scene
+            self.layout.prop(scene.ACON_prop, "use_dof", text="")
         else:
             self.layout.active = False
 
@@ -219,8 +218,8 @@ class Acon3dBackgroundPanel(bpy.types.Panel):
         toggle_texture = context.scene.ACON_prop.toggle_texture
 
         if context.scene.camera is not None and toggle_texture:
-            cam = context.scene.camera.data
-            self.layout.prop(cam, "show_background_images", text="")
+            scene = context.scene
+            self.layout.prop(scene.ACON_prop, "show_background_images", text="")
         else:
             self.layout.active = False
 

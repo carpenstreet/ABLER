@@ -296,6 +296,13 @@ class AconSceneProperty(bpy.types.PropertyGroup):
 
     selected_objects_str: bpy.props.StringProperty(name="Selected Objects")
 
+    use_dof: bpy.props.BoolProperty(
+        name="Depth of Field", default=False, update=scenes.change_dof
+    )
+
+    show_background_images: bpy.props.BoolProperty(
+        name="Background Images", default=False, update=scenes.change_background_images
+
     use_bloom: bpy.props.BoolProperty(
         name="Bloom", default=True, update=scenes.change_bloom
     )

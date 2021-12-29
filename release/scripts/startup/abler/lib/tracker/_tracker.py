@@ -25,6 +25,10 @@ class EventKind(enum.Enum):
     look_at_me = "Look At Me"
     use_state_on = "Use State On"
     use_state_off = "Use State Off"
+    depth_of_field_on = "Depth of Field On"
+    depth_of_field_off = "Depth of Field Off"
+    background_images_on = "Background Images On"
+    background_images_off = "Background Images Off"
     bloom_on = "Bloom On"
     bloom_off = "Bloom Off"
 
@@ -160,6 +164,18 @@ class Tracker(metaclass=ABCMeta):
 
     def use_state_off(self):
         self._track(EventKind.use_state_off.value)
+
+    def depth_of_field_on(self):
+        self._track(EventKind.depth_of_field_on.value)
+
+    def depth_of_field_off(self):
+        self._track(EventKind.depth_of_field_off.value)
+
+    def background_images_on(self):
+        self._track(EventKind.background_images_on.value)
+
+    def background_images_off(self):
+        self._track(EventKind.background_images_off.value)
 
     def bloom_on(self):
         self._track(EventKind.bloom_on.value)
