@@ -17,11 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+from typing import Optional
 import bpy, math
+from bpy.types import Object, Light
 
 
-def changeSunRotation(self, context):
-    acon_sun = bpy.data.objects.get("ACON_sun")
+def changeSunRotation(self, context) -> None:
+    acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
 
@@ -32,8 +34,8 @@ def changeSunRotation(self, context):
     acon_sun.rotation_euler.z = prop.sun_rotation_z
 
 
-def toggleSun(self, context):
-    acon_sun = bpy.data.objects.get("ACON_sun")
+def toggleSun(self, context) -> None:
+    acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
 
@@ -44,23 +46,23 @@ def toggleSun(self, context):
 
 
 def changeSunStrength(self, context):
-    acon_sun = bpy.data.objects.get("ACON_sun")
+    acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
 
     prop = context.scene.ACON_prop
-
-    acon_sun.data.energy = prop.sun_strength
+    if acon_sun.type == "SUN":
+        acon_sun.data.energy = prop.sun_strength
 
 
 def toggleShadow(self, context):
-    acon_sun = bpy.data.objects.get("ACON_sun")
+    acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
 
     prop = context.scene.ACON_prop
-
-    acon_sun.data.use_shadow = prop.toggle_shadow
+    if acon_sun.type == "SUN":
+        acon_sun.data.use_shadow = prop.toggle_shadow
 
 
 def setupSharpShadow():
@@ -68,19 +70,19 @@ def setupSharpShadow():
     bpy.context.scene.eevee.shadow_cascade_size = "4096"
     bpy.context.scene.eevee.use_soft_shadows = True
 
-    acon_sun = bpy.data.objects.get("ACON_sun")
+    acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
 
     if not acon_sun:
         acon_sun = createAconSun()
+    if acon_sun.type == "SUN":
+        acon_sun.data.angle = 0
+        acon_sun.data.use_contact_shadow = 1
 
-    acon_sun.data.angle = 0
-    acon_sun.data.use_contact_shadow = 1
 
-
-def createAconSun():
-    acon_sun_data = bpy.data.lights.new("ACON_sun", type="SUN")
+def createAconSun() -> Object:
+    acon_sun_data: Light = bpy.data.lights.new("ACON_sun", type="SUN")
     acon_sun_data.energy = 1
-    acon_sun = bpy.data.objects.new("ACON_sun", acon_sun_data)
+    acon_sun: Object = bpy.data.objects.new("ACON_sun", acon_sun_data)
     acon_sun.rotation_euler.x = math.radians(90 - 35)
     acon_sun.rotation_euler.y = 0
     acon_sun.rotation_euler.z = math.radians(65)
