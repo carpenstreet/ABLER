@@ -7,7 +7,7 @@ def find_dotenv():
     last_dir = None
     while last_dir != current_dir:
         check_path = os.path.join(current_dir, ".env")
-        if os.path.isfile(check_path)
+        if os.path.isfile(check_path):
             return check_path
 
         parent_dir = os.path.abspath(os.path.join(current_dir, os.path.pardir))
