@@ -1997,8 +1997,8 @@ endif()
 if(0)
   print_all_vars()
 endif()
-
 # ABLER python requirements
+
 if (WIN32)
   if (NOT DEFINED LIBDIR)
     message(FATAL_ERROR "libdir not defined!")
