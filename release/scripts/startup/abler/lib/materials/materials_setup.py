@@ -382,6 +382,15 @@ def createAconMatNodeGroups():
     node_bright.name = "ACON_node_bright"
     node_group.links.new(node_bright.outputs[0], node_contrast.inputs[0])
 
+    node_shaderToRGB = nodes.new("ShaderNodeShaderToRGB")
+    node_group.links.new(node_shaderToRGB.outputs[0], node_bright.inputs[0])
+
+    node_mixShader_0 = nodes.new("ShaderNodeMixShader")
+    node_group.links.new(node_mixShader_0.outputs[0], node_shaderToRGB.inputs[0])
+
+    node_Geometry = nodes.new("ShaderNodeNewGeometry")
+    node_group.links.new(node_Geometry.outputs[6], node_mixShader_0.inputs[0])
+
     inputs = nodes.new("NodeGroupInput")
     node_group.inputs.new("NodeSocketColor", "Color")
     node_group.inputs.new("NodeSocketFloat", "AlphaMixFactor")
@@ -393,7 +402,8 @@ def createAconMatNodeGroups():
     node_group.inputs.new("NodeSocketFloat", "Negative Alpha")
     node_group.inputs.new("NodeSocketFloat", "Image Alpha")
     node_group.inputs.new("NodeSocketFloat", "Edge Mix Factor")
-    node_group.links.new(inputs.outputs[0], node_bright.inputs[0])
+    node_group.inputs.new("NodeSocketColor", "Color")
+    node_group.links.new(inputs.outputs[0], node_mixShader_0.inputs[1])
     node_group.links.new(inputs.outputs[1], node_multiply_1.inputs[1])
     node_group.links.new(inputs.outputs[1], node_mixColor_3.inputs[0])
     node_group.links.new(inputs.outputs[2], node_mixShader_3.inputs[0])
@@ -404,6 +414,7 @@ def createAconMatNodeGroups():
     node_group.links.new(inputs.outputs[7], node_multiply_1.inputs[0])
     node_group.links.new(inputs.outputs[8], node_multiply_3.inputs[0])
     node_group.links.new(inputs.outputs[9], node_multiply_5.inputs[1])
+    node_group.links.new(inputs.outputs[10], node_mixShader_0.inputs[2])
 
     node_group.inputs[0].default_value = (1, 1, 1, 1)
     node_group.inputs[1].default_value = 0
@@ -424,6 +435,7 @@ def createAconMatNodeGroups():
     node_group.inputs[8].min_value = 0
     node_group.inputs[8].max_value = 1
     node_group.inputs[9].default_value = 1
+    node_group.inputs[10].default_value = (0, 0, 0.8, 1)
 
     context = bpy.context
 
