@@ -74,6 +74,8 @@ class Acon3dAlertOperator(bpy.types.Operator):
 
 
 class Acon3dModalOperator(bpy.types.Operator):
+    """key 반복입력시 씹히지 않도록 해주는 class"""
+
     bl_idname = "acon3d.modal_operator"
     bl_label = "Login Modal Operator"
     pass_key = {
@@ -159,6 +161,7 @@ class Acon3dModalOperator(bpy.types.Operator):
         if userInfo and userInfo.ACON_prop.login_status == "SUCCESS":
             return {"FINISHED"}
 
+        # enter 연속으로 두번 누르면 로그인이 되도록!
         if event.type == "RET":
             bpy.ops.acon3d.login()
 

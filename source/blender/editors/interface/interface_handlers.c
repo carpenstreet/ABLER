@@ -3702,12 +3702,12 @@ static void ui_do_but_textedit(
         retval = WM_UI_HANDLER_BREAK;
         /* PROP_USERNAME과 PROP_PASSWORD에서 RET키를 눌렀을때 키가 두번 실행됨으로써
          * credential_modal에서 evet.type=="RET"일때 login이 실행되도록 구상했습니다. */
-        // if (but->rnaprop) {
-        //   if (RNA_property_subtype(but->rnaprop) == PROP_PASSWORD ||
-        //       RNA_property_subtype(but->rnaprop) == PROP_USERNAME) {
-        //     WM_operator_name_call(C, "Acon3dLoginOperator", WM_OP_EXEC_DEFAULT, NULL);
-        //   }
-        // }
+        if (but->rnaprop) {
+          if (RNA_property_subtype(but->rnaprop) == PROP_PASSWORD ||
+              RNA_property_subtype(but->rnaprop) == PROP_USERNAME) {
+            WM_operator_name_call(C, "Acon3dLoginOperator", WM_OP_EXEC_DEFAULT, NULL);
+          }
+        }
         break;
       case EVT_DELKEY:
         changed = ui_textedit_delete(

@@ -364,7 +364,7 @@ class AconMeshProperty(bpy.types.PropertyGroup):
         description="Username",
         subtype="USERNAME",
         options={"TEXTEDIT_UPDATE"},
-    )
+    )  # subtype = "USERNAME" 추가 -> enter 2번이 되도록
 
     password: bpy.props.StringProperty(
         name="Password",
@@ -378,7 +378,7 @@ class AconMeshProperty(bpy.types.PropertyGroup):
         description="Password",
         subtype="USERNAME",
         options={"TEXTEDIT_UPDATE"},
-    )
+    )  # subtype = "USERNAME" 추가 -> enter 2번이 되도록
 
     show_password: bpy.props.BoolProperty(
         name="Show Password", default=False, update=toggle_show_password
