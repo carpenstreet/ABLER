@@ -85,7 +85,7 @@ class Tracker(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _enqueue_email_update(self, email: str):
+    def _enqueue_email_update(self, email: str, ip: str):
         """
         Enqueue update of user email.
 
@@ -112,9 +112,9 @@ class Tracker(metaclass=ABCMeta):
         else:
             return True
 
-    def login(self, email: str):
+    def login(self, email: str, ip: str):
         if self._track(EventKind.login.value):
-            self._enqueue_email_update(email)
+            self._enqueue_email_update(email, ip)
 
     def login_fail(self):
         self._track(EventKind.login_fail.value)
@@ -192,7 +192,7 @@ class DummyTracker(Tracker):
     def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         pass
 
-    def _enqueue_email_update(self, email: str):
+    def _enqueue_email_update(self, email: str, ip: str):
         pass
 
 
@@ -205,6 +205,6 @@ class AggregateTracker(Tracker):
         for t in self.trackers:
             t._enqueue_event(event_name, properties)
 
-    def _enqueue_email_update(self, email: str):
+    def _enqueue_email_update(self, email: str, ip: str):
         for t in self.trackers:
-            t._enqueue_email_update(email)
+            t._enqueue_email_update(email, ip)
