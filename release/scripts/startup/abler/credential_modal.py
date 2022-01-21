@@ -31,7 +31,6 @@ from .lib.remember_username import (
 )
 from .lib.login import is_first_open
 from .lib.tracker import tracker
-from .lib.tracker._get_ip import get_ip
 from .lib.async_task import AsyncTask
 
 
@@ -246,7 +245,8 @@ class LoginTask(AsyncTask):
 
     def _on_success(self):
 
-        tracker.login(self.username, ip=get_ip())
+        tracker.login()
+        tracker.update_profile(self.username)
 
         prop = self.prop
         path = bpy.utils.resource_path("USER")

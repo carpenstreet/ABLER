@@ -5,6 +5,7 @@ from typing import Any, Optional
 import bpy
 
 from ._versioning import get_version
+from ._get_ip import get_ip
 
 
 class EventKind(enum.Enum):
@@ -112,9 +113,11 @@ class Tracker(metaclass=ABCMeta):
         else:
             return True
 
-    def login(self, email: str, ip: str):
-        if self._track(EventKind.login.value):
-            self._enqueue_email_update(email, ip)
+    def login(self):
+        self._track(EventKind.login.value)
+
+    def update_profile(self, email: str):
+        self._enqueue_email_update(email, ip=get_ip())
 
     def login_fail(self):
         self._track(EventKind.login_fail.value)
