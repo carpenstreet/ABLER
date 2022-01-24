@@ -5,6 +5,7 @@ from typing import Any, Optional
 import bpy
 
 from ._versioning import get_version
+from ._get_ip import get_ip
 
 
 class EventKind(enum.Enum):
@@ -85,9 +86,9 @@ class Tracker(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _enqueue_email_update(self, email: str):
+    def _enqueue_profile_update(self, email: str, ip: str):
         """
-        Enqueue update of user email.
+        Enqueue update of user email and ip.
 
         Implementations must be asynchronous.
         """
@@ -112,9 +113,11 @@ class Tracker(metaclass=ABCMeta):
         else:
             return True
 
-    def login(self, email: str):
-        if self._track(EventKind.login.value):
-            self._enqueue_email_update(email)
+    def login(self):
+        self._track(EventKind.login.value)
+
+    def update_profile(self, email: str):
+        self._enqueue_profile_update(email, ip=get_ip())
 
     def login_fail(self):
         self._track(EventKind.login_fail.value)
@@ -192,7 +195,7 @@ class DummyTracker(Tracker):
     def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         pass
 
-    def _enqueue_email_update(self, email: str):
+    def _enqueue_profile_update(self, email: str, ip: str):
         pass
 
 
@@ -205,6 +208,6 @@ class AggregateTracker(Tracker):
         for t in self.trackers:
             t._enqueue_event(event_name, properties)
 
-    def _enqueue_email_update(self, email: str):
+    def _enqueue_profile_update(self, email: str, ip: str):
         for t in self.trackers:
-            t._enqueue_email_update(email)
+            t._enqueue_profile_update(email, ip)
