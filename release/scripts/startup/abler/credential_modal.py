@@ -244,9 +244,7 @@ class LoginTask(AsyncTask):
             raise Exception("status code is not 200")
 
     def _on_success(self):
-
-        tracker.login()
-        tracker.update_profile(self.username)
+        tracker.login(self.username)
 
         prop = self.prop
         path = bpy.utils.resource_path("USER")
