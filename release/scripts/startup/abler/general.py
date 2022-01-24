@@ -131,7 +131,7 @@ class ImportFBXOperator(bpy.types.Operator, ImportHelper):
         FILEPATH = self.filepath
 
         filename = os.path.basename(FILEPATH)
-        col_imported = bpy.data.collections.new("[FBX]" + filename.replace(".fbx", ""))
+        col_imported = bpy.data.collections.new("[FBX] " + filename.replace(".fbx", ""))
 
         col_layers = bpy.data.collections.get("Layers")
         if not col_layers:
