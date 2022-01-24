@@ -93276,6 +93276,10 @@ msgid "File Open"
 msgstr "파일 열기"
 
 
+msgid "Import FBX"
+msgstr "FBX 가져오기"
+
+
 msgid "Use Current Scene Settings"
 msgstr "현재 씬 설정을 그대로 사용"
 
