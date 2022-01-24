@@ -33,6 +33,7 @@ bl_info = {
 
 import bpy
 from .lib import scenes
+from .lib.tracker import tracker
 
 
 class CreateSceneOperator(bpy.types.Operator):
@@ -58,6 +59,8 @@ class CreateSceneOperator(bpy.types.Operator):
     )
 
     def execute(self, context):
+        tracker.scene_add()
+
         old_scene = context.scene
         new_scene = scenes.createScene(old_scene, self.preset, self.name)
         context.window_manager.ACON_prop.scene = new_scene.name

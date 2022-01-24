@@ -92976,6 +92976,9 @@ msgstr "면 설정"
 msgid "Toon Color Depth"
 msgstr "색 표현 수"
 
+msgid "Object Control"
+msgstr "오브젝트 설정"
+
 
 msgid "Image Adjustment"
 msgstr "이미지 보정"
@@ -93271,6 +93274,10 @@ msgstr "\"cs@acon3d.com\"으로 문의 부탁드립니다."
 
 msgid "File Open"
 msgstr "파일 열기"
+
+
+msgid "Import FBX"
+msgstr "FBX 가져오기"
 
 
 msgid "Use Current Scene Settings"

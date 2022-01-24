@@ -1,5 +1,6 @@
 import bpy
 from . import cameras
+from .tracker import tracker
 
 
 def toggleConstraintToCamera(self, context):
@@ -7,6 +8,10 @@ def toggleConstraintToCamera(self, context):
     cameras.makeSureCameraExists()
 
     obj = context.object
+    look_at_me = obj.ACON_prop.constraint_to_camera_rotation_z
+    if look_at_me:
+        tracker.look_at_me()
+
     setConstraintToCameraByObject(obj, context)
 
 
@@ -49,6 +54,12 @@ def step(edge0: tuple[float], edge1: tuple[float], x: float) -> tuple[float]:
 def toggleUseState(self, context):
 
     use_state = self.use_state
+
+    prop = context.object.ACON_prop
+    if prop.use_state:
+        tracker.use_state_on()
+    else:
+        tracker.use_state_off()
 
     if use_state:
 

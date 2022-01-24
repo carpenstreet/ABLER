@@ -32,6 +32,7 @@ bl_info = {
 
 
 import bpy
+from .lib.tracker import tracker
 
 
 class MATERIAL_UL_List(bpy.types.UIList):
@@ -213,8 +214,7 @@ class Acon3dBloomPanel(bpy.types.Panel):
 
     def draw_header(self, context):
         scene = context.scene
-        props = scene.eevee
-        self.layout.prop(props, "use_bloom", text="")
+        self.layout.prop(scene.ACON_prop, "use_bloom", text="")
 
     def draw(self, context):
         layout = self.layout
