@@ -52,8 +52,22 @@ class Acon3dCreateGroupOperator(bpy.types.Operator):
 
         col_group = bpy.data.collections.new("ACON_group")
         collection.children.link(col_group)
+
         for obj in context.selected_objects:
-            col_group.objects.link(obj)
+            group_props = obj.ACON_prop.group
+            last_group = None
+            if len(group_props):
+                last_group_prop = group_props[-1]
+                last_group = bpy.data.collections.get(last_group_prop.name)
+
+            if last_group:
+                if last_group.name in collection.children.keys():
+                    collection.children.unlink(last_group)
+                if last_group.name not in col_group.children.keys():
+                    col_group.children.link(last_group)
+            else:
+                col_group.objects.link(obj)
+
             new_group_prop = obj.ACON_prop.group.add()
             new_group_prop.name = col_group.name
 
@@ -76,10 +90,19 @@ class Acon3dExplodeGroupOperator(bpy.types.Operator):
             if not len(group_props):
                 continue
 
-            last_group_prop = group_props[len(group_props) - 1]
+            last_group_prop = group_props[-1]
+
+            root_group = bpy.data.collections.get("Groups")
+            if not root_group:
+                root_group = bpy.data.collections.new("Groups")
+                context.scene.collection.children.link(root_group)
+                layer_collection = context.view_layer.layer_collection
+                layer_collection.children.get("Groups").exclude = True
 
             selected_group = bpy.data.collections.get(last_group_prop.name)
             if selected_group:
+                for child in selected_group.children:
+                    root_group.children.link(child)
                 bpy.data.collections.remove(selected_group)
 
             group_props.remove(len(group_props) - 1)
@@ -108,7 +131,12 @@ class Acon3dLayerPanel(bpy.types.Panel):
         for child in collection.children:
             index += 1
 
-            target = bpy.context.scene.l_exclude[findex]
+            l_exclude = bpy.context.scene.l_exclude
+
+            if findex > len(l_exclude) - 1:
+                break
+
+            target = l_exclude[findex]
 
             icon = "OUTLINER_COLLECTION"
             icon_vis = "HIDE_ON"

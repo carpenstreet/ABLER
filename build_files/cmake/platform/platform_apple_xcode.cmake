@@ -23,7 +23,7 @@
 # set(CMAKE_OSX_ARCHITECTURES "arm64")
 # message(STATUS "${ARCHITECTURE}")
 # Detect processor architecture.
-# if(NOT CMAKE_OSX_ARCHITECTURES)
+if(NOT CMAKE_OSX_ARCHITECTURES)
 execute_process(COMMAND uname -m OUTPUT_VARIABLE ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
 execute_process(COMMAND sysctl -q hw.optional.arm64
             OUTPUT_VARIABLE _sysctl_stdout
@@ -35,7 +35,7 @@ if(_sysctl_result EQUAL 0 AND _sysctl_stdout MATCHES "hw.optional.arm64: 1")
 endif()
 message(STATUS "Detected native architecture ${ARCHITECTURE}.")
 set(CMAKE_OSX_ARCHITECTURES ${ARCHITECTURE})
-# endif()
+endif()
 
 # Detect developer directory. Depending on configuration this may be either
 # an Xcode or Command Line Tools installation.

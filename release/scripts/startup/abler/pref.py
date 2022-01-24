@@ -44,6 +44,8 @@ def load_handler(dummy):
     render.setupBackgroundImagesCompositor()
     materials.applyAconToonStyle()
     materials.applyAconWorldShader()
+    for scene in bpy.data.scenes:
+        scene.view_settings.view_transform = "Standard"
 
 
 def register():

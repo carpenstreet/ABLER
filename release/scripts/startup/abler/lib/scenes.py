@@ -18,13 +18,43 @@
 
 
 import bpy, os
-from . import shadow, layers, objects, materials
+from bpy.types import Scene
+from typing import List, Tuple, Optional
 from math import radians
+from . import shadow, layers, objects, materials
+from .tracker import tracker
 
 
-def genSceneName(name, i=1):
-    found = None
-    combinedName = name + str(i)
+def change_dof(self, context) -> None:
+    prop = context.scene.ACON_prop
+    context.scene.camera.data.dof.use_dof = prop.use_dof
+    if prop.use_dof:
+        tracker.depth_of_field_on()
+    else:
+        tracker.depth_of_field_off()
+
+
+def change_background_images(self, context) -> None:
+    prop = context.scene.ACON_prop
+    context.scene.camera.data.show_background_images = prop.show_background_images
+    if prop.show_background_images:
+        tracker.background_images_on()
+    else:
+        tracker.background_images_off()
+
+
+def change_bloom(self, context) -> None:
+    prop = context.scene.ACON_prop
+    context.scene.eevee.use_bloom = prop.use_bloom
+    if prop.use_bloom:
+        tracker.bloom_on()
+    else:
+        tracker.bloom_off()
+
+
+def genSceneName(name: str, i: int = 1) -> str:
+    found: Optional[bool] = None
+    combinedName: str = name + str(i)
 
     for scene in bpy.data.scenes:
         if scene.name == combinedName:
@@ -38,10 +68,10 @@ def genSceneName(name, i=1):
 
 
 # scene_items should be a global variable due to a bug in EnumProperty
-scene_items = []
+scene_items: List[Tuple[str, str, str]] = []
 
 
-def add_scene_items(self, context):
+def add_scene_items(self, context) -> List[Tuple[str, str, str]]:
     scene_items.clear()
     for scene in bpy.data.scenes:
         scene_items.append((scene.name, scene.name, ""))
@@ -114,7 +144,7 @@ def loadHdr(self, context):
         raise e
 
 
-def loadScene(self, context):
+def loadScene(self, context) -> None:
 
     if not context:
         context = bpy.context
@@ -122,8 +152,8 @@ def loadScene(self, context):
     if not self:
         self = context.window_manager.ACON_prop
 
-    newScene = bpy.data.scenes.get(self.scene)
-    oldScene = context.scene
+    newScene: Optional[Scene] = bpy.data.scenes.get(self.scene)
+    oldScene: Optional[Scene] = context.scene
     context.window.scene = newScene
 
     materials.toggleToonEdge(self, context)
@@ -150,7 +180,7 @@ def loadScene(self, context):
         objects.setConstraintToCameraByObject(obj, context)
 
 
-def createScene(old_scene, type, name):
+def createScene(old_scene: Scene, type: str, name: str) -> Optional[Scene]:
 
     new_scene = old_scene.copy()
     new_scene.name = name

@@ -74,3 +74,4 @@ CmakeFiles/
 
 build/AblerLauncher
 dist
+.env

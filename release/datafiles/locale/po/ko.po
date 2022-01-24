@@ -92976,6 +92976,9 @@ msgstr "면 설정"
 msgid "Toon Color Depth"
 msgstr "색 표현 수"
 
+msgid "Object Control"
+msgstr "오브젝트 설정"
+
 
 msgid "Image Adjustment"
 msgstr "이미지 보정"
@@ -93313,3 +93316,10 @@ msgctxt "Operator"
 msgid "New Camera"
 msgstr "새로운 카메라"
 
+
+msgid "Use State"
+msgstr "상태정보 사용하기"
+
+
+msgid "Save object's current location / rotation / scale values to state data"
+msgstr "오브젝트의 현재 위치 / 회전 / 스케일 값을 상태정보에 저장합니다."
