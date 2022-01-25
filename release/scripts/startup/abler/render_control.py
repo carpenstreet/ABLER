@@ -218,16 +218,12 @@ class Acon3dRenderFullOperator(Acon3dRenderOperator):
 class Acon3dRenderTempSceneOperator(Acon3dRenderOperator):
 
     temp_scenes = []
-    prev_scene_name: str
 
     def prepare_render(self):
         render.clearCompositor()
         render.matchObjectVisibility()
 
     def prepare_queue(self, context):
-
-        # get prev_scene
-        self.prev_scene_name = bpy.context.scene.name
 
         scene = context.scene.copy()
         scene.name = context.scene.name + "_shadow"
@@ -261,8 +257,8 @@ class Acon3dRenderTempSceneOperator(Acon3dRenderOperator):
 
         self.temp_scenes.clear()
 
-        # set prev_scene
-        bpy.data.window_managers["WinMan"].ACON_prop.scene = self.prev_scene_name
+        # set initial_scene
+        bpy.data.window_managers["WinMan"].ACON_prop.scene = self.initial_scene.name
 
         return {"FINISHED"}
 
