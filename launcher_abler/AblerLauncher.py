@@ -15,6 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import lib
 import pathlib
 from PySide2 import QtWidgets, QtCore, QtGui
 import qdarkstyle
@@ -703,7 +704,8 @@ class BlenderUpdater(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
     def exec_windows(self):
         try:
-            _ = subprocess.Popen(os.path.join('"' + dir_ + "/blender.exe" + '"'))
+            if lib.isUserAdmin():
+                _ = lib.runas_shell_user(os.path.join('"' + dir_ + "/blender.exe" + '"'))
             logger.info(f"Executing {dir_}blender.exe")
             QtCore.QCoreApplication.instance().quit()
         except Exception as e:
