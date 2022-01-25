@@ -22,7 +22,7 @@ import ctypes
 import platform
 from bpy.app.handlers import persistent
 import requests, webbrowser, pickle, os
-from .lib.post_open import tracker_file_open
+from .lib.pre_open import tracker_file_open
 from .lib.remember_username import (
     delete_remembered_username,
     read_remembered_checkbox,
