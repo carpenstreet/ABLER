@@ -94,7 +94,12 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
                     added_l_exclude = context.scene.l_exclude.add()
                     added_l_exclude.name = coll_2.name
                     added_l_exclude.value = True
-                    col_layers.children.link(coll_2)
+                    if coll_2.name in col_layers.children.keys():
+                        print("Same Name of Collection Already Exists!!" + coll_2.name)
+                        # coll_2의 이름을 바꿔서 col_layers에 넣어줘야함!
+                        # col_layers.children.link(coll_2)
+                    else:
+                        col_layers.children.link(coll_2)
 
         for obj in data_to.objects:
             if obj.type == "MESH":
