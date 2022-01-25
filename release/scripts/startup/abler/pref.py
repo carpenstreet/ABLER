@@ -2,7 +2,7 @@ import bpy
 from bpy.app.handlers import persistent
 from .lib import cameras, shadow, render
 from .lib.materials import materials_setup
-from .lib.pre_open import change_and_reset_value
+from .lib.post_open import change_and_reset_value
 
 
 def init_setting(dummy):
