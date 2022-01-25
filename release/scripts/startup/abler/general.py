@@ -55,9 +55,6 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
 
         FILEPATH = self.filepath
 
-        col_imported = bpy.data.collections.new("Imported")
-        context.scene.collection.children.link(col_imported)
-
         col_layers = bpy.data.collections.get("Layers")
         if not col_layers:
             col_layers = bpy.data.collections.new("Layers")
@@ -84,9 +81,6 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
                 if coll.name == child:
                     found = True
 
-            if not found:
-                col_imported.children.link(coll)
-
             if coll.name == "Layers" or (
                 "Layers." in coll.name and len(coll.name) == 10
             ):
@@ -94,12 +88,7 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
                     added_l_exclude = context.scene.l_exclude.add()
                     added_l_exclude.name = coll_2.name
                     added_l_exclude.value = True
-                    if coll_2.name in col_layers.children.keys():
-                        print("Same Name of Collection Already Exists!!" + coll_2.name)
-                        # coll_2의 이름을 바꿔서 col_layers에 넣어줘야함!
-                        # col_layers.children.link(coll_2)
-                    else:
-                        col_layers.children.link(coll_2)
+                    col_layers.children.link(coll_2)
 
         for obj in data_to.objects:
             if obj.type == "MESH":
