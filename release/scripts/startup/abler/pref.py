@@ -47,6 +47,8 @@ def load_handler(dummy):
     materials_setup.applyAconToonStyle()
     for scene in bpy.data.scenes:
         scene.view_settings.view_transform = "Standard"
+
+    # update scene value when file-open
     change_and_reset_value()
 
 
