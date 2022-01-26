@@ -115,6 +115,11 @@ def loadScene(self, context) -> None:
     # TODO: scene이 바뀔때마다 look-at-me가 가리키는 scene.camera가 업데이트 돼야함
     for obj in bpy.data.objects:
         objects.setConstraintToCameraByObject(obj, context=None)
+    #     if obj.ACON_prop.constraint_to_camera_rotation_z:
+    #         # obj.ACON_prop.constraint_to_camera_rotation_z = False
+    #         # obj.ACON_prop.constraint_to_camera_rotation_z = True
+    #         obj.ACON_prop.constraint_to_camera_rotation_z = True
+    #         # True가 되면 context.scene.camera를 따라가야하는데 이전 scene의 카메라를 따라감
 
 
 def createScene(old_scene: Scene, type: str, name: str) -> Optional[Scene]:
