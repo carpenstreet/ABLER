@@ -450,6 +450,169 @@ class Acon3dRenderPanel(bpy.types.Panel):
             row = layout.row()
             row.operator("acon3d.render_all", text="Render All Scenes")
             row.operator("acon3d.render_snip", text="Snip Render")
+            row = layout.row()
+            row.operator(
+                "acon3d.world_diffuse_render", text="Render Diffuse Texture HDR"
+            )
+            row = layout.row()
+            row.operator("acon3d.world_normal_render", text="Render Normal Texture HDR")
+
+
+class Acon3dWorldDiffuseTextureRenderOperator(bpy.types.Operator):
+    """Development"""
+
+    bl_idname = "acon3d.world_diffuse_render"
+    bl_label = "Render Diffuse Texture HDR"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        from math import radians
+
+        scene = bpy.context.scene
+
+        camera = scene.camera
+        camera.location = (0, 0, 2)
+        camera.rotation_euler = (radians(90), radians(0), radians(-90))
+        camera.data.type = "PANO"
+        camera.data.cycles.panorama_type = "EQUIRECTANGULAR"
+
+        render = scene.render
+        render.engine = "CYCLES"
+        render.resolution_x = 8000
+        render.resolution_y = 4000
+        render.resolution_percentage = 100
+        render.film_transparent = True
+
+        for mat in bpy.data.materials:
+
+            node_tree = mat.node_tree
+            nodes = node_tree.nodes
+
+            node_output = None
+            node_combinedToon = None
+
+            for node in nodes:
+                if node.type == "OUTPUT_MATERIAL":
+                    node_output = node
+
+                if node.name == "ACON_nodeGroup_combinedToon":
+                    node_combinedToon = node
+
+            if node_combinedToon and node_output:
+                node_tree.links.new(node_combinedToon.outputs[0], node_output.inputs[0])
+
+        node_group = bpy.data.node_groups.get("ACON_nodeGroup_combinedToon")
+
+        if node_group:
+
+            node_outline = node_group.nodes.get("ACON_nodeGroup_outline")
+            inputs = node_outline.inputs
+            inputs[0].default_value = 40
+            inputs[1].default_value = 40
+
+        bpy.ops.render.render("INVOKE_DEFAULT")
+
+        return {"FINISHED"}
+
+
+class Acon3dWorldNormalTextureRenderOperator(bpy.types.Operator):
+    """Development"""
+
+    bl_idname = "acon3d.world_normal_render"
+    bl_label = "Render Normal Texture HDR"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        from math import radians
+
+        scene = bpy.context.scene
+
+        camera = scene.camera
+        camera.location = (0, 0, 2)
+        camera.rotation_euler = (radians(90), radians(0), radians(-90))
+        camera.data.type = "PANO"
+        camera.data.cycles.panorama_type = "EQUIRECTANGULAR"
+
+        render = scene.render
+        render.engine = "CYCLES"
+        render.resolution_x = 8000
+        render.resolution_y = 4000
+        render.resolution_percentage = 100
+        render.film_transparent = True
+
+        for mat in bpy.data.materials:
+
+            node_tree = mat.node_tree
+            nodes = node_tree.nodes
+
+            node_output = None
+
+            for node in nodes:
+                if node.type == "OUTPUT_MATERIAL":
+                    node_output = node
+
+            if not node_output:
+                node_output = nodes.new("ShaderNodeOutputMaterial")
+
+            node_normalToColor = nodes.get("ACON_normal_to_color")
+
+            if not node_normalToColor:
+
+                node_group = bpy.data.node_groups.get("ACON_normal_to_color")
+
+                if not node_group:
+
+                    node_group = bpy.data.node_groups.new(
+                        "ACON_normal_to_color", "ShaderNodeTree"
+                    )
+
+                    nodes = node_group.nodes
+
+                    node_geometry = nodes.new("ShaderNodeNewGeometry")
+
+                    node_vectorMath_1 = nodes.new("ShaderNodeVectorMath")
+                    node_vectorMath_1.operation = "MULTIPLY"
+                    node_vectorMath_1.inputs[1].default_value = (0.5, 0.5, 0.5)
+                    node_group.links.new(
+                        node_geometry.outputs[1], node_vectorMath_1.inputs[0]
+                    )
+
+                    node_vectorMath_2 = nodes.new("ShaderNodeVectorMath")
+                    node_vectorMath_2.operation = "ADD"
+                    node_vectorMath_2.inputs[1].default_value = (0.5, 0.5, 0.5)
+                    node_group.links.new(
+                        node_vectorMath_1.outputs[0], node_vectorMath_2.inputs[0]
+                    )
+
+                    node_mixShader = nodes.new("ShaderNodeMixShader")
+                    node_group.links.new(
+                        node_geometry.outputs[6], node_mixShader.inputs[0]
+                    )
+                    node_group.links.new(
+                        node_vectorMath_2.outputs[0], node_mixShader.inputs[1]
+                    )
+
+                    node_transparent = nodes.new("ShaderNodeBsdfTransparent")
+                    node_transparent.inputs[0].default_value = (1, 1, 1, 1)
+                    node_group.links.new(
+                        node_transparent.outputs[0], node_mixShader.inputs[2]
+                    )
+
+                    outputs = nodes.new("NodeGroupOutput")
+                    node_group.outputs.new("NodeSocketShader", "Shader")
+                    node_group.links.new(node_mixShader.outputs[0], outputs.inputs[0])
+
+                    nodes = mat.node_tree.nodes
+
+                node_normalToColor = nodes.new(type="ShaderNodeGroup")
+                node_normalToColor.name = "ACON_normal_to_color"
+                node_normalToColor.node_tree = node_group
+
+            node_tree.links.new(node_normalToColor.outputs[0], node_output.inputs[0])
+
+        bpy.ops.render.render("INVOKE_DEFAULT")
+
+        return {"FINISHED"}
 
 
 classes = (
@@ -461,6 +624,8 @@ classes = (
     Acon3dRenderSnipOperator,
     Acon3dRenderQuickOperator,
     Acon3dRenderPanel,
+    Acon3dWorldDiffuseTextureRenderOperator,
+    Acon3dWorldNormalTextureRenderOperator,
 )
 
 
