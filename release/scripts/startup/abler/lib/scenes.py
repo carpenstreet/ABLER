@@ -112,8 +112,9 @@ def loadScene(self, context) -> None:
     shadow.toggleShadow(self, context)
     shadow.changeSunRotation(self, context)
 
+    # TODO: scene이 바뀔때마다 look-at-me가 가리키는 scene.camera가 업데이트 돼야함
     for obj in bpy.data.objects:
-        objects.setConstraintToCameraByObject(obj, context)
+        objects.setConstraintToCameraByObject(obj, context=None)
 
 
 def createScene(old_scene: Scene, type: str, name: str) -> Optional[Scene]:
