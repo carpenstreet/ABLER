@@ -94,16 +94,19 @@ class Acon3dStateActionOperator(bpy.types.Operator):
 
 
 class RefreshLookAtMeOperator(bpy.types.Operator):
+    """Refresh Look at me"""
 
     bl_idname = "acon3d.refresh_lookatme"
     bl_label = "Refresh Look at me"
 
     def execute(self, context):
-        bpy.ops.object.select_all(action="SELECT")
+        bpy.ops.object.select_all(action="DESELECT")
         for obj in bpy.data.objects:
             if obj.ACON_prop.constraint_to_camera_rotation_z:
+                obj.select_set(True)
+                bpy.context.view_layer.objects.active = obj
                 obj.ACON_prop.constraint_to_camera_rotation_z = True
-        bpy.ops.object.select_all(action="DESELECT")
+                obj.select_set(False)
         return {"FINISHED"}
 
 
