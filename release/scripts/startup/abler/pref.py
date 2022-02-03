@@ -1,6 +1,6 @@
 import bpy
 from bpy.app.handlers import persistent
-from .lib import cameras, shadow, render
+from .lib import cameras, shadow, render, scenes
 from .lib.materials import materials_setup
 
 
@@ -46,6 +46,9 @@ def load_handler(dummy):
     materials_setup.applyAconToonStyle()
     for scene in bpy.data.scenes:
         scene.view_settings.view_transform = "Standard"
+
+    # refresh look_at_me
+    scenes.refresh_look_at_me()
 
 
 def register():
