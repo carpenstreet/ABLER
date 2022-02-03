@@ -68,6 +68,16 @@ def genSceneName(name: str, i: int = 1) -> str:
         return combinedName
 
 
+def refresh_look_at_me() -> None:
+    bpy.ops.object.select_all(action="DESELECT")
+    for obj in bpy.data.objects:
+        if obj.ACON_prop.constraint_to_camera_rotation_z:
+            obj.select_set(True)
+            bpy.context.view_layer.objects.active = obj
+            obj.ACON_prop.constraint_to_camera_rotation_z = True
+            obj.select_set(False)
+
+
 # scene_items should be a global variable due to a bug in EnumProperty
 scene_items: List[Tuple[str, str, str]] = []
 
@@ -113,7 +123,7 @@ def loadScene(self, context) -> None:
     shadow.changeSunRotation(self, context)
 
     # refresh look_at_me
-    bpy.ops.acon3d.refresh_lookatme()
+    refresh_look_at_me()
 
 
 def createScene(old_scene: Scene, type: str, name: str) -> Optional[Scene]:

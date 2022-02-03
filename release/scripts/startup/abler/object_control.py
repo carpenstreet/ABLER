@@ -93,23 +93,6 @@ class Acon3dStateActionOperator(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class RefreshLookAtMeOperator(bpy.types.Operator):
-    """Refresh Look at me"""
-
-    bl_idname = "acon3d.refresh_lookatme"
-    bl_label = "Refresh Look at me"
-
-    def execute(self, context):
-        bpy.ops.object.select_all(action="DESELECT")
-        for obj in bpy.data.objects:
-            if obj.ACON_prop.constraint_to_camera_rotation_z:
-                obj.select_set(True)
-                bpy.context.view_layer.objects.active = obj
-                obj.ACON_prop.constraint_to_camera_rotation_z = True
-                obj.select_set(False)
-        return {"FINISHED"}
-
-
 class Acon3dObjectPanel(bpy.types.Panel):
     bl_idname = "ACON_PT_Object_Main"
     bl_label = "Object Control"
@@ -133,7 +116,6 @@ class Acon3dObjectPanel(bpy.types.Panel):
         if context.object:
             row = col.row()
             row.prop(context.object.ACON_prop, "constraint_to_camera_rotation_z")
-            row.operator("acon3d.refresh_lookatme", text="", icon="FILE_REFRESH")
 
 
 class ObjectSubPanel(bpy.types.Panel):
@@ -171,7 +153,6 @@ class ObjectSubPanel(bpy.types.Panel):
 classes = (
     Acon3dStateActionOperator,
     Acon3dStateUpdateOperator,
-    RefreshLookAtMeOperator,
     Acon3dObjectPanel,
     ObjectSubPanel,
 )
