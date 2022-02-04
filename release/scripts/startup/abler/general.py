@@ -192,6 +192,17 @@ class FileOpenOperator(bpy.types.Operator, ImportHelper):
         return {"FINISHED"}
 
 
+class DummyUndoOperator(bpy.types.Operator):
+    """Dummy operator to undo"""
+
+    bl_idname = "acon3d.dummy_undo"
+    bl_label = "Dummy Undo"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        return {"FINISHED"}
+
+
 class FlyOperator(bpy.types.Operator):
     """Fly Mode"""
 
@@ -250,6 +261,7 @@ classes = (
     FileOpenOperator,
     FlyOperator,
     ImportFBXOperator,
+    DummyUndoOperator,
 )
 
 

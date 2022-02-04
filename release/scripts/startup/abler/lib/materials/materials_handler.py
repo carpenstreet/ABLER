@@ -194,6 +194,9 @@ def changeMaterialType(self, context):
 
 def changeImageAdjustBrightness(self, context):
 
+    # add dummy operator
+    bpy.ops.acon3d.dummy_undo()
+
     node_group = bpy.data.node_groups.get("ACON_nodeGroup_combinedToon")
     if not node_group:
         return
