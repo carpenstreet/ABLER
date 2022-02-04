@@ -62,7 +62,7 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
 
         with bpy.data.libraries.load(FILEPATH) as (data_from, data_to):
             data_to.collections = data_from.collections
-            data_to.objects = [name for name in data_from.objects]
+            data_to.objects = list(data_from.objects)
 
         children_names = {}
 
@@ -76,11 +76,7 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
                 data_to.collections.remove(coll)
                 break
 
-            found = False
-            for child in children_names:
-                if coll.name == child:
-                    found = True
-
+            found = any(coll.name == child for child in children_names)
             if coll.name == "Layers" or (
                 "Layers." in coll.name and len(coll.name) == 10
             ):

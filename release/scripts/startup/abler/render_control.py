@@ -63,6 +63,7 @@ class Acon3dCameraViewOperator(bpy.types.Operator):
     bl_idname = "acon3d.camera_view"
     bl_label = "Camera View"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         cameras.turnOnCameraView()

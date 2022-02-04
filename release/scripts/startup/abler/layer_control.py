@@ -41,6 +41,7 @@ class Acon3dCreateGroupOperator(bpy.types.Operator):
     bl_idname = "acon3d.create_group"
     bl_label = "Create Group"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         collection = bpy.data.collections.get("Groups")
@@ -80,6 +81,7 @@ class Acon3dExplodeGroupOperator(bpy.types.Operator):
     bl_idname = "acon3d.explode_group"
     bl_label = "Explode Group"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
 
