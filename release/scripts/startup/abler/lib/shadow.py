@@ -51,7 +51,7 @@ def changeSunStrength(self, context) -> None:
         acon_sun = createAconSun()
 
     prop = context.scene.ACON_prop
-    if acon_sun.type == "SUN":
+    if acon_sun.data.type == "SUN":
         acon_sun.data.energy = prop.sun_strength
 
 
@@ -61,7 +61,7 @@ def toggleShadow(self, context) -> None:
         acon_sun = createAconSun()
 
     prop = context.scene.ACON_prop
-    if acon_sun.type == "SUN":
+    if acon_sun.data.type == "SUN":
         acon_sun.data.use_shadow = prop.toggle_shadow
 
 
@@ -74,7 +74,7 @@ def setupSharpShadow():
 
     if not acon_sun:
         acon_sun = createAconSun()
-    if acon_sun.type == "SUN":
+    if acon_sun.data.type == "SUN":
         acon_sun.data.angle = 0
         acon_sun.data.use_contact_shadow = 1
 
