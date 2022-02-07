@@ -55,9 +55,6 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
 
         FILEPATH = self.filepath
 
-        col_imported = bpy.data.collections.new("Imported")
-        context.scene.collection.children.link(col_imported)
-
         col_layers = bpy.data.collections.get("Layers")
         if not col_layers:
             col_layers = bpy.data.collections.new("Layers")
@@ -83,9 +80,6 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
             for child in children_names:
                 if coll.name == child:
                     found = True
-
-            if not found:
-                col_imported.children.link(coll)
 
             if coll.name == "Layers" or (
                 "Layers." in coll.name and len(coll.name) == 10
