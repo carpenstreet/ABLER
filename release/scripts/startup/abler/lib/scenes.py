@@ -69,13 +69,19 @@ def genSceneName(name: str, i: int = 1) -> str:
 
 
 def refresh_look_at_me() -> None:
+
+    context = bpy.context
+    prev_active_object = context.active_object
+
     bpy.ops.object.select_all(action="DESELECT")
     for obj in bpy.data.objects:
         if obj.ACON_prop.constraint_to_camera_rotation_z:
             obj.select_set(True)
-            bpy.context.view_layer.objects.active = obj
+            context.view_layer.objects.active = obj
             obj.ACON_prop.constraint_to_camera_rotation_z = True
             obj.select_set(False)
+
+    context.view_layer.objects.active = prev_active_object
 
 
 # scene_items should be a global variable due to a bug in EnumProperty
