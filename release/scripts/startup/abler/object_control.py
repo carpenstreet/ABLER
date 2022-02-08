@@ -40,6 +40,7 @@ class Acon3dStateUpdateOperator(bpy.types.Operator):
     bl_idname = "acon3d.state_update"
     bl_label = "Update State"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -70,6 +71,7 @@ class Acon3dStateActionOperator(bpy.types.Operator):
     bl_idname = "acon3d.state_action"
     bl_label = "Move State"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     step: bpy.props.FloatProperty(name="Toggle Mode", default=0.25)
 

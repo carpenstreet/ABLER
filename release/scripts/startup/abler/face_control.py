@@ -73,6 +73,7 @@ class CloneMaterialOperator(bpy.types.Operator):
 
     bl_idname = "acon3d.clone_material"
     bl_label = "Clone Material"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):

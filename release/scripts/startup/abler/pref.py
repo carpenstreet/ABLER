@@ -2,6 +2,7 @@ import bpy
 from bpy.app.handlers import persistent
 from .lib import cameras, shadow, render, scenes
 from .lib.materials import materials_setup
+from .lib.post_open import change_and_reset_value
 
 
 def init_setting(dummy):
@@ -49,6 +50,9 @@ def load_handler(dummy):
 
     # refresh look_at_me
     scenes.refresh_look_at_me()
+    
+    # update scene value when file-open
+    change_and_reset_value()
 
 
 def register():
