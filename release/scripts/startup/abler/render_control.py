@@ -159,9 +159,7 @@ class Acon3dRenderOperator(bpy.types.Operator, ImportHelper):
 
                 if self.show_on_completion:
                     scene = context.scene
-                    filename = (
-                        scene.name + "." + scene.render.image_settings.file_format
-                    )
+                    filename = f"{scene.name}.{scene.render.image_settings.file_format}"
                     openDirectory(os.path.join(self.filepath, filename))
 
                 return self.on_render_finish(context)
@@ -227,7 +225,7 @@ class Acon3dRenderTempSceneOperator(Acon3dRenderOperator):
     def prepare_queue(self, context):
 
         scene = context.scene.copy()
-        scene.name = context.scene.name + "_shadow"
+        scene.name = f"{context.scene.name}_shadow"
         self.render_queue.append(scene)
         self.temp_scenes.append(scene)
 
@@ -241,8 +239,7 @@ class Acon3dRenderTempSceneOperator(Acon3dRenderOperator):
         for mat in bpy.data.materials:
             mat.blend_method = "OPAQUE"
             mat.shadow_method = "OPAQUE"
-            toonNode = mat.node_tree.nodes.get("ACON_nodeGroup_combinedToon")
-            if toonNode:
+            if toonNode := mat.node_tree.nodes.get("ACON_nodeGroup_combinedToon"):
                 toonNode.inputs[1].default_value = 0
                 toonNode.inputs[3].default_value = 1
 
@@ -291,7 +288,7 @@ class Acon3dRenderLineOperator(Acon3dRenderTempSceneOperator):
         super().prepare_queue(context)
 
         scene = self.render_queue[0]
-        scene.name = context.scene.name + "_line"
+        scene.name = f"{context.scene.name}_line"
         prop = scene.ACON_prop
         prop.toggle_shading = False
         prop.toggle_toon_edge = True
@@ -324,8 +321,9 @@ class Acon3dRenderSnipOperator(Acon3dRenderTempSceneOperator):
 
             shade_scene = self.temp_scenes[0]
             filename = (
-                shade_scene.name + "." + shade_scene.render.image_settings.file_format
+                f"{shade_scene.name}.{shade_scene.render.image_settings.file_format}"
             )
+
             image_path = os.path.join(self.filepath, filename)
             self.temp_image = bpy.data.images.load(image_path)
 
@@ -352,7 +350,7 @@ class Acon3dRenderSnipOperator(Acon3dRenderTempSceneOperator):
         super().prepare_queue(context)
 
         scene = context.scene.copy()
-        scene.name = context.scene.name + "_snipped"
+        scene.name = f"{context.scene.name}_snipped"
         scene.ACON_prop.toggle_shading = False
         self.render_queue.append(scene)
         self.temp_scenes.append(scene)
@@ -369,7 +367,7 @@ class Acon3dRenderSnipOperator(Acon3dRenderTempSceneOperator):
             col_group.objects.link(obj)
 
         scene = context.scene.copy()
-        scene.name = context.scene.name + "_full"
+        scene.name = f"{context.scene.name}_full"
         self.render_queue.append(scene)
         self.temp_scenes.append(scene)
 
@@ -427,18 +425,11 @@ class Acon3dRenderPanel(bpy.types.Panel):
         layout.label(icon="RENDER_STILL")
 
     def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        is_camera = False
-        for obj in bpy.data.objects:
-            if obj.type == "CAMERA":
-                is_camera = True
-                break
-
         scene = context.scene
 
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
         row = layout.row(align=True)
         row.operator("acon3d.camera_view", text="", icon="RESTRICT_VIEW_OFF")
         row.prop(scene.render, "resolution_x", text="")
@@ -447,7 +438,7 @@ class Acon3dRenderPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("acon3d.render_quick", text="Quick Render", text_ctxt="*")
 
-        if is_camera:
+        if is_camera := any(obj.type == "CAMERA" for obj in bpy.data.objects):
             row.operator("acon3d.render_full", text="Full Render")
             row = layout.row()
             row.operator("acon3d.render_line", text="Line Render")
