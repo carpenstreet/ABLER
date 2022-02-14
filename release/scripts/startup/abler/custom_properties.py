@@ -56,9 +56,9 @@ class CollectionLayerExcludeProperties(bpy.types.PropertyGroup):
     def updateLayerVis(self, context):
         target_layer = bpy.data.collections[self.name]
         for objs in target_layer.objects:
-            belonging_col_names = set(
+            belonging_col_names = {
                 collection.name for collection in objs.users_collection
-            )
+            }
             should_show = all(
                 layer.value
                 for layer in bpy.context.scene.l_exclude

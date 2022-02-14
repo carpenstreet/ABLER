@@ -87,9 +87,7 @@ class Acon3dStateActionOperator(bpy.types.Operator):
             else:
                 x += self.step
 
-            if x > 1:
-                x = 1
-
+            x = min(x, 1)
             prop.state_slider = x
 
         return {"FINISHED"}
@@ -130,8 +128,7 @@ class ObjectSubPanel(bpy.types.Panel):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw_header(self, context):
-        obj = context.object
-        if obj:
+        if obj := context.object:
             layout = self.layout
             layout.active = bool(len(context.selected_objects))
             layout.enabled = layout.active
