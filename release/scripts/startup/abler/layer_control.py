@@ -132,6 +132,10 @@ class Acon3dLayerPanel(bpy.types.Panel):
         for child in collection.children:
             index += 1
 
+            if child.name == "Layer0":
+                findex += 1
+                continue
+
             l_exclude = bpy.context.scene.l_exclude
 
             if findex > len(l_exclude) - 1:
