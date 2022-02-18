@@ -16,3 +16,15 @@
 [submodule "extern/sentry-native"]
 	path = extern/sentry-native
 	url = git@github.com:getsentry/sentry-native.git
+
+[submodule "launcher_qt"]
+	path = launcher_qt
+	url = https://github.com/ACON3D/QT-Launcher.git
+	branch = main
+	ignore = all
+
+[submodule "release/scripts/addons_abler/io_skp"]
+	path = release/scripts/addons_abler/io_skp
+	url = https://github.com/ACON3D/SKP_Converter.git
+	branch = main
+	ignore = all

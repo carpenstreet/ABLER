@@ -43,6 +43,9 @@ def toggleEachEdge(self, context):
 
     mat = obj.active_material
 
+    if not mat:
+        return
+
     toonEdgeFactorValue = int(mat.ACON_prop.toggle_edge)
     toonNode = mat.node_tree.nodes.get("ACON_nodeGroup_combinedToon")
     toonNode.inputs[9].default_value = toonEdgeFactorValue
@@ -99,6 +102,10 @@ def toggleEachShading(self, context):
         return
 
     mat = obj.active_material
+
+    if not mat:
+        return
+
     shadingFactorValue = int(mat.ACON_prop.toggle_shading)
     toonNode = mat.node_tree.nodes.get("ACON_nodeGroup_combinedToon")
     toonNode.inputs[4].default_value = shadingFactorValue
@@ -114,6 +121,9 @@ def toggleEachShadow(self, context):
         return
 
     mat = obj.active_material
+
+    if not mat:
+        return
 
     if mat.ACON_prop.toggle_shadow:
         mat.shadow_method = "CLIP"

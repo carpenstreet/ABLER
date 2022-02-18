@@ -32,6 +32,7 @@ bl_info = {
 
 
 import bpy
+from .lib.tracker import tracker
 
 
 class MATERIAL_UL_List(bpy.types.UIList):
@@ -42,14 +43,14 @@ class MATERIAL_UL_List(bpy.types.UIList):
         layout.use_property_decorate = False
         ob = data
         slot = item
-        ma = slot.material
-
-        if ma:
-
+        if ma := slot.material:
             layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
             layout.prop(ma.ACON_prop, "type", text="")
 
-            toonNode = ma.node_tree.nodes["ACON_nodeGroup_combinedToon"]
+            toonNode = ma.node_tree.nodes.get("ACON_nodeGroup_combinedToon")
+
+            if not toonNode:
+                return
 
             if ma.ACON_prop.type == "Diffuse":
                 layout.label(text="", translate=False)
@@ -69,14 +70,12 @@ class CloneMaterialOperator(bpy.types.Operator):
 
     bl_idname = "acon3d.clone_material"
     bl_label = "Clone Material"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
         try:
-            if context.object.active_material:
-                return True
-            else:
-                return False
+            return bool(context.object.active_material)
         except:
             return False
 
@@ -116,9 +115,7 @@ class MaterialPanel(bpy.types.Panel):
                 "active_material_index",
                 rows=2,
             )
-            mat = obj.active_material
-
-            if mat:
+            if mat := obj.active_material:
                 box = col.box()
                 row = box.row()
                 row.template_ID(
@@ -210,8 +207,7 @@ class Acon3dBloomPanel(bpy.types.Panel):
 
     def draw_header(self, context):
         scene = context.scene
-        props = scene.eevee
-        self.layout.prop(props, "use_bloom", text="")
+        self.layout.prop(scene.ACON_prop, "use_bloom", text="")
 
     def draw(self, context):
         layout = self.layout

@@ -56,8 +56,17 @@ class CollectionLayerExcludeProperties(bpy.types.PropertyGroup):
     def updateLayerVis(self, context):
         target_layer = bpy.data.collections[self.name]
         for objs in target_layer.objects:
-            objs.hide_viewport = not (self.value)
-            objs.hide_render = not (self.value)
+            belonging_col_names = {
+                collection.name for collection in objs.users_collection
+            }
+            should_show = all(
+                layer.value
+                for layer in bpy.context.scene.l_exclude
+                if layer.name in belonging_col_names
+            )
+
+            objs.hide_viewport = not should_show
+            objs.hide_render = not should_show
 
     def updateLayerLock(self, context):
         target_layer = bpy.data.collections[self.name]
@@ -295,6 +304,17 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     selected_objects_str: bpy.props.StringProperty(name="Selected Objects")
+
+    use_dof: bpy.props.BoolProperty(
+        name="Depth of Field", default=False, update=scenes.change_dof
+    )
+
+    show_background_images: bpy.props.BoolProperty(
+        name="Background Images", default=False, update=scenes.change_background_images
+    )
+    use_bloom: bpy.props.BoolProperty(
+        name="Bloom", default=True, update=scenes.change_bloom
+    )
 
 
 class AconMaterialProperty(bpy.types.PropertyGroup):

@@ -22,12 +22,14 @@ import ctypes
 import platform
 from bpy.app.handlers import persistent
 import requests, webbrowser, pickle, os
+from .lib.post_open import tracker_file_open
 from .lib.remember_username import (
     delete_remembered_username,
     read_remembered_checkbox,
     remember_username,
     read_remembered_username,
 )
+from .lib.login import is_first_open
 from .lib.tracker import tracker
 from .lib.async_task import AsyncTask
 
@@ -151,8 +153,7 @@ class Acon3dModalOperator(bpy.types.Operator):
         def char2key(c):
             result = ctypes.windll.User32.VkKeyScanW(ord(c))
             shift_state = (result & 0xFF00) >> 8
-            vk_key = result & 0xFF
-            return vk_key
+            return result & 0xFF
 
         if userInfo and userInfo.ACON_prop.login_status == "SUCCESS":
             return {"FINISHED"}
@@ -242,7 +243,7 @@ class LoginTask(AsyncTask):
             raise Exception("status code is not 200")
 
     def _on_success(self):
-        tracker.logged_in(self.username)
+        tracker.login(self.username)
 
         prop = self.prop
         path = bpy.utils.resource_path("USER")
@@ -274,6 +275,8 @@ class LoginTask(AsyncTask):
         bpy.context.window.cursor_set("DEFAULT")
 
     def _on_failure(self, e: BaseException):
+        tracker.login_fail()
+
         self.prop.login_status = "FAIL"
         print("Login request has failed.")
         print(e)
@@ -312,6 +315,9 @@ class Acon3dAnchorOperator(bpy.types.Operator):
 
 @persistent
 def open_credential_modal(dummy):
+
+    fileopen = tracker_file_open()
+
     prefs = bpy.context.preferences
     prefs.view.show_splash = True
 
@@ -331,17 +337,16 @@ def open_credential_modal(dummy):
             raise
         prop.remember_username = read_remembered_checkbox()
 
-        cookiesFile = open(path_cookiesFile, "rb")
-        cookies = pickle.load(cookiesFile)
-        cookiesFile.close()
+        with open(path_cookiesFile, "rb") as cookiesFile:
+            cookies = pickle.load(cookiesFile)
         response = requests.get(
             "https://api-v2.acon3d.com/auth/acon3d/refresh", cookies=cookies
         )
 
         responseData = response.json()
-        token = responseData["accessToken"]
-
-        if token:
+        if token := responseData["accessToken"]:
+            if not fileopen and is_first_open():
+                tracker.login_auto()
             prop.login_status = "SUCCESS"
 
     except:
