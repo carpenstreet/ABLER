@@ -1,6 +1,7 @@
 from typing import Optional
 import bpy
 from .tracker import tracker
+from ..custom_properties import AconSceneProperty
 
 
 def tracker_file_open() -> Optional[bool]:
@@ -13,12 +14,10 @@ def tracker_file_open() -> Optional[bool]:
 
 def change_and_reset_value() -> None:
 
-    # line update
-    original_value = bpy.context.scene.ACON_prop.edge_min_line_width
-    bpy.context.scene.ACON_prop.edge_min_line_width = 0
-    bpy.context.scene.ACON_prop.edge_min_line_width = original_value
-
-    # sun update
-    original_value = bpy.context.scene.ACON_prop.sun_strength
-    bpy.context.scene.ACON_prop.sun_strength = 1.0
-    bpy.context.scene.ACON_prop.sun_strength = original_value
+    properties = AconSceneProperty.__annotations__
+    for property in properties:
+        get_property = getattr(bpy.context.scene.ACON_prop, property)
+        original_value = get_property
+        if type(get_property) == float or type(get_property) == int:
+            setattr(bpy.context.scene.ACON_prop, property, 0)
+            setattr(bpy.context.scene.ACON_prop, property, original_value)
