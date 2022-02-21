@@ -13,9 +13,9 @@
 	url = https://github.com/blender/blender-dev-tools.git
 	branch = blender-v2.93-release
 	ignore = all
-[submodule "extern/sentry-native"]
-	path = extern/sentry-native
-	url = git@github.com:getsentry/sentry-native.git
+# [submodule "extern/sentry-native"]
+# 	path = extern/sentry-native
+# 	url = git@github.com:getsentry/sentry-native.git
 
 [submodule "launcher_qt"]
 	path = launcher_qt
