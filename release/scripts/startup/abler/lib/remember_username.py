@@ -26,4 +26,4 @@ def delete_remembered_username() -> None:
 
 
 def read_remembered_checkbox() -> bool:
-    return bool(os.path.isfile(path_cookies_username))
+    return os.path.isfile(path_cookies_username)

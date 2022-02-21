@@ -8,7 +8,7 @@ def toggleConstraintToCamera(self, context):
     cameras.makeSureCameraExists()
 
     obj = context.object
-    if _ := obj.ACON_prop.constraint_to_camera_rotation_z:
+    if obj.ACON_prop.constraint_to_camera_rotation_z:
         tracker.look_at_me()
 
     setConstraintToCameraByObject(obj, context)

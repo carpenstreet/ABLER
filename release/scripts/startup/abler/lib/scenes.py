@@ -56,9 +56,7 @@ def change_bloom(self, context: Context) -> None:
 def genSceneName(name: str, i: int = 1) -> str:
     combinedName: str = name + str(i)
 
-    found: Optional[bool] = next(
-        (True for scene in bpy.data.scenes if scene.name == combinedName), None
-    )
+    found = any(scene.name == combinedName for scene in bpy.data.scenes)
 
     return genSceneName(name, i + 1) if found else combinedName
 
