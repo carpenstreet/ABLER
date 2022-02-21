@@ -16,8 +16,7 @@ def change_and_reset_value() -> None:
 
     properties = AconSceneProperty.__annotations__
     for property in properties:
-        get_property = getattr(bpy.context.scene.ACON_prop, property)
-        original_value = get_property
-        if type(get_property) == float or type(get_property) == int:
+        original_value = getattr(bpy.context.scene.ACON_prop, property)
+        if type(original_value) == float or type(original_value) == int:
             setattr(bpy.context.scene.ACON_prop, property, 0)
             setattr(bpy.context.scene.ACON_prop, property, original_value)
