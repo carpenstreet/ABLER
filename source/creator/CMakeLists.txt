@@ -288,6 +288,10 @@ if(WITH_PYTHON_MODULE)
 
 else()
   add_executable(blender ${EXETYPE} ${SRC})
+  # TODO: 아래 심볼을 못 찾는 문제 자체가 해결되어야 함
+  if(APPLE)
+    target_link_options(blender PRIVATE "-Wl,-U,_BrotliDecoderDecompress")
+  endif()
 endif()
 
 if(WITH_BUILDINFO)
