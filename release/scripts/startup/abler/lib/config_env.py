@@ -1,8 +1,9 @@
 import os
+from typing import Optional
 from dotenv import load_dotenv
 
 
-def find_dotenv():
+def find_dotenv() -> Optional(str):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     last_dir = None
     while last_dir != current_dir:

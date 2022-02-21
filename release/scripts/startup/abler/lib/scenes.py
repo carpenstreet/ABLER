@@ -19,14 +19,14 @@
 
 from typing import List, Tuple, Optional
 import bpy
-from bpy.types import Scene
+from bpy.types import Scene, Context
 from . import shadow, layers, objects
 from .materials import materials_handler
 from math import radians
 from .tracker import tracker
 
 
-def change_dof(self, context) -> None:
+def change_dof(self, context: Context) -> None:
     prop = context.scene.ACON_prop
     context.scene.camera.data.dof.use_dof = prop.use_dof
     if prop.use_dof:
@@ -35,7 +35,7 @@ def change_dof(self, context) -> None:
         tracker.depth_of_field_off()
 
 
-def change_background_images(self, context) -> None:
+def change_background_images(self, context: Context) -> None:
     prop = context.scene.ACON_prop
     context.scene.camera.data.show_background_images = prop.show_background_images
     if prop.show_background_images:
@@ -44,7 +44,7 @@ def change_background_images(self, context) -> None:
         tracker.background_images_off()
 
 
-def change_bloom(self, context) -> None:
+def change_bloom(self, context: Context) -> None:
     prop = context.scene.ACON_prop
     context.scene.eevee.use_bloom = prop.use_bloom
     if prop.use_bloom:
@@ -54,18 +54,13 @@ def change_bloom(self, context) -> None:
 
 
 def genSceneName(name: str, i: int = 1) -> str:
-    found: Optional[bool] = None
     combinedName: str = name + str(i)
 
-    for scene in bpy.data.scenes:
-        if scene.name == combinedName:
-            found = True
-            break
+    found: Optional[bool] = next(
+        (True for scene in bpy.data.scenes if scene.name == combinedName), None
+    )
 
-    if found:
-        return genSceneName(name, i + 1)
-    else:
-        return combinedName
+    return genSceneName(name, i + 1) if found else combinedName
 
 
 def refresh_look_at_me() -> None:
@@ -88,7 +83,7 @@ def refresh_look_at_me() -> None:
 scene_items: List[Tuple[str, str, str]] = []
 
 
-def add_scene_items(self, context) -> List[Tuple[str, str, str]]:
+def add_scene_items(self, context: Context) -> List[Tuple[str, str, str]]:
     scene_items.clear()
     for scene in bpy.data.scenes:
         scene_items.append((scene.name, scene.name, ""))
@@ -96,7 +91,7 @@ def add_scene_items(self, context) -> List[Tuple[str, str, str]]:
     return scene_items
 
 
-def loadScene(self, context) -> None:
+def loadScene(self, context: Context) -> None:
 
     if not context:
         context = bpy.context

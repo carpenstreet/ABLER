@@ -8,8 +8,7 @@ def toggleConstraintToCamera(self, context):
     cameras.makeSureCameraExists()
 
     obj = context.object
-    look_at_me = obj.ACON_prop.constraint_to_camera_rotation_z
-    if look_at_me:
+    if _ := obj.ACON_prop.constraint_to_camera_rotation_z:
         tracker.look_at_me()
 
     setConstraintToCameraByObject(obj, context)
@@ -67,17 +66,14 @@ def toggleUseState(self, context):
 
             prop = obj.ACON_prop
 
-            if obj == context.object or not prop.use_state:
+            if (obj == context.object or not prop.use_state) and not prop.state_exists:
+                for att in ["location", "rotation_euler", "scale"]:
 
-                if not prop.state_exists:
+                    vector = getattr(obj, att)
+                    setattr(prop.state_begin, att, vector)
+                    setattr(prop.state_end, att, vector)
 
-                    for att in ["location", "rotation_euler", "scale"]:
-
-                        vector = getattr(obj, att)
-                        setattr(prop.state_begin, att, vector)
-                        setattr(prop.state_end, att, vector)
-
-                    prop.state_exists = True
+                prop.state_exists = True
 
             if not prop.use_state:
 
