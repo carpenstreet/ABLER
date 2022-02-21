@@ -1,8 +1,9 @@
+from typing import Optional
 import bpy
 from .tracker import tracker
 
 
-def tracker_file_open():
+def tracker_file_open() -> Optional[bool]:
 
     # tracking file_open
     if bpy.data.filepath != "":
@@ -10,7 +11,7 @@ def tracker_file_open():
         return True
 
 
-def change_and_reset_value():
+def change_and_reset_value() -> None:
 
     # line update
     original_value = bpy.context.scene.ACON_prop.edge_min_line_width
