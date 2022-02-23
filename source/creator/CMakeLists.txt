@@ -1018,16 +1018,18 @@ elseif(APPLE)
     DESTINATION "."
   )
   # build and install abler launcher
-  if(APPLE)
-    execute_process(
-      COMMAND pyinstaller --icon=icon.icns --onefile --windowed --uac-admin -y ${CMAKE_SOURCE_DIR}/launcher_abler/AblerLauncher.py
-    )
-    install(
-      FILES ${CMAKE_SOURCE_DIR}/launcher_abler/dist/AblerLauncher
-      PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
-      DESTINATION ABLER.app/Contents/MacOS
-    )
-  endif()
+#   if(APPLE)
+#     if (CMAKE_BUILD_TYPE STREQUAL "Release")
+#         execute_process(
+#         COMMAND pyinstaller --icon=icon.icns --onefile --windowed --uac-admin -y ${CMAKE_SOURCE_DIR}/launcher_abler/AblerLauncher.py
+#         )
+#         install(
+#         FILES ${CMAKE_SOURCE_DIR}/launcher_abler/dist/AblerLauncher
+#         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+#         DESTINATION ABLER.app/Contents/MacOS
+#         )
+#     endif()
+#   endif()
 
   # install release and app files
   set(BLENDER_TEXT_FILES_DESTINATION ABLER.app/Contents/Resources/text)
