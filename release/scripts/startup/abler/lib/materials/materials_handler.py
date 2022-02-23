@@ -19,7 +19,19 @@
 
 import bpy
 from typing import List, Optional
-from bpy.types import *
+from bpy.types import (
+    Context,
+    NodeTree,
+    Node,
+    Object,
+    Material,
+    BoolProperty,
+    EnumProperty,
+    FloatProperty,
+    MaterialSlot,
+    NodeSocket,
+    PropertyGroup,
+)
 
 
 def toggleToonEdge(self, context: Context) -> None:
