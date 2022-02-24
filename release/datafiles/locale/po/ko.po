@@ -93327,3 +93327,31 @@ msgstr "상태정보 사용하기"
 
 msgid "Save object's current location / rotation / scale values to state data"
 msgstr "오브젝트의 현재 위치 / 회전 / 스케일 값을 상태정보에 저장합니다."
+
+
+msgid "Group Navigation"
+msgstr "그룹 네비게이션"
+
+msgid "Group Navigate Top"
+msgstr "최상위 그룹"
+
+msgid "Select Top Group"
+msgstr "최상위 그룹 선택하기"
+
+msgid "Group Navigate Up"
+msgstr "상위 그룹"
+
+msgid "Select Upper Group"
+msgstr "상위 그룹 선택하기"
+
+msgid "Group Navigate Down"
+msgstr "하위 그룹"
+
+msgid "Select Lower Group"
+msgstr "하위 그룹 선택하기"
+
+msgid "Group Navigate Bottom"
+msgstr "최하위 그룹"
+
+msgid "Select Bottom Group"
+msgstr "최하위 그룹 선택하기"

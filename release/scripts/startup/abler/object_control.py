@@ -32,6 +32,67 @@ bl_info = {
 
 
 import bpy
+from .lib import layers
+
+
+class GroupNavigateTopOperator(bpy.types.Operator):
+    """Select Top Group"""
+
+    bl_idname = "acon3d.group_navigate_top"
+    bl_label = "Group Navigate Top"
+    bl_translation_context = "*"
+
+    @classmethod
+    def poll(cls, context):
+        return context.object
+
+    def execute(self, context):
+        return {"FINISHED"}
+
+
+class GroupNavigateUpOperator(bpy.types.Operator):
+    """Select Upper Group"""
+
+    bl_idname = "acon3d.group_navigate_up"
+    bl_label = "Group Navigate Up"
+    bl_translation_context = "*"
+
+    @classmethod
+    def poll(cls, context):
+        return context.object
+
+    def execute(self, context):
+        return {"FINISHED"}
+
+
+class GroupNavigateDownOperator(bpy.types.Operator):
+    """Select Lower Group"""
+
+    bl_idname = "acon3d.group_navigate_down"
+    bl_label = "Group Navigate Down"
+    bl_translation_context = "*"
+
+    @classmethod
+    def poll(cls, context):
+        return context.object
+
+    def execute(self, context):
+        return {"FINISHED"}
+
+
+class GroupNavigateBottomOperator(bpy.types.Operator):
+    """Select Bottom Group"""
+
+    bl_idname = "acon3d.group_navigate_bottom"
+    bl_label = "Group Navigate Bottom"
+    bl_translation_context = "*"
+
+    @classmethod
+    def poll(cls, context):
+        return context.object
+
+    def execute(self, context):
+        return {"FINISHED"}
 
 
 class Acon3dStateUpdateOperator(bpy.types.Operator):
@@ -149,11 +210,38 @@ class ObjectSubPanel(bpy.types.Panel):
         row.operator("acon3d.state_update", text="", icon="FILE_REFRESH")
 
 
+class Acon3dGroupNavigaionPanel(bpy.types.Panel):
+    bl_parent_id = "ACON_PT_Object_Main"
+    bl_idname = "ACON_PT_Group_Navigation"
+    bl_label = "Group Navigation"
+    bl_category = "ACON3D"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_options = {"DEFAULT_CLOSED"}
+
+    def draw(self, context):
+        obj = context.object
+        prop = obj.ACON_prop
+        layout = self.layout
+
+        row = layout.row(align=True)
+        row.prop(prop, "group_list", text="")
+        row.operator("acon3d.group_navigate_top", text="", icon="TRIA_UP_BAR")
+        row.operator("acon3d.group_navigate_up", text="", icon="TRIA_UP")
+        row.operator("acon3d.group_navigate_down", text="", icon="TRIA_DOWN")
+        row.operator("acon3d.group_navigate_bottom", text="", icon="TRIA_DOWN_BAR")
+
+
 classes = (
+    GroupNavigateUpOperator,
+    GroupNavigateTopOperator,
+    GroupNavigateDownOperator,
+    GroupNavigateBottomOperator,
     Acon3dStateActionOperator,
     Acon3dStateUpdateOperator,
     Acon3dObjectPanel,
     ObjectSubPanel,
+    Acon3dGroupNavigaionPanel,
 )
 
 
