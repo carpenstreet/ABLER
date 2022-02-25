@@ -100,7 +100,7 @@ class Acon3dViewPanel(bpy.types.Panel):
 
     bl_idname = "ACON3D_PT_view"
     bl_label = "Camera Control"
-    bl_category = "ACON3D"
+    bl_category = "Camera"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_options = {"DEFAULT_CLOSED"}
@@ -160,7 +160,7 @@ class Acon3dDOFPanel(bpy.types.Panel):
     bl_parent_id = "ACON3D_PT_view"
     bl_idname = "ACON3D_PT_dof"
     bl_label = "Depth of Field"
-    bl_category = "ACON3D"
+    bl_category = "Camera"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_options = {"DEFAULT_CLOSED"}
@@ -212,7 +212,7 @@ class Acon3dBackgroundPanel(bpy.types.Panel):
     bl_parent_id = "ACON3D_PT_view"
     bl_idname = "ACON3D_PT_background"
     bl_label = "Background Images"
-    bl_category = "ACON3D"
+    bl_category = "Camera"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_options = {"DEFAULT_CLOSED"}
