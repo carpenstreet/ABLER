@@ -444,6 +444,11 @@ class AconObjectProperty(bpy.types.PropertyGroup):
 
     group: bpy.props.CollectionProperty(type=AconObjectGroupProperty)
 
+    group_list: bpy.props.EnumProperty(
+        name="View",
+        items=objects.add_group_list_from_collection,
+    )
+
     constraint_to_camera_rotation_z: bpy.props.BoolProperty(
         name="Look at me", default=False, update=objects.toggleConstraintToCamera
     )
