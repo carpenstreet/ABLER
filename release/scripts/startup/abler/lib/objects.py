@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Union, Tuple, Optional
+from bpy.types import Context
 import bpy
 from . import cameras
 from .tracker import tracker
@@ -19,7 +20,9 @@ def toggleConstraintToCamera(self, context):
 items: List[Tuple[str, str, str]] = []
 
 
-def add_group_list_from_collection(self, context) -> List[Tuple[str, str, str]]:
+def add_group_list_from_collection(
+    self, context: Context
+) -> List[Tuple[str, str, str]]:
     items.clear()
 
     obj = context.object

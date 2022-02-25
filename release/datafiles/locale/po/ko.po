@@ -93330,7 +93330,7 @@ msgstr "오브젝트의 현재 위치 / 회전 / 스케일 값을 상태정보�
 
 
 msgid "Group Navigation"
-msgstr "그룹 네비게이션"
+msgstr "그룹 내비게이션"
 
 msgid "Group Navigate Top"
 msgstr "최상위 그룹"
