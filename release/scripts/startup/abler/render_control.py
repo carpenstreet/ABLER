@@ -406,6 +406,8 @@ class Acon3dRenderQuickOperator(Acon3dRenderOperator):
         for obj in self.initial_selected_objects:
             obj.select_set(True)
 
+        self.initial_selected_objects.clear()
+
         return {"FINISHED"}
 
 
