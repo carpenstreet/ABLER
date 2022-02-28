@@ -381,8 +381,6 @@ class Acon3dRenderQuickOperator(Acon3dRenderOperator):
     bl_label = "Quick Render"
     bl_translation_context = "*"
 
-    initial_selected_objects = []
-
     def execute(self, context):
         tracker.render_quick()
         return super().execute(context)
@@ -394,21 +392,11 @@ class Acon3dRenderQuickOperator(Acon3dRenderOperator):
         scene.render.filepath = os.path.join(filepath, scene.name)
 
         for obj in context.selected_objects:
-            self.initial_selected_objects.append(obj)
             obj.select_set(False)
 
         bpy.ops.render.opengl("INVOKE_DEFAULT", write_still=True)
 
         return {"RUNNING_MODAL"}
-
-    def on_render_finish(self, context):
-
-        for obj in self.initial_selected_objects:
-            obj.select_set(True)
-
-        self.initial_selected_objects.clear()
-
-        return {"FINISHED"}
 
 
 class Acon3dRenderPanel(bpy.types.Panel):
