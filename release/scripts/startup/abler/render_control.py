@@ -225,14 +225,9 @@ class Acon3dRenderTempSceneOperator(Acon3dRenderOperator):
     def prepare_queue(self, context):
 
         scene = context.scene.copy()
-        scene.name = f"{context.scene.name}_shadow"
         self.render_queue.append(scene)
         self.temp_scenes.append(scene)
 
-        prop = scene.ACON_prop
-        prop.toggle_texture = False
-        prop.toggle_shading = True
-        prop.toggle_toon_edge = False
         scene.eevee.use_bloom = False
         scene.render.use_lock_interface = True
 
@@ -272,6 +267,14 @@ class Acon3dRenderShadowOperator(Acon3dRenderTempSceneOperator):
         tracker.render_shadow()
 
         super().prepare_queue(context)
+
+        scene = self.render_queue[0]
+        scene.name = f"{context.scene.name}_shadow"
+        prop = scene.ACON_prop
+        prop.toggle_texture = False
+        prop.toggle_shading = True
+        prop.toggle_toon_edge = False
+
         return {"RUNNING_MODAL"}
 
 
@@ -290,6 +293,7 @@ class Acon3dRenderLineOperator(Acon3dRenderTempSceneOperator):
         scene = self.render_queue[0]
         scene.name = f"{context.scene.name}_line"
         prop = scene.ACON_prop
+        prop.toggle_texture = False
         prop.toggle_shading = False
         prop.toggle_toon_edge = True
 
