@@ -1,4 +1,5 @@
 import os
+import sys
 
 from ._tracker import Tracker, DummyTracker, AggregateTracker
 
@@ -11,5 +12,11 @@ def _remote_tracker():
 
 
 tracker: Tracker = (
-    DummyTracker() if os.environ.get("DISABLE_TRACK") else _remote_tracker()
+    DummyTracker()
+    if (
+        os.environ.get("DISABLE_TRACK")
+        or "--background" in sys.argv
+        or "-b" in sys.argv
+    )
+    else _remote_tracker()
 )
