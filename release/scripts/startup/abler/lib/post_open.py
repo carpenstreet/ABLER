@@ -23,7 +23,6 @@ def change_and_reset_value() -> None:
         if type(original_value) == float or type(original_value) == int:
             setattr(bpy.context.scene.ACON_prop, property, original_value)
         elif type(original_value) == bool:
-            # TODO : tracker flag를 심어줘야함.
             setattr(bpy.context.scene.ACON_prop, property, original_value)
 
         # string을 뺀 이유 : EnumProperty에 없는 값을 넣어주면 error가 뜸.
