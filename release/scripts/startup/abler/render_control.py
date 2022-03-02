@@ -336,6 +336,8 @@ class Acon3dRenderSnipOperator(Acon3dRenderTempSceneOperator):
                 *compNodes, snip_layer=self.temp_layer, shade_image=self.temp_image
             )
 
+            os.remove(image_path)
+
         else:
 
             bpy.data.collections.remove(self.temp_col)
