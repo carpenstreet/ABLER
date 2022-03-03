@@ -123,10 +123,7 @@ def up(group_list: List[Collection], group_item: Collection) -> Optional[Collect
     """
     try:
         idx: int = group_list.index(group_item)
-        if idx > 0:
-            return group_list[idx - 1]
-        else:
-            return group_list[0]
+        return group_list[idx - 1] if idx > 0 else group_list[0]
     except:
         return None
 
@@ -140,10 +137,7 @@ def down(
     """
     try:
         idx: int = group_list.index(group_item)
-        if idx < len(group_list) - 1:
-            return group_list[idx + 1]
-        else:
-            return "object"
+        return group_list[idx + 1] if idx < len(group_list) - 1 else "object"
     except:
         return None
 
@@ -283,22 +277,22 @@ def checkObjectSelectionChange(dummy):
     )
 
 
-@persistent
-def initDoubleClick(dummy):
-    bpy.ops.acon3d.group_selection("INVOKE_DEFAULT")
+# @persistent
+# def initDoubleClick(dummy):
+#     bpy.ops.acon3d.group_selection("INVOKE_DEFAULT")
 
 
-def subscribeToDoubleClick():
-    bpy.app.handlers.load_post.append(initDoubleClick)
+# def subscribeToDoubleClick():
+#     bpy.app.handlers.load_post.append(initDoubleClick)
 
 
-def clearDoubleClickSubscribers():
-    bpy.app.handlers.load_post.remove(initDoubleClick)
+# def clearDoubleClickSubscribers():
+#     bpy.app.handlers.load_post.remove(initDoubleClick)
 
 
-def subscribeToGroupedObjects():
-    bpy.app.handlers.depsgraph_update_post.append(checkObjectSelectionChange)
+# def subscribeToGroupedObjects():
+#     bpy.app.handlers.depsgraph_update_post.append(checkObjectSelectionChange)
 
 
-def clearSubscribers():
-    bpy.app.handlers.depsgraph_update_post.remove(checkObjectSelectionChange)
+# def clearSubscribers():
+#     bpy.app.handlers.depsgraph_update_post.remove(checkObjectSelectionChange)
