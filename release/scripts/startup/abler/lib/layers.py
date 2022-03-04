@@ -150,10 +150,7 @@ def group_navigate_up(
     if selected_group_prop.current_root_group != root_ancester_collection.name:
         return
     if selected_group_prop.current_group == "":
-        if len(ordered_ancester_collections) == 1:
-            selection = ordered_ancester_collections[-1]
-        else:
-            selection = ordered_ancester_collections[-2]
+        selection = ordered_ancester_collections[-1]
     else:
         selection = up(
             ordered_ancester_collections,
@@ -232,7 +229,6 @@ def init_group_navigation(
     group_length = len(group_props)
     if not group_length:
         return
-
     last_group_prop = group_props[0]
 
     selected_group = bpy.data.collections.get(last_group_prop.name)
@@ -251,10 +247,6 @@ def init_group_navigation(
 
 
 def selectByGroup(direction: str) -> None:
-    if len(bpy.context.selected_objects) == 1:
-        selected_group_prop = bpy.context.scene.ACON_selected_group
-        selected_group_prop.current_root_group = ""
-        selected_group_prop.current_group = ""
     (
         selected_group_prop,
         root_ancester_collection,
