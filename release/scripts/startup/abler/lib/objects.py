@@ -23,15 +23,18 @@ def setConstraintToCameraByObject(obj, context=None):
 
     look_at_me = obj.ACON_prop.constraint_to_camera_rotation_z
 
-    for obj in context.selected_objects:
+    objects = context.selected_objects.copy()
+    objects.append(obj)
 
-        prop = obj.ACON_prop
-        const = obj.constraints.get("ACON_const_copyRotation")
+    for object in objects:
+
+        prop = object.ACON_prop
+        const = object.constraints.get("ACON_const_copyRotation")
 
         if look_at_me:
 
             if not const:
-                const = obj.constraints.new(type="COPY_ROTATION")
+                const = object.constraints.new(type="COPY_ROTATION")
                 const.name = "ACON_const_copyRotation"
                 const.use_x = False
                 const.use_y = False
