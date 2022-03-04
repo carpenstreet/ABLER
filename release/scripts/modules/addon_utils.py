@@ -57,7 +57,7 @@ def paths():
     addon_paths += _bpy.utils.script_paths("addons_contrib")
 
     # ABLER SCRIPTS: customed scripts for abler
-    addon_paths += _bpy.utils.script_paths("addons_abler")
+    # addon_paths += _bpy.utils.script_paths("addons_abler")
 
     return addon_paths
 
