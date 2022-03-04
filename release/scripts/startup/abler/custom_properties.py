@@ -466,7 +466,7 @@ class AconObjectProperty(bpy.types.PropertyGroup):
 
     constraint_to_camera_rotation_z: bpy.props.BoolProperty(
         # name="Look at me",
-        name="Look at me",
+        name="",
         description="Set object to look camera",
         default=False,
         update=objects.toggleConstraintToCamera,

@@ -115,7 +115,11 @@ class Acon3dObjectPanel(bpy.types.Panel):
 
         if context.object:
             row = col.row()
-            row.prop(context.object.ACON_prop, "constraint_to_camera_rotation_z")
+            row.prop(
+                context.object.ACON_prop,
+                "constraint_to_camera_rotation_z",
+                text="Look at me",
+            )
 
 
 class ObjectSubPanel(bpy.types.Panel):
