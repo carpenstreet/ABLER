@@ -59129,7 +59129,7 @@ msgid "Interactively fly around the scene"
 msgstr "W, A, S, D / Q, E / 방향키 / 마우스를 활용하여 뷰포트를 움직입니다"
 
 
-msgid "Interactively Fly Around The Scene"
+msgid "Move around the scene using WASD, QE, and mouse like FPS game"
 msgstr "FPS 게임에서 사용되는 W,A,S,D / Q,E / 마우스로 이동 가능한 비행 모드입니다"
 
 
@@ -93047,7 +93047,7 @@ msgid "Camera Control"
 msgstr "카메라"
 
 
-msgid "Fly (shift + `)"
+msgid "Fly Mode (shift + `)"
 msgstr "플라이 모드 (shift + `)"
 
 
