@@ -114,7 +114,6 @@ class Tracker(metaclass=ABCMeta):
             next_properties.update(properties)
         try:
             self._enqueue_event(event_name, next_properties)
-            print(f"TRACKING: {event_name}")
         except Exception as e:
             print(e)
             return False
