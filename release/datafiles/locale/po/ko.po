@@ -93327,3 +93327,7 @@ msgstr "상태정보 사용하기"
 
 msgid "Save object's current location / rotation / scale values to state data"
 msgstr "오브젝트의 현재 위치 / 회전 / 스케일 값을 상태정보에 저장합니다."
+
+
+msgid "Function test"
+msgstr "함수 테스트"

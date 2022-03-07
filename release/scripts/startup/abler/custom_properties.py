@@ -19,7 +19,7 @@
 
 import bpy
 from math import radians
-from .lib import scenes, cameras, shadow, objects
+from .lib import scenes, cameras, shadow, objects, cube
 from .lib.materials import materials_handler
 
 
@@ -301,6 +301,74 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         max=2,
         step=1,
         update=materials_handler.changeImageAdjustSaturation,
+    )
+
+    # Cube Location Control
+    cube_location_x: bpy.props.FloatProperty(
+        name="Cube Location X",
+        description="Set cube location x-axis",
+        subtype="FACTOR",
+        default=0,
+        min=-10,
+        max=10,
+        step=1,
+        update=cube.changeCubeLocation,
+    )
+
+    cube_location_y: bpy.props.FloatProperty(
+        name="Cube Location Y",
+        description="Set cube location y-axis",
+        subtype="FACTOR",
+        default=0,
+        min=-10,
+        max=10,
+        step=1,
+        update=cube.changeCubeLocation,
+    )
+
+    cube_location_z: bpy.props.FloatProperty(
+        name="Cube Location Z",
+        description="Set cube location z-axis",
+        subtype="FACTOR",
+        default=0,
+        min=-10,
+        max=10,
+        step=1,
+        update=cube.changeCubeLocation,
+    )
+
+    # Cube Scale Control
+    cube_scale_x: bpy.props.FloatProperty(
+        name="Cube Scale X",
+        description="Set cube scale x-axis",
+        subtype="FACTOR",
+        default=1,
+        min=0.1,
+        max=5,
+        step=0.05,
+        update=cube.changeCubeScale,
+    )
+
+    cube_scale_y: bpy.props.FloatProperty(
+        name="Cube Scale Y",
+        description="Set cube scale y-axis",
+        subtype="FACTOR",
+        default=1,
+        min=0.1,
+        max=5,
+        step=0.05,
+        update=cube.changeCubeScale,
+    )
+
+    cube_scale_z: bpy.props.FloatProperty(
+        name="Cube Scale Z",
+        description="Set cube scale z-axis",
+        subtype="FACTOR",
+        default=1,
+        min=0.1,
+        max=5,
+        step=0.05,
+        update=cube.changeCubeScale,
     )
 
     selected_objects_str: bpy.props.StringProperty(name="Selected Objects")

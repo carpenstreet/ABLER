@@ -32,6 +32,12 @@ class EventKind(enum.Enum):
     bloom_on = "Bloom On"
     bloom_off = "Bloom Off"
 
+    # Cube Control
+    make_cube = "Make Cube"
+    remove_cube = "Remove Cube"
+    get_cube_object = "Get Cube Object"
+    remove_all = "Remove All"
+
 
 def accumulate(interval=0):
     """
@@ -182,6 +188,19 @@ class Tracker(metaclass=ABCMeta):
 
     def bloom_off(self):
         self._track(EventKind.bloom_off.value)
+
+    # Cube Control
+    def make_cube(self):
+        self._track(EventKind.make_cube.value)
+
+    def remove_cube(self):
+        self._track(EventKind.remove_cube.value)
+
+    def get_cube_object(self):
+        self._track(EventKind.get_cube_object.value)
+
+    def remove_all(self):
+        self._track(EventKind.remove_all.value)
 
 
 class DummyTracker(Tracker):
