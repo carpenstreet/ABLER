@@ -149,9 +149,9 @@ class Acon3dFacePanel(bpy.types.Panel):
         col.separator()
         col = row.column()
         row = col.row()
-        row.prop(context.scene.ACON_prop, "toggle_texture")
+        row.prop(context.scene.ACON_prop, "toggle_texture", text="Texture")
         row = col.row()
-        row.prop(context.scene.ACON_prop, "toggle_shading")
+        row.prop(context.scene.ACON_prop, "toggle_shading", text="Shading")
         return
 
 

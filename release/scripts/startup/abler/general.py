@@ -173,7 +173,7 @@ class ToggleToolbarOperator(bpy.types.Operator):
 
 
 class FileOpenOperator(bpy.types.Operator, ImportHelper):
-    """File Open"""
+    """Open new file"""
 
     bl_idname = "acon3d.file_open"
     bl_label = "File Open"
@@ -189,10 +189,10 @@ class FileOpenOperator(bpy.types.Operator, ImportHelper):
 
 
 class FlyOperator(bpy.types.Operator):
-    """Fly Mode"""
+    """Move around the scene using WASD, QE, and mouse like FPS game"""
 
     bl_idname = "acon3d.fly_mode"
-    bl_label = "Fly (shift + `)"
+    bl_label = "Fly Mode (shift + `)"
     bl_translation_context = "*"
 
     def execute(self, context):
