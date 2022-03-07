@@ -47,7 +47,8 @@ def handleLayerVisibilityOnSceneChange(oldScene, newScene):
 def get_ancester_collections(collection: Collection, parents: List[Collection]) -> None:
     for parent_collection in bpy.data.collections:
         if collection.name in parent_collection.children.keys():
-            parents.append(parent_collection)
+            if not is_component_collection(parent_collection):
+                parents.append(parent_collection)
             get_ancester_collections(parent_collection, parents)
             return
 
@@ -64,6 +65,13 @@ def is_ancester_collection(a: Collection, b: Collection) -> bool:
     parents = []
     get_ancester_collections(a, parents)
     return b in parents
+
+
+def is_component_collection(collection: Collection) -> bool:
+    return (
+        collection.name in bpy.data.collections.get("Components").children.keys()
+        or collection.name == "Components"
+    )
 
 
 def quick_sort_by_hierarchy(
@@ -92,7 +100,6 @@ def get_ordered_ancester_collections(
 ) -> List[Collection]:
     parents = []
     get_ancester_collections(collection, parents)
-    parents.pop()
     ret_list = list(reversed(quick_sort_by_hierarchy(parents)))
     ret_list.append(collection)
     return ret_list
@@ -157,7 +164,14 @@ def group_navigate_up(
             bpy.data.collections[selected_group_prop.current_group],
         )
     if not selection:
-        return selectByGroup("TOP")
+        try:
+            selection = ordered_ancester_collections[-1]
+            selected_group_prop.current_group = selection.name
+        except Exception as e:
+            print(e)
+            return selectByGroup("TOP")
+    while len(selection.all_objects) <= 1:
+        selection = up(ordered_ancester_collections, selection)
     selected_group_prop.current_group = selection.name
     for obj in selection.all_objects:
         obj.select_set(True)
@@ -230,10 +244,15 @@ def init_group_navigation(
     if not group_length:
         return
     last_group_prop = group_props[0]
+    ordered_group_list = [
+        bpy.data.collections[item.name]
+        for item in reversed(group_props)
+        if item.name in bpy.data.collections.keys()
+    ]
 
     selected_group = bpy.data.collections.get(last_group_prop.name)
-    ordered_ancester_collections = get_ordered_ancester_collections(selected_group)
-    if len(ordered_ancester_collections) > 0:
+    ordered_ancester_collections = ordered_group_list
+    if ordered_ancester_collections:
         root_ancester_collection: Collection = ordered_ancester_collections[0]
     else:
         return

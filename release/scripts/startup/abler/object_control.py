@@ -229,7 +229,7 @@ class Acon3dGroupNavigaionPanel(bpy.types.Panel):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
-        obj = context.object
+        obj = context.active_object
         prop = obj.ACON_prop
         layout = self.layout
 
