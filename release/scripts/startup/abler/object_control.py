@@ -234,6 +234,7 @@ class Acon3dGroupNavigaionPanel(bpy.types.Panel):
         layout = self.layout
 
         row = layout.row(align=True)
+        row.enabled = "Groups" in context.collection.children.keys()
         row.prop(prop, "group_list", text="")
         row.operator("acon3d.group_navigate_top", text="", icon="TRIA_UP_BAR")
         row.operator("acon3d.group_navigate_up", text="", icon="TRIA_UP")
