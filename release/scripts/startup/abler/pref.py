@@ -3,6 +3,7 @@ from bpy.app.handlers import persistent
 from .lib import cameras, shadow, render, scenes
 from .lib.materials import materials_setup
 from .lib.post_open import change_and_reset_value
+from .lib.tracker import tracker
 
 
 def init_setting(dummy):
@@ -38,21 +39,22 @@ def init_setting(dummy):
 
 @persistent
 def load_handler(dummy):
-    init_setting(None)
-    cameras.makeSureCameraExists()
-    cameras.switchToRendredView()
-    cameras.turnOnCameraView(False)
-    shadow.setupSharpShadow()
-    render.setupBackgroundImagesCompositor()
-    materials_setup.applyAconToonStyle()
-    for scene in bpy.data.scenes:
-        scene.view_settings.view_transform = "Standard"
+    tracker.turn_off()
+    try:
+        init_setting(None)
+        cameras.makeSureCameraExists()
+        cameras.switchToRendredView()
+        cameras.turnOnCameraView(False)
+        shadow.setupSharpShadow()
+        render.setupBackgroundImagesCompositor()
+        materials_setup.applyAconToonStyle()
+        for scene in bpy.data.scenes:
+            scene.view_settings.view_transform = "Standard"
 
-    # refresh look_at_me
-    scenes.refresh_look_at_me()
-    
-    # update scene value when file-open
-    change_and_reset_value()
+        scenes.refresh_look_at_me()
+        change_and_reset_value()
+    finally:
+        tracker.turn_on()
 
 
 def register():
