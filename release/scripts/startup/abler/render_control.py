@@ -63,6 +63,7 @@ class Acon3dCameraViewOperator(bpy.types.Operator):
     bl_idname = "acon3d.camera_view"
     bl_label = "Camera View"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         cameras.turnOnCameraView()
@@ -158,9 +159,7 @@ class Acon3dRenderOperator(bpy.types.Operator, ImportHelper):
 
                 if self.show_on_completion:
                     scene = context.scene
-                    filename = (
-                        scene.name + "." + scene.render.image_settings.file_format
-                    )
+                    filename = f"{scene.name}.{scene.render.image_settings.file_format}"
                     openDirectory(os.path.join(self.filepath, filename))
 
                 return self.on_render_finish(context)
@@ -226,22 +225,16 @@ class Acon3dRenderTempSceneOperator(Acon3dRenderOperator):
     def prepare_queue(self, context):
 
         scene = context.scene.copy()
-        scene.name = context.scene.name + "_shadow"
         self.render_queue.append(scene)
         self.temp_scenes.append(scene)
 
-        prop = scene.ACON_prop
-        prop.toggle_texture = False
-        prop.toggle_shading = True
-        prop.toggle_toon_edge = False
         scene.eevee.use_bloom = False
         scene.render.use_lock_interface = True
 
         for mat in bpy.data.materials:
             mat.blend_method = "OPAQUE"
             mat.shadow_method = "OPAQUE"
-            toonNode = mat.node_tree.nodes.get("ACON_nodeGroup_combinedToon")
-            if toonNode:
+            if toonNode := mat.node_tree.nodes.get("ACON_nodeGroup_combinedToon"):
                 toonNode.inputs[1].default_value = 0
                 toonNode.inputs[3].default_value = 1
 
@@ -257,6 +250,9 @@ class Acon3dRenderTempSceneOperator(Acon3dRenderOperator):
 
         self.temp_scenes.clear()
 
+        # set initial_scene
+        bpy.data.window_managers["WinMan"].ACON_prop.scene = self.initial_scene.name
+
         return {"FINISHED"}
 
 
@@ -271,6 +267,14 @@ class Acon3dRenderShadowOperator(Acon3dRenderTempSceneOperator):
         tracker.render_shadow()
 
         super().prepare_queue(context)
+
+        scene = self.render_queue[0]
+        scene.name = f"{context.scene.name}_shadow"
+        prop = scene.ACON_prop
+        prop.toggle_texture = False
+        prop.toggle_shading = True
+        prop.toggle_toon_edge = False
+
         return {"RUNNING_MODAL"}
 
 
@@ -287,8 +291,9 @@ class Acon3dRenderLineOperator(Acon3dRenderTempSceneOperator):
         super().prepare_queue(context)
 
         scene = self.render_queue[0]
-        scene.name = context.scene.name + "_line"
+        scene.name = f"{context.scene.name}_line"
         prop = scene.ACON_prop
+        prop.toggle_texture = False
         prop.toggle_shading = False
         prop.toggle_toon_edge = True
 
@@ -320,8 +325,9 @@ class Acon3dRenderSnipOperator(Acon3dRenderTempSceneOperator):
 
             shade_scene = self.temp_scenes[0]
             filename = (
-                shade_scene.name + "." + shade_scene.render.image_settings.file_format
+                f"{shade_scene.name}.{shade_scene.render.image_settings.file_format}"
             )
+
             image_path = os.path.join(self.filepath, filename)
             self.temp_image = bpy.data.images.load(image_path)
 
@@ -333,6 +339,8 @@ class Acon3dRenderSnipOperator(Acon3dRenderTempSceneOperator):
             render.setupSnipCompositor(
                 *compNodes, snip_layer=self.temp_layer, shade_image=self.temp_image
             )
+
+            os.remove(image_path)
 
         else:
 
@@ -348,8 +356,11 @@ class Acon3dRenderSnipOperator(Acon3dRenderTempSceneOperator):
         super().prepare_queue(context)
 
         scene = context.scene.copy()
-        scene.name = context.scene.name + "_snipped"
-        scene.ACON_prop.toggle_shading = False
+        scene.name = f"{context.scene.name}_snipped"
+        prop = scene.ACON_prop
+        prop.toggle_texture = False
+        prop.toggle_shading = False
+        prop.toggle_toon_edge = False
         self.render_queue.append(scene)
         self.temp_scenes.append(scene)
 
@@ -365,7 +376,7 @@ class Acon3dRenderSnipOperator(Acon3dRenderTempSceneOperator):
             col_group.objects.link(obj)
 
         scene = context.scene.copy()
-        scene.name = context.scene.name + "_full"
+        scene.name = f"{context.scene.name}_full"
         self.render_queue.append(scene)
         self.temp_scenes.append(scene)
 
@@ -379,8 +390,6 @@ class Acon3dRenderQuickOperator(Acon3dRenderOperator):
     bl_label = "Quick Render"
     bl_translation_context = "*"
 
-    initial_selected_objects = []
-
     def execute(self, context):
         tracker.render_quick()
         return super().execute(context)
@@ -392,19 +401,11 @@ class Acon3dRenderQuickOperator(Acon3dRenderOperator):
         scene.render.filepath = os.path.join(filepath, scene.name)
 
         for obj in context.selected_objects:
-            self.initial_selected_objects.append(obj)
             obj.select_set(False)
 
         bpy.ops.render.opengl("INVOKE_DEFAULT", write_still=True)
 
         return {"RUNNING_MODAL"}
-
-    def on_render_finish(self, context):
-
-        for obj in self.initial_selected_objects:
-            obj.select_set(True)
-
-        return {"FINISHED"}
 
 
 class Acon3dRenderPanel(bpy.types.Panel):
@@ -423,18 +424,11 @@ class Acon3dRenderPanel(bpy.types.Panel):
         layout.label(icon="RENDER_STILL")
 
     def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        is_camera = False
-        for obj in bpy.data.objects:
-            if obj.type == "CAMERA":
-                is_camera = True
-                break
-
         scene = context.scene
 
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
         row = layout.row(align=True)
         row.operator("acon3d.camera_view", text="", icon="RESTRICT_VIEW_OFF")
         row.prop(scene.render, "resolution_x", text="")
@@ -443,7 +437,7 @@ class Acon3dRenderPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("acon3d.render_quick", text="Quick Render", text_ctxt="*")
 
-        if is_camera:
+        if any(obj.type == "CAMERA" for obj in bpy.data.objects):
             row.operator("acon3d.render_full", text="Full Render")
             row = layout.row()
             row.operator("acon3d.render_line", text="Line Render")

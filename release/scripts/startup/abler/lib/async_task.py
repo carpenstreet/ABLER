@@ -79,17 +79,16 @@ class AsyncTask(metaclass=ABCMeta):
         def queue_sentinel():
             if self.__queue.empty():
                 return self._wait_interval
-            else:
-                if bpy.app.timers.is_registered(self._timeout_sentinel):
-                    bpy.app.timers.unregister(self._timeout_sentinel)
-                popped = self.__queue.get_nowait()
-                try:
-                    if isinstance(popped, BaseException):
-                        self._on_failure(popped)
-                    else:
-                        self._on_success()
-                finally:
-                    self._on_cleanup()
+            if bpy.app.timers.is_registered(self._timeout_sentinel):
+                bpy.app.timers.unregister(self._timeout_sentinel)
+            popped = self.__queue.get_nowait()
+            try:
+                if isinstance(popped, BaseException):
+                    self._on_failure(popped)
+                else:
+                    self._on_success()
+            finally:
+                self._on_cleanup()
 
         def timeout_sentinel():
             self.cancel()

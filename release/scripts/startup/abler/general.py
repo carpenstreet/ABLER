@@ -31,6 +31,7 @@ bl_info = {
 }
 
 
+import os
 import bpy
 from bpy_extras.io_utils import ImportHelper
 from .lib import scenes
@@ -55,9 +56,6 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
 
         FILEPATH = self.filepath
 
-        col_imported = bpy.data.collections.new("Imported")
-        context.scene.collection.children.link(col_imported)
-
         col_layers = bpy.data.collections.get("Layers")
         if not col_layers:
             col_layers = bpy.data.collections.new("Layers")
@@ -65,7 +63,7 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
 
         with bpy.data.libraries.load(FILEPATH) as (data_from, data_to):
             data_to.collections = data_from.collections
-            data_to.objects = [name for name in data_from.objects]
+            data_to.objects = list(data_from.objects)
 
         children_names = {}
 
@@ -79,14 +77,7 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
                 data_to.collections.remove(coll)
                 break
 
-            found = False
-            for child in children_names:
-                if coll.name == child:
-                    found = True
-
-            if not found:
-                col_imported.children.link(coll)
-
+            found = any(coll.name == child for child in children_names)
             if coll.name == "Layers" or (
                 "Layers." in coll.name and len(coll.name) == 10
             ):
@@ -114,6 +105,53 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
         return {"FINISHED"}
 
 
+class ImportFBXOperator(bpy.types.Operator, ImportHelper):
+    """Import objects according to the current settings"""
+
+    bl_idname = "acon3d.import_fbx"
+    bl_label = "Import FBX"
+    bl_translation_context = "*"
+
+    filter_glob: bpy.props.StringProperty(default="*.fbx", options={"HIDDEN"})
+
+    def execute(self, context):
+
+        for obj in bpy.data.objects:
+            obj.select_set(False)
+
+        FILEPATH = self.filepath
+
+        filename = os.path.basename(FILEPATH)
+        col_imported = bpy.data.collections.new("[FBX] " + filename.replace(".fbx", ""))
+
+        col_layers = bpy.data.collections.get("Layers")
+        if not col_layers:
+            col_layers = bpy.data.collections.new("Layers")
+            context.scene.collection.children.link(col_layers)
+
+        bpy.ops.import_scene.fbx(filepath=FILEPATH)
+        for obj in bpy.context.selected_objects:
+            if obj.name in bpy.context.scene.collection.objects:
+                bpy.context.scene.collection.objects.unlink(obj)
+            for c in bpy.data.collections:
+                if obj.name in c.objects:
+                    c.objects.unlink(obj)
+            col_imported.objects.link(obj)
+
+        # put col_imported in l_exclude
+        col_layers.children.link(col_imported)
+        added_l_exclude = context.scene.l_exclude.add()
+        added_l_exclude.name = col_imported.name
+        added_l_exclude.value = True
+
+        # create group
+        bpy.ops.acon3d.create_group()
+        # apply AconToonStyle
+        materials_setup.applyAconToonStyle()
+
+        return {"FINISHED"}
+
+
 class ToggleToolbarOperator(bpy.types.Operator):
     """Toggle toolbar visibility"""
 
@@ -136,7 +174,7 @@ class ToggleToolbarOperator(bpy.types.Operator):
 
 
 class FileOpenOperator(bpy.types.Operator, ImportHelper):
-    """File Open"""
+    """Open new file"""
 
     bl_idname = "acon3d.file_open"
     bl_label = "File Open"
@@ -147,15 +185,15 @@ class FileOpenOperator(bpy.types.Operator, ImportHelper):
     def execute(self, context):
         FILEPATH = self.filepath
         bpy.ops.wm.open_mainfile(filepath=FILEPATH)
-        
+
         return {"FINISHED"}
 
-        
+
 class FlyOperator(bpy.types.Operator):
-    """Fly Mode"""
+    """Move around the scene using WASD, QE, and mouse like FPS game"""
 
     bl_idname = "acon3d.fly_mode"
-    bl_label = "Fly (shift + `)"
+    bl_label = "Fly Mode (shift + `)"
     bl_translation_context = "*"
 
     def execute(self, context):
@@ -185,6 +223,10 @@ class Acon3dImportPanel(bpy.types.Panel):
         row.scale_y = 1.0
         row.operator("acon3d.file_open")
         row.operator("acon3d.import_blend", text="Import")
+
+        layout.separator()
+        row = layout.row()
+        row.operator("acon3d.import_fbx", text="Import FBX")
 
         row = layout.row()
 
@@ -219,6 +261,8 @@ classes = (
     ApplyToonStyleOperator,
     FileOpenOperator,
     FlyOperator,
+    ImportFBXOperator,
+    ApplyToonStyleOperator,
 )
 
 

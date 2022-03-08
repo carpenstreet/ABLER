@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Union, Tuple, Optional
+from bpy.types import Context
 import bpy
 from . import cameras
 from .tracker import tracker
@@ -8,11 +10,29 @@ def toggleConstraintToCamera(self, context):
     cameras.makeSureCameraExists()
 
     obj = context.object
-    look_at_me = obj.ACON_prop.constraint_to_camera_rotation_z
-    if look_at_me:
+    if obj.ACON_prop.constraint_to_camera_rotation_z:
         tracker.look_at_me()
 
     setConstraintToCameraByObject(obj, context)
+
+
+# items should be a global variable due to a bug in EnumProperty
+items: List[Tuple[str, str, str]] = []
+
+
+def add_group_list_from_collection(
+    self, context: Context
+) -> List[Tuple[str, str, str]]:
+    items.clear()
+
+    obj = context.object
+    items.append((obj.name, obj.name, "", "OUTLINER_OB_MESH", 0))
+
+    if collection := bpy.context.object.ACON_prop.group:
+        for item in collection:
+            items.append((item.name, item.name, "", "OUTLINER_COLLECTION", 1))
+
+    return items
 
 
 def setConstraintToCameraByObject(obj, context=None):
@@ -55,23 +75,26 @@ def toggleUseState(self, context):
 
     use_state = self.use_state
 
+    prop = context.object.ACON_prop
+    if prop.use_state:
+        tracker.use_state_on()
+    else:
+        tracker.use_state_off()
+
     if use_state:
 
         for obj in context.selected_objects:
 
             prop = obj.ACON_prop
 
-            if obj == context.object or not prop.use_state:
+            if (obj == context.object or not prop.use_state) and not prop.state_exists:
+                for att in ["location", "rotation_euler", "scale"]:
 
-                if not prop.state_exists:
+                    vector = getattr(obj, att)
+                    setattr(prop.state_begin, att, vector)
+                    setattr(prop.state_end, att, vector)
 
-                    for att in ["location", "rotation_euler", "scale"]:
-
-                        vector = getattr(obj, att)
-                        setattr(prop.state_begin, att, vector)
-                        setattr(prop.state_end, att, vector)
-
-                    prop.state_exists = True
+                prop.state_exists = True
 
             if not prop.use_state:
 

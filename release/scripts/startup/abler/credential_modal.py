@@ -29,6 +29,7 @@ from .lib.remember_username import (
     remember_username,
     read_remembered_username,
 )
+from .lib.login import is_first_open
 from .lib.tracker import tracker
 from .lib.async_task import AsyncTask
 
@@ -152,8 +153,7 @@ class Acon3dModalOperator(bpy.types.Operator):
         def char2key(c):
             result = ctypes.windll.User32.VkKeyScanW(ord(c))
             shift_state = (result & 0xFF00) >> 8
-            vk_key = result & 0xFF
-            return vk_key
+            return result & 0xFF
 
         if userInfo and userInfo.ACON_prop.login_status == "SUCCESS":
             return {"FINISHED"}
@@ -316,7 +316,7 @@ class Acon3dAnchorOperator(bpy.types.Operator):
 @persistent
 def open_credential_modal(dummy):
 
-    tracker_file_open()
+    fileopen = tracker_file_open()
 
     prefs = bpy.context.preferences
     prefs.view.show_splash = True
@@ -337,18 +337,16 @@ def open_credential_modal(dummy):
             raise
         prop.remember_username = read_remembered_checkbox()
 
-        cookiesFile = open(path_cookiesFile, "rb")
-        cookies = pickle.load(cookiesFile)
-        cookiesFile.close()
+        with open(path_cookiesFile, "rb") as cookiesFile:
+            cookies = pickle.load(cookiesFile)
         response = requests.get(
             "https://api-v2.acon3d.com/auth/acon3d/refresh", cookies=cookies
         )
 
         responseData = response.json()
-        token = responseData["accessToken"]
-
-        if token:
-            tracker.login_auto()
+        if token := responseData["accessToken"]:
+            if not fileopen and is_first_open():
+                tracker.login_auto()
             prop.login_status = "SUCCESS"
 
     except:

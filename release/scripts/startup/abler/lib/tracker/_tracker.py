@@ -23,6 +23,18 @@ class EventKind(enum.Enum):
     fly_mode = "Fly Mode"
     scene_add = "Scene Add"
     look_at_me = "Look At Me"
+    use_state_on = "Use State On"
+    use_state_off = "Use State Off"
+    depth_of_field_on = "Depth of Field On"
+    depth_of_field_off = "Depth of Field Off"
+    background_images_on = "Background Images On"
+    background_images_off = "Background Images Off"
+    bloom_on = "Bloom On"
+    bloom_off = "Bloom Off"
+    group_navigate_bottom = "Group Navigate Bottom"
+    group_navigate_top = "Group Navigate Top"
+    group_navigate_down = "Group Navigate Down"
+    group_navigate_up = "Group Navigate Up"
 
 
 def accumulate(interval=0):
@@ -60,12 +72,19 @@ class Tracker(metaclass=ABCMeta):
     def __init__(self):
         self._agreed = True
         self._default_properties = {}
+        self._enabled = True
 
         if v := get_version():
             major, minor, patch = v
             self._default_properties["version"] = f"{major}.{minor}.{patch}"
         else:
             self._default_properties["version"] = "development"
+
+    def turn_on(self):
+        self._enabled = True
+
+    def turn_off(self):
+        self._enabled = False
 
     @abstractmethod
     def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
@@ -88,6 +107,8 @@ class Tracker(metaclass=ABCMeta):
     def _track(
         self, event_name: str, properties: Optional[dict[str, Any]] = None
     ) -> bool:
+        if not self._enabled:
+            return False
         if not self._agreed:
             return False
 
@@ -97,7 +118,6 @@ class Tracker(metaclass=ABCMeta):
             next_properties.update(properties)
         try:
             self._enqueue_event(event_name, next_properties)
-            print(f"TRACKING: {event_name}")
         except Exception as e:
             print(e)
             return False
@@ -150,6 +170,42 @@ class Tracker(metaclass=ABCMeta):
 
     def fly_mode(self):
         self._track(EventKind.fly_mode.value)
+
+    def use_state_on(self):
+        self._track(EventKind.use_state_on.value)
+
+    def use_state_off(self):
+        self._track(EventKind.use_state_off.value)
+
+    def depth_of_field_on(self):
+        self._track(EventKind.depth_of_field_on.value)
+
+    def depth_of_field_off(self):
+        self._track(EventKind.depth_of_field_off.value)
+
+    def background_images_on(self):
+        self._track(EventKind.background_images_on.value)
+
+    def background_images_off(self):
+        self._track(EventKind.background_images_off.value)
+
+    def bloom_on(self):
+        self._track(EventKind.bloom_on.value)
+
+    def bloom_off(self):
+        self._track(EventKind.bloom_off.value)
+
+    def group_navigate_bottom(self):
+        self._track(EventKind.group_navigate_bottom.value)
+
+    def group_navigate_top(self):
+        self._track(EventKind.group_navigate_top.value)
+
+    def group_navigate_down(self):
+        self._track(EventKind.group_navigate_down.value)
+
+    def group_navigate_up(self):
+        self._track(EventKind.group_navigate_up.value)
 
 
 class DummyTracker(Tracker):

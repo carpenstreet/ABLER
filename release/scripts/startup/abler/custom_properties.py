@@ -56,8 +56,17 @@ class CollectionLayerExcludeProperties(bpy.types.PropertyGroup):
     def updateLayerVis(self, context):
         target_layer = bpy.data.collections[self.name]
         for objs in target_layer.objects:
-            objs.hide_viewport = not (self.value)
-            objs.hide_render = not (self.value)
+            belonging_col_names = {
+                collection.name for collection in objs.users_collection
+            }
+            should_show = all(
+                layer.value
+                for layer in bpy.context.scene.l_exclude
+                if layer.name in belonging_col_names
+            )
+
+            objs.hide_viewport = not should_show
+            objs.hide_render = not should_show
 
     def updateLayerLock(self, context):
         target_layer = bpy.data.collections[self.name]
@@ -67,11 +76,44 @@ class CollectionLayerExcludeProperties(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty(name="Layer Name", default="")
 
     value: bpy.props.BoolProperty(
-        name="Layer Exclude", default=True, update=updateLayerVis
+        name="Layer Exclude",
+        description="Make objects on the current layer invisible in the viewport",
+        default=True,
+        update=updateLayerVis,
     )
 
     lock: bpy.props.BoolProperty(
-        name="Layer Lock", default=False, update=updateLayerLock
+        name="Layer Lock",
+        description="Make objects on the current layer lock in the viewport",
+        default=False,
+        update=updateLayerLock,
+    )
+
+
+class AconSceneSelectedGroupProperty(bpy.types.PropertyGroup):
+    @classmethod
+    def register(cls):
+        bpy.types.Scene.ACON_selected_group = bpy.props.PointerProperty(
+            type=AconSceneSelectedGroupProperty
+        )
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.Scene.ACON_selected_group
+
+    current_root_group: bpy.props.StringProperty(
+        name="Current Selected Root Group", default=""
+    )
+    current_group: bpy.props.StringProperty(name="Current Selected Group", default="")
+    direction: bpy.props.EnumProperty(
+        name="Level Direction",
+        description="Change order of collection level",
+        items=[
+            ("UP", "up", "Level Up"),
+            ("DOWN", "down", "Level Down"),
+            ("TOP", "top", "Level Top"),
+            ("BOTTOM", "bottom", "Level bottom"),
+        ],
     )
 
 
@@ -85,14 +127,16 @@ class AconSceneProperty(bpy.types.PropertyGroup):
         del bpy.types.Scene.ACON_prop
 
     toggle_toon_edge: bpy.props.BoolProperty(
-        name="Toon Style Edge",
-        description="Toggle toon style edge expression",
+        # name="Toon Style Edge",
+        name="",
+        description="Express toon style edge",
         default=True,
         update=materials_handler.toggleToonEdge,
     )
 
     edge_min_line_width: bpy.props.FloatProperty(
-        name="Min Line Width",
+        # name="Min Line Width",
+        name="",
         description="Adjust the thickness of minimum depth edges",
         subtype="PIXEL",
         default=1,
@@ -103,7 +147,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     edge_max_line_width: bpy.props.FloatProperty(
-        name="Max Line Width",
+        # name="Max Line Width",
+        name="",
         description="Adjust the thickness of maximum depth edges",
         subtype="PIXEL",
         default=1,
@@ -114,7 +159,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     edge_line_detail: bpy.props.FloatProperty(
-        name="Line Detail",
+        # name="Line Detail",
+        name="",
         description="Amount of edges to be shown. (recommended: 1.2)",
         subtype="FACTOR",
         default=2,
@@ -125,22 +171,25 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     toggle_toon_face: bpy.props.BoolProperty(
-        name="Toon Style Face",
-        description="Toggle toon style face expression",
+        # name="Toon Style Face",
+        name="",
+        description="Express toon style face",
         default=True,
         update=materials_handler.toggleToonFace,
     )
 
     toggle_texture: bpy.props.BoolProperty(
-        name="Texture",
-        description="Toggle material texture",
+        # name="Texture",
+        name="",
+        description="Express material texture",
         default=True,
         update=materials_handler.toggleTexture,
     )
 
     toggle_shading: bpy.props.BoolProperty(
-        name="Shading",
-        description="Toggle shading",
+        # name="Shading",
+        name="",
+        description="Express shading",
         default=True,
         update=materials_handler.toggleShading,
     )
@@ -153,7 +202,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     toon_shading_brightness_1: bpy.props.FloatProperty(
-        name="Brightness 1",
+        # name="Brightness 1",
+        name="",
         description="Change shading brightness (Range: 0 ~ 10)",
         subtype="FACTOR",
         default=3,
@@ -164,7 +214,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     toon_shading_brightness_2: bpy.props.FloatProperty(
-        name="Brightness 2",
+        # name="Brightness 2",
+        name="",
         description="Change shading brightness (Range: 0 ~ 10)",
         subtype="FACTOR",
         default=5,
@@ -181,11 +232,16 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     toggle_sun: bpy.props.BoolProperty(
-        name="Sun Light", default=True, update=shadow.toggleSun
+        # name="Sun Light",
+        name="",
+        description="Express sunlight",
+        default=True,
+        update=shadow.toggleSun,
     )
 
     sun_strength: bpy.props.FloatProperty(
-        name="Strength",
+        # name="Strength",
+        name="",
         description="Sunlight strength in watts per meter squared (W/m^2)",
         subtype="FACTOR",
         default=1,
@@ -196,11 +252,16 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     toggle_shadow: bpy.props.BoolProperty(
-        name="Shadow", default=True, update=shadow.toggleShadow
+        # name="Shadow",
+        name="",
+        description="Express shadow",
+        default=True,
+        update=shadow.toggleShadow,
     )
 
     sun_rotation_x: bpy.props.FloatProperty(
-        name="Altitude",
+        # name="Altitude",
+        name="",
         description="Adjust sun altitude",
         subtype="ANGLE",
         unit="ROTATION",
@@ -209,7 +270,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     sun_rotation_z: bpy.props.FloatProperty(
-        name="Azimuth",
+        # name="Azimuth",
+        name="",
         description="Adjust sun azimuth",
         subtype="ANGLE",
         unit="ROTATION",
@@ -218,7 +280,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     image_adjust_brightness: bpy.props.FloatProperty(
-        name="Brightness",
+        # name="Brightness",
+        name="",
         description="Adjust brightness of general image (Range: -1 ~ 1)",
         subtype="FACTOR",
         default=0,
@@ -229,7 +292,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     image_adjust_contrast: bpy.props.FloatProperty(
-        name="Contrast",
+        # name="Contrast",
+        name="",
         description="Adjust contrast of general image (Range: -1 ~ 1)",
         subtype="FACTOR",
         default=0,
@@ -240,7 +304,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     image_adjust_color_r: bpy.props.FloatProperty(
-        name="Red",
+        # name="Red",
+        name="",
         description="Adjust color balance (Range: 0 ~ 2)",
         subtype="FACTOR",
         default=1,
@@ -251,7 +316,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     image_adjust_color_g: bpy.props.FloatProperty(
-        name="Green",
+        # name="Green",
+        name="",
         description="Adjust color balance (Range: 0 ~ 2)",
         subtype="FACTOR",
         default=1,
@@ -262,7 +328,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     image_adjust_color_b: bpy.props.FloatProperty(
-        name="Blue",
+        # name="Blue",
+        name="",
         description="Adjust color balance (Range: 0 ~ 2)",
         subtype="FACTOR",
         default=1,
@@ -273,7 +340,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     image_adjust_hue: bpy.props.FloatProperty(
-        name="Hue",
+        # name="Hue",
+        name="",
         description="Adjust hue (Range: 0 ~ 1)",
         subtype="FACTOR",
         default=0.5,
@@ -284,7 +352,8 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     image_adjust_saturation: bpy.props.FloatProperty(
-        name="Saturation",
+        # name="Saturation",
+        name="",
         description="Adjust saturation (Range: 0 ~ 2)",
         subtype="FACTOR",
         default=1,
@@ -295,6 +364,30 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     )
 
     selected_objects_str: bpy.props.StringProperty(name="Selected Objects")
+
+    use_dof: bpy.props.BoolProperty(
+        # name="Depth of Field",
+        name="",
+        description="Blur objects at a certain distance using the values set below",
+        default=False,
+        update=scenes.change_dof,
+    )
+
+    show_background_images: bpy.props.BoolProperty(
+        # name="Background Images",
+        name="",
+        description="Add images to the front and rear of the model",
+        default=False,
+        update=scenes.change_background_images,
+    )
+
+    use_bloom: bpy.props.BoolProperty(
+        # name="Bloom",
+        name="",
+        description="Create a shining effect with high luminance pixels",
+        default=True,
+        update=scenes.change_bloom,
+    )
 
 
 class AconMaterialProperty(bpy.types.PropertyGroup):
@@ -372,7 +465,6 @@ class AconMeshProperty(bpy.types.PropertyGroup):
 
 
 class AconObjectGroupProperty(bpy.types.PropertyGroup):
-
     name: bpy.props.StringProperty(name="Group", description="Group", default="")
 
 
@@ -398,12 +490,25 @@ class AconObjectProperty(bpy.types.PropertyGroup):
 
     group: bpy.props.CollectionProperty(type=AconObjectGroupProperty)
 
+    group_list: bpy.props.EnumProperty(
+        name="View",
+        items=objects.add_group_list_from_collection,
+    )
+
     constraint_to_camera_rotation_z: bpy.props.BoolProperty(
-        name="Look at me", default=False, update=objects.toggleConstraintToCamera
+        # name="Look at me",
+        name="",
+        description="Set object to look camera",
+        default=False,
+        update=objects.toggleConstraintToCamera,
     )
 
     use_state: bpy.props.BoolProperty(
-        name="Use State", default=False, update=objects.toggleUseState
+        # name="Use State",
+        name="",
+        description="Move object using the preset state information and the slider below",
+        default=False,
+        update=objects.toggleUseState,
     )
 
     state_exists: bpy.props.BoolProperty(
@@ -428,6 +533,7 @@ class AconObjectProperty(bpy.types.PropertyGroup):
 classes = (
     AconWindowManagerProperty,
     CollectionLayerExcludeProperties,
+    AconSceneSelectedGroupProperty,
     AconSceneProperty,
     AconMaterialProperty,
     AconMeshProperty,
