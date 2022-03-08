@@ -2872,6 +2872,12 @@ class WM_OT_drop_blend_file(Operator):
         props.display_file_selector = False
         props.load_ui = False
 
+        col = layout.column()
+        col.operator_context = "EXEC_DEFAULT"
+        col.operator(
+            "acon3d.import_blend", text="Import", icon="IMPORT"
+        ).filepath = self.filepath
+
         layout.separator()
         col = layout.column()
         col.operator_context = 'INVOKE_DEFAULT'

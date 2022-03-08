@@ -19,14 +19,14 @@
 
 from typing import List, Tuple, Optional
 import bpy
-from bpy.types import Scene
+from bpy.types import Scene, Context
 from . import shadow, layers, objects
 from .materials import materials_handler
 from math import radians
 from .tracker import tracker
 
 
-def change_dof(self, context) -> None:
+def change_dof(self, context: Context) -> None:
     prop = context.scene.ACON_prop
     context.scene.camera.data.dof.use_dof = prop.use_dof
     if prop.use_dof:
@@ -35,7 +35,7 @@ def change_dof(self, context) -> None:
         tracker.depth_of_field_off()
 
 
-def change_background_images(self, context) -> None:
+def change_background_images(self, context: Context) -> None:
     prop = context.scene.ACON_prop
     context.scene.camera.data.show_background_images = prop.show_background_images
     if prop.show_background_images:
@@ -44,7 +44,7 @@ def change_background_images(self, context) -> None:
         tracker.background_images_off()
 
 
-def change_bloom(self, context) -> None:
+def change_bloom(self, context: Context) -> None:
     prop = context.scene.ACON_prop
     context.scene.eevee.use_bloom = prop.use_bloom
     if prop.use_bloom:
@@ -54,25 +54,34 @@ def change_bloom(self, context) -> None:
 
 
 def genSceneName(name: str, i: int = 1) -> str:
-    found: Optional[bool] = None
     combinedName: str = name + str(i)
 
-    for scene in bpy.data.scenes:
-        if scene.name == combinedName:
-            found = True
-            break
+    found = any(scene.name == combinedName for scene in bpy.data.scenes)
 
-    if found:
-        return genSceneName(name, i + 1)
-    else:
-        return combinedName
+    return genSceneName(name, i + 1) if found else combinedName
+
+
+def refresh_look_at_me() -> None:
+
+    context = bpy.context
+    prev_active_object = context.active_object
+
+    bpy.ops.object.select_all(action="DESELECT")
+    for obj in bpy.data.objects:
+        if obj.ACON_prop.constraint_to_camera_rotation_z:
+            obj.select_set(True)
+            context.view_layer.objects.active = obj
+            obj.ACON_prop.constraint_to_camera_rotation_z = True
+            obj.select_set(False)
+
+    context.view_layer.objects.active = prev_active_object
 
 
 # scene_items should be a global variable due to a bug in EnumProperty
 scene_items: List[Tuple[str, str, str]] = []
 
 
-def add_scene_items(self, context) -> List[Tuple[str, str, str]]:
+def add_scene_items(self, context: Context) -> List[Tuple[str, str, str]]:
     scene_items.clear()
     for scene in bpy.data.scenes:
         scene_items.append((scene.name, scene.name, ""))
@@ -80,7 +89,7 @@ def add_scene_items(self, context) -> List[Tuple[str, str, str]]:
     return scene_items
 
 
-def loadScene(self, context) -> None:
+def loadScene(self, context: Context) -> None:
 
     if not context:
         context = bpy.context
@@ -92,28 +101,28 @@ def loadScene(self, context) -> None:
     oldScene: Optional[Scene] = context.scene
     context.window.scene = newScene
 
-    materials_handler.toggleToonEdge(self, context)
-    materials_handler.changeLineProps(self, context)
-    materials_handler.toggleToonFace(self, context)
-    materials_handler.toggleTexture(self, context)
-    materials_handler.toggleShading(self, context)
-    materials_handler.changeToonDepth(self, context)
-    materials_handler.changeToonShadingBrightness(self, context)
-    materials_handler.changeImageAdjustBrightness(self, context)
-    materials_handler.changeImageAdjustContrast(self, context)
-    materials_handler.changeImageAdjustColor(self, context)
-    materials_handler.changeImageAdjustHue(self, context)
-    materials_handler.changeImageAdjustSaturation(self, context)
+    materials_handler.toggleToonEdge(None, context)
+    materials_handler.changeLineProps(None, context)
+    materials_handler.toggleToonFace(None, context)
+    materials_handler.toggleTexture(None, context)
+    materials_handler.toggleShading(None, context)
+    materials_handler.changeToonDepth(None, context)
+    materials_handler.changeToonShadingBrightness(None, context)
+    materials_handler.changeImageAdjustBrightness(None, context)
+    materials_handler.changeImageAdjustContrast(None, context)
+    materials_handler.changeImageAdjustColor(None, context)
+    materials_handler.changeImageAdjustHue(None, context)
+    materials_handler.changeImageAdjustSaturation(None, context)
 
     layers.handleLayerVisibilityOnSceneChange(oldScene, newScene)
 
-    shadow.toggleSun(self, context)
-    shadow.changeSunStrength(self, context)
-    shadow.toggleShadow(self, context)
-    shadow.changeSunRotation(self, context)
+    shadow.toggleSun(None, context)
+    shadow.changeSunStrength(None, context)
+    shadow.toggleShadow(None, context)
+    shadow.changeSunRotation(None, context)
 
-    for obj in bpy.data.objects:
-        objects.setConstraintToCameraByObject(obj, context)
+    # refresh look_at_me
+    refresh_look_at_me()
 
 
 def createScene(old_scene: Scene, type: str, name: str) -> Optional[Scene]:

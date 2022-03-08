@@ -30,6 +30,7 @@ __all__ = (
 )
 
 import bpy as _bpy
+
 _preferences = _bpy.context.preferences
 
 error_encoding = False
@@ -55,6 +56,9 @@ def paths():
     # if folder addons_contrib/ exists, scripts in there will be loaded too
     addon_paths += _bpy.utils.script_paths("addons_contrib")
 
+    # ABLER SCRIPTS: customed scripts for abler
+    # addon_paths += _bpy.utils.script_paths("addons_abler")
+
     return addon_paths
 
 
@@ -74,9 +78,10 @@ def modules_refresh(module_cache=addons_fake_modules):
         if _bpy.app.debug_python:
             print("fake_module", mod_path, mod_name)
         import ast
+
         ModuleType = type(ast)
         try:
-            file_mod = open(mod_path, "r", encoding='UTF-8')
+            file_mod = open(mod_path, "r", encoding="UTF-8")
         except OSError as ex:
             print("Error opening file:", mod_path, ex)
             return None
@@ -118,6 +123,7 @@ def modules_refresh(module_cache=addons_fake_modules):
         except:
             print("Syntax error 'ast.parse' can't read:", repr(mod_path))
             import traceback
+
             traceback.print_exc()
             ast_data = None
 
@@ -140,6 +146,7 @@ def modules_refresh(module_cache=addons_fake_modules):
             except:
                 print("AST error parsing bl_info for:", repr(mod_path))
                 import traceback
+
                 traceback.print_exc()
                 return None
 
@@ -149,8 +156,7 @@ def modules_refresh(module_cache=addons_fake_modules):
             return mod
         else:
             print(
-                "fake_module: addon missing 'bl_info' "
-                "gives bad performance!:",
+                "fake_module: addon missing 'bl_info' " "gives bad performance!:",
                 repr(mod_path),
             )
             return None
@@ -160,8 +166,8 @@ def modules_refresh(module_cache=addons_fake_modules):
     for path in path_list:
 
         # force all contrib addons to be 'TESTING'
-        if path.endswith(("addons_contrib", )):
-            force_support = 'TESTING'
+        if path.endswith(("addons_contrib",)):
+            force_support = "TESTING"
         else:
             force_support = None
 
@@ -175,7 +181,9 @@ def modules_refresh(module_cache=addons_fake_modules):
                         "  %r\n"
                         "  %r" % (mod.__file__, mod_path)
                     )
-                    error_duplicates.append((mod.bl_info["name"], mod.__file__, mod_path))
+                    error_duplicates.append(
+                        (mod.bl_info["name"], mod.__file__, mod_path)
+                    )
 
                 elif mod.__time__ != os.path.getmtime(mod_path):
                     print(
@@ -231,17 +239,17 @@ def check(module_name):
     :rtype: tuple of booleans
     """
     import sys
+
     loaded_default = module_name in _preferences.addons
 
     mod = sys.modules.get(module_name)
-    loaded_state = (
-        (mod is not None) and
-        getattr(mod, "__addon_enabled__", Ellipsis)
-    )
+    loaded_state = (mod is not None) and getattr(mod, "__addon_enabled__", Ellipsis)
 
     if loaded_state is Ellipsis:
         print(
-            "Warning: addon-module", module_name, "found module "
+            "Warning: addon-module",
+            module_name,
+            "found module "
             "but without '__addon_enabled__' field, "
             "possible name collision from file:",
             repr(getattr(mod, "__file__", "<unknown>")),
@@ -253,6 +261,7 @@ def check(module_name):
         loaded_default = True
 
     return loaded_default, loaded_state
+
 
 # utility functions
 
@@ -295,8 +304,10 @@ def enable(module_name, *, default_set=False, persistent=False, handle_error=Non
     from bpy_restrict_state import RestrictBlend
 
     if handle_error is None:
+
         def handle_error(_ex):
             import traceback
+
             traceback.print_exc()
 
     # reload if the mtime changes
@@ -324,6 +335,7 @@ def enable(module_name, *, default_set=False, persistent=False, handle_error=Non
         mtime_new = os.path.getmtime(mod.__file__)
         if mtime_orig != mtime_new:
             import importlib
+
             print("module changed on disk:", repr(mod.__file__), "reloading...")
 
             try:
@@ -371,13 +383,17 @@ def enable(module_name, *, default_set=False, persistent=False, handle_error=Non
 
         if mod.bl_info.get("blender", (0, 0, 0)) < (2, 80, 0):
             if _bpy.app.debug:
-                print("Warning: Add-on '%s' was not upgraded for 2.80, ignoring" % module_name)
+                print(
+                    "Warning: Add-on '%s' was not upgraded for 2.80, ignoring"
+                    % module_name
+                )
             return None
 
         # 2) Try register collected modules.
         # Removed register_module, addons need to handle their own registration now.
 
         from _bpy import _bl_owner_id_get, _bl_owner_id_set
+
         owner_id_prev = _bl_owner_id_get()
         _bl_owner_id_set(module_name)
 
@@ -421,8 +437,10 @@ def disable(module_name, *, default_set=False, handle_error=None):
     import sys
 
     if handle_error is None:
+
         def handle_error(_ex):
             import traceback
+
             traceback.print_exc()
 
     mod = sys.modules.get(module_name)
@@ -443,9 +461,8 @@ def disable(module_name, *, default_set=False, handle_error=None):
             handle_error(ex)
     else:
         print(
-            "addon_utils.disable: %s not %s" % (
-                module_name,
-                "disabled" if mod is None else "loaded")
+            "addon_utils.disable: %s not %s"
+            % (module_name, "disabled" if mod is None else "loaded")
         )
 
     # could be in more than once, unlikely but better do this just in case.
@@ -476,6 +493,7 @@ def reset_all(*, reload_scripts=False):
             # first check if reload is needed before changing state.
             if reload_scripts:
                 import importlib
+
                 mod = sys.modules.get(mod_name)
                 if mod:
                     importlib.reload(mod)
@@ -491,9 +509,11 @@ def reset_all(*, reload_scripts=False):
 
 def disable_all():
     import sys
+
     # Collect modules to disable first because dict can be modified as we disable.
     addon_modules = [
-        item for item in sys.modules.items()
+        item
+        for item in sys.modules.items()
         if getattr(item[1], "__addon_enabled__", False)
     ]
     # Check the enabled state again since it's possible the disable call
@@ -522,7 +542,7 @@ def module_bl_info(mod, info_basis=None):
             "location": "",
             "description": "",
             "doc_url": "",
-            "support": 'COMMUNITY',
+            "support": "COMMUNITY",
             "category": "",
             "warning": "",
             "show_expanded": False,
@@ -553,8 +573,9 @@ def module_bl_info(mod, info_basis=None):
             print(
                 "Warning: add-on \"%s\": 'wiki_url' in 'bl_info' "
                 "is deprecated please use 'doc_url' instead!\n"
-                "         %s" % (
-                    addon_info['name'],
+                "         %s"
+                % (
+                    addon_info["name"],
                     getattr(mod, "__file__", None),
                 )
             )

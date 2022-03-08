@@ -33,10 +33,7 @@ def genCameraName(name: str, i: int = 1) -> str:
                 found = True
                 break
 
-    if found:
-        return genCameraName(name, i + 1)
-    else:
-        return name + str(i)
+    return genCameraName(name, i + 1) if found else name + str(i)
 
 
 # items should be a global variable due to a bug in EnumProperty
@@ -45,9 +42,7 @@ items: List[Tuple[str, str, str]] = []
 
 def add_view_items_from_collection(self, context) -> List[Tuple[str, str, str]]:
     items.clear()
-    collection = bpy.data.collections.get("ACON_col_cameras")
-
-    if collection:
+    if collection := bpy.data.collections.get("ACON_col_cameras"):
         for item in collection.objects:
             items.append((item.name, item.name, ""))
 

@@ -32,6 +32,76 @@ bl_info = {
 
 
 import bpy
+from .lib import layers
+from .lib.tracker import tracker
+
+
+class GroupNavigateTopOperator(bpy.types.Operator):
+    """Select Top Group"""
+
+    bl_idname = "acon3d.group_navigate_top"
+    bl_label = "Group Navigate Top"
+    bl_translation_context = "*"
+
+    @classmethod
+    def poll(cls, context):
+        return context.object
+
+    def execute(self, context):
+        tracker.group_navigate_top()
+        layers.selectByGroup("TOP")
+        return {"FINISHED"}
+
+
+class GroupNavigateUpOperator(bpy.types.Operator):
+    """Select Upper Group"""
+
+    bl_idname = "acon3d.group_navigate_up"
+    bl_label = "Group Navigate Up"
+    bl_translation_context = "*"
+
+    @classmethod
+    def poll(cls, context):
+        return context.object
+
+    def execute(self, context):
+        tracker.group_navigate_up()
+        layers.selectByGroup("UP")
+        return {"FINISHED"}
+
+
+class GroupNavigateDownOperator(bpy.types.Operator):
+    """Select Lower Group"""
+
+    bl_idname = "acon3d.group_navigate_down"
+    bl_label = "Group Navigate Down"
+    bl_translation_context = "*"
+
+    @classmethod
+    def poll(cls, context):
+        return context.object
+
+    def execute(self, context):
+        tracker.group_navigate_down()
+        layers.selectByGroup("DOWN")
+        return {"FINISHED"}
+
+
+class GroupNavigateBottomOperator(bpy.types.Operator):
+    """Select Bottom Group"""
+
+    bl_idname = "acon3d.group_navigate_bottom"
+    bl_label = "Group Navigate Bottom"
+    bl_translation_context = "*"
+
+    @classmethod
+    def poll(cls, context):
+        return context.object
+
+    def execute(self, context):
+        tracker.group_navigate_bottom()
+        layers.selectByGroup("BOTTOM")
+        return {"FINISHED"}
 
 
 class Acon3dStateUpdateOperator(bpy.types.Operator):
@@ -40,6 +110,7 @@ class Acon3dStateUpdateOperator(bpy.types.Operator):
     bl_idname = "acon3d.state_update"
     bl_label = "Update State"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -70,6 +141,7 @@ class Acon3dStateActionOperator(bpy.types.Operator):
     bl_idname = "acon3d.state_action"
     bl_label = "Move State"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     step: bpy.props.FloatProperty(name="Toggle Mode", default=0.25)
 
@@ -85,9 +157,7 @@ class Acon3dStateActionOperator(bpy.types.Operator):
             else:
                 x += self.step
 
-            if x > 1:
-                x = 1
-
+            x = min(x, 1)
             prop.state_slider = x
 
         return {"FINISHED"}
@@ -115,7 +185,11 @@ class Acon3dObjectPanel(bpy.types.Panel):
 
         if context.object:
             row = col.row()
-            row.prop(context.object.ACON_prop, "constraint_to_camera_rotation_z")
+            row.prop(
+                context.object.ACON_prop,
+                "constraint_to_camera_rotation_z",
+                text="Look at me",
+            )
 
 
 class ObjectSubPanel(bpy.types.Panel):
@@ -128,8 +202,7 @@ class ObjectSubPanel(bpy.types.Panel):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw_header(self, context):
-        obj = context.object
-        if obj:
+        if obj := context.object:
             layout = self.layout
             layout.active = bool(len(context.selected_objects))
             layout.enabled = layout.active
@@ -150,11 +223,39 @@ class ObjectSubPanel(bpy.types.Panel):
         row.operator("acon3d.state_update", text="", icon="FILE_REFRESH")
 
 
+class Acon3dGroupNavigaionPanel(bpy.types.Panel):
+    bl_parent_id = "ACON_PT_Object_Main"
+    bl_idname = "ACON_PT_Group_Navigation"
+    bl_label = "Group Navigation"
+    bl_category = "ACON3D"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_options = {"DEFAULT_CLOSED"}
+
+    def draw(self, context):
+        obj = context.active_object
+        prop = obj.ACON_prop
+        layout = self.layout
+
+        row = layout.row(align=True)
+        row.enabled = "Groups" in context.collection.children.keys()
+        row.prop(prop, "group_list", text="")
+        row.operator("acon3d.group_navigate_top", text="", icon="TRIA_UP_BAR")
+        row.operator("acon3d.group_navigate_up", text="", icon="TRIA_UP")
+        row.operator("acon3d.group_navigate_down", text="", icon="TRIA_DOWN")
+        row.operator("acon3d.group_navigate_bottom", text="", icon="TRIA_DOWN_BAR")
+
+
 classes = (
+    GroupNavigateUpOperator,
+    GroupNavigateTopOperator,
+    GroupNavigateDownOperator,
+    GroupNavigateBottomOperator,
     Acon3dStateActionOperator,
     Acon3dStateUpdateOperator,
     Acon3dObjectPanel,
     ObjectSubPanel,
+    Acon3dGroupNavigaionPanel,
 )
 
 

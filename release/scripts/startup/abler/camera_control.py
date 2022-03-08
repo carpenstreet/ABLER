@@ -36,8 +36,11 @@ from .lib import cameras
 
 
 class CreateCameraOperator(bpy.types.Operator):
+    """Creates New Camera"""
+
     bl_idname = "acon3d.create_camera"
-    bl_label = "New Camera"
+    bl_label = "Create Camera"
+    bl_options = {"REGISTER", "UNDO"}
 
     name: bpy.props.StringProperty(name="Name")
 
@@ -76,9 +79,12 @@ class CreateCameraOperator(bpy.types.Operator):
 
 
 class DeleteCameraOperator(bpy.types.Operator):
+    """Deletes Current Camera"""
+
     bl_idname = "acon3d.delete_camera"
-    bl_label = "Delete"
+    bl_label = "Delete Camera"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(self, context):
@@ -192,9 +198,12 @@ class Acon3dDOFPanel(bpy.types.Panel):
 
 
 class RemoveBackgroundOperator(bpy.types.Operator):
+    """Removes Current Background Image"""
+
     bl_idname = "acon3d.background_image_remove"
     bl_label = "Remove Background Image"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     index: bpy.props.IntProperty(name="Index", default=0)
 

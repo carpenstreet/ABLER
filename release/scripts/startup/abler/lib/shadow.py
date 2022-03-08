@@ -19,10 +19,10 @@
 
 from typing import Optional
 import bpy, math
-from bpy.types import Object, Light
+from bpy.types import Object, Light, Context
 
 
-def changeSunRotation(self, context) -> None:
+def changeSunRotation(self, context: Context) -> None:
     acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
@@ -34,7 +34,7 @@ def changeSunRotation(self, context) -> None:
     acon_sun.rotation_euler.z = prop.sun_rotation_z
 
 
-def toggleSun(self, context) -> None:
+def toggleSun(self, context: Context) -> None:
     acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
@@ -45,23 +45,23 @@ def toggleSun(self, context) -> None:
     acon_sun.hide_render = not prop.toggle_sun
 
 
-def changeSunStrength(self, context) -> None:
+def changeSunStrength(self, context: Context) -> None:
     acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
 
     prop = context.scene.ACON_prop
-    if acon_sun.type == "SUN":
+    if acon_sun.data.type == "SUN":
         acon_sun.data.energy = prop.sun_strength
 
 
-def toggleShadow(self, context) -> None:
+def toggleShadow(self, context: Context) -> None:
     acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
 
     prop = context.scene.ACON_prop
-    if acon_sun.type == "SUN":
+    if acon_sun.data.type == "SUN":
         acon_sun.data.use_shadow = prop.toggle_shadow
 
 
@@ -74,7 +74,7 @@ def setupSharpShadow():
 
     if not acon_sun:
         acon_sun = createAconSun()
-    if acon_sun.type == "SUN":
+    if acon_sun.data.type == "SUN":
         acon_sun.data.angle = 0
         acon_sun.data.use_contact_shadow = 1
 

@@ -41,6 +41,7 @@ class CreateSceneOperator(bpy.types.Operator):
 
     bl_idname = "acon3d.create_scene"
     bl_label = "New Scene"
+    bl_options = {"REGISTER", "UNDO"}
 
     name: bpy.props.StringProperty(name="Name")
 
@@ -85,6 +86,7 @@ class DeleteSceneOperator(bpy.types.Operator):
     bl_idname = "acon3d.delete_scene"
     bl_label = "Remove Scene"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(self, context):

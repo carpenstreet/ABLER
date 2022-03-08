@@ -43,10 +43,7 @@ class MATERIAL_UL_List(bpy.types.UIList):
         layout.use_property_decorate = False
         ob = data
         slot = item
-        ma = slot.material
-
-        if ma:
-
+        if ma := slot.material:
             layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
             layout.prop(ma.ACON_prop, "type", text="")
 
@@ -73,14 +70,12 @@ class CloneMaterialOperator(bpy.types.Operator):
 
     bl_idname = "acon3d.clone_material"
     bl_label = "Clone Material"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
         try:
-            if context.object.active_material:
-                return True
-            else:
-                return False
+            return bool(context.object.active_material)
         except:
             return False
 
@@ -120,9 +115,7 @@ class MaterialPanel(bpy.types.Panel):
                 "active_material_index",
                 rows=2,
             )
-            mat = obj.active_material
-
-            if mat:
+            if mat := obj.active_material:
                 box = col.box()
                 row = box.row()
                 row.template_ID(
@@ -156,9 +149,9 @@ class Acon3dFacePanel(bpy.types.Panel):
         col.separator()
         col = row.column()
         row = col.row()
-        row.prop(context.scene.ACON_prop, "toggle_texture")
+        row.prop(context.scene.ACON_prop, "toggle_texture", text="Texture")
         row = col.row()
-        row.prop(context.scene.ACON_prop, "toggle_shading")
+        row.prop(context.scene.ACON_prop, "toggle_shading", text="Shading")
         return
 
 

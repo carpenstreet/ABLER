@@ -33,10 +33,10 @@ bl_info = {
 
 # Main imports
 import bpy
+import sys
 from types import ModuleType
 
 from . import custom_properties
-from . import credential_modal
 from . import general
 from . import scene_control
 from . import edge_control
@@ -48,6 +48,7 @@ from . import camera_control
 from . import layer_control
 from . import render_control
 from . import pref
+from . import operators
 from .lib.tracker import tracker
 
 
@@ -57,7 +58,6 @@ from .lib.tracker import tracker
 
 importedLibrary = [
     custom_properties,
-    credential_modal,
     general,
     scene_control,
     edge_control,
@@ -69,7 +69,12 @@ importedLibrary = [
     layer_control,
     render_control,
     pref,
+    operators,
 ]
+if "--background" not in sys.argv and "-b" not in sys.argv:
+    from . import credential_modal
+
+    importedLibrary.append(credential_modal)
 
 
 def register():
@@ -79,7 +84,7 @@ def register():
         try:
             item.register()
         except Exception as e:
-            print(f"ABLER: Failed to register {str(item.__name__)}\n" + str(e))
+            print(f"ABLER: Failed to register {item.__name__}\n" + str(e))
 
 
 def unregister():
@@ -89,7 +94,7 @@ def unregister():
         try:
             item.register()
         except Exception as e:
-            print(f"ABLER: Failed to unregister {str(item.__name__)}\n" + str(e))
+            print(f"ABLER: Failed to unregister {item.__name__}\n" + str(e))
 
 
 if __name__ == "__main__":

@@ -41,6 +41,7 @@ class Acon3dCreateGroupOperator(bpy.types.Operator):
     bl_idname = "acon3d.create_group"
     bl_label = "Create Group"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         collection = bpy.data.collections.get("Groups")
@@ -80,6 +81,7 @@ class Acon3dExplodeGroupOperator(bpy.types.Operator):
     bl_idname = "acon3d.explode_group"
     bl_label = "Explode Group"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
 
@@ -99,8 +101,7 @@ class Acon3dExplodeGroupOperator(bpy.types.Operator):
                 layer_collection = context.view_layer.layer_collection
                 layer_collection.children.get("Groups").exclude = True
 
-            selected_group = bpy.data.collections.get(last_group_prop.name)
-            if selected_group:
+            if selected_group := bpy.data.collections.get(last_group_prop.name):
                 for child in selected_group.children:
                     root_group.children.link(child)
                 bpy.data.collections.remove(selected_group)
@@ -131,6 +132,10 @@ class Acon3dLayerPanel(bpy.types.Panel):
         for child in collection.children:
             index += 1
 
+            if child.name == "Layer0":
+                findex += 1
+                continue
+
             l_exclude = bpy.context.scene.l_exclude
 
             if findex > len(l_exclude) - 1:
@@ -139,13 +144,8 @@ class Acon3dLayerPanel(bpy.types.Panel):
             target = l_exclude[findex]
 
             icon = "OUTLINER_COLLECTION"
-            icon_vis = "HIDE_ON"
-            if target.value:
-                icon_vis = "HIDE_OFF"
-            icon_lock = "LOCKED"
-            if not target.lock:
-                icon_lock = "UNLOCKED"
-
+            icon_vis = "HIDE_OFF" if target.value else "HIDE_ON"
+            icon_lock = "UNLOCKED" if not target.lock else "LOCKED"
             row = layout.row()
             row.use_property_decorate = False
             sub = row.split(factor=0.98)
@@ -201,7 +201,7 @@ def register():
     for cls in classes:
         register_class(cls)
 
-    layers.subscribeToGroupedObjects()
+    # layers.subscribeToGroupedObjects()
 
 
 def unregister():
@@ -210,4 +210,4 @@ def unregister():
     for cls in reversed(classes):
         unregister_class(cls)
 
-    layers.clearSubscribers()
+    # layers.clearSubscribers()
