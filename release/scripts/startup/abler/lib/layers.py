@@ -170,6 +170,10 @@ def group_navigate_up(
         except Exception as e:
             print(e)
             return selectByGroup("TOP")
+    # group-group-object의 구조를 가진 경우, UP을 실행해도
+    # 여러번 눌러야 하는 경우가 있음. 그래서 while 문으로
+    # 처리했지만, root group까지 이런 구조인 오브젝트들이
+    # 있어서 for loop로 최대 5회 돌도록 처리함.
     for _ in range(5):
         if len(selection.all_objects) > 1:
             break
