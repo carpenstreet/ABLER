@@ -2,9 +2,10 @@ import bpy
 import sys
 from bpy.app.handlers import persistent
 from .lib import cameras, shadow, render, scenes
-from .lib.materials import materials_setup
+from .lib.materials import materials_setup, materials_handler
 from .lib.post_open import change_and_reset_value
 from .lib.tracker import tracker
+from types import SimpleNamespace
 
 
 def init_setting(dummy):
@@ -59,11 +60,36 @@ def load_handler(dummy):
         tracker.turn_on()
 
 
+@persistent
+def save_pre_handler(dummy):
+    override = SimpleNamespace()
+    override_scene = SimpleNamespace()
+    override.scene = override_scene
+    override_ACON_prop = SimpleNamespace()
+    override_scene.ACON_prop = override_ACON_prop
+    override_ACON_prop.toggle_toon_edge = False
+    override_ACON_prop.toggle_toon_face = False
+    materials_handler.toggleToonEdge(None, override)
+    materials_handler.toggleToonFace(None, override)
+
+
+@persistent
+def save_post_handler(dummy):
+    materials_handler.toggleToonEdge(None, None)
+    materials_handler.toggleToonFace(None, None)
+    for scene in bpy.data.scenes:
+        scene.view_settings.view_transform = "Standard"
+
+
 def register():
     bpy.app.handlers.load_factory_startup_post.append(init_setting)
     bpy.app.handlers.load_post.append(load_handler)
+    bpy.app.handlers.save_pre.append(save_pre_handler)
+    bpy.app.handlers.save_post.append(save_post_handler)
 
 
 def unregister():
+    bpy.app.handlers.save_post.remove(save_post_handler)
+    bpy.app.handlers.save_pre.remove(save_pre_handler)
     bpy.app.handlers.load_post.remove(load_handler)
     bpy.app.handlers.load_factory_startup_post.remove(init_setting)

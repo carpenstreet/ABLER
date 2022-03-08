@@ -258,10 +258,10 @@ classes = (
     Acon3dImportPanel,
     ToggleToolbarOperator,
     ImportOperator,
+    ApplyToonStyleOperator,
     FileOpenOperator,
     FlyOperator,
     ImportFBXOperator,
-    ApplyToonStyleOperator,
 )
 
 
