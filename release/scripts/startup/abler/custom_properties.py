@@ -90,6 +90,33 @@ class CollectionLayerExcludeProperties(bpy.types.PropertyGroup):
     )
 
 
+class AconSceneSelectedGroupProperty(bpy.types.PropertyGroup):
+    @classmethod
+    def register(cls):
+        bpy.types.Scene.ACON_selected_group = bpy.props.PointerProperty(
+            type=AconSceneSelectedGroupProperty
+        )
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.Scene.ACON_selected_group
+
+    current_root_group: bpy.props.StringProperty(
+        name="Current Selected Root Group", default=""
+    )
+    current_group: bpy.props.StringProperty(name="Current Selected Group", default="")
+    direction: bpy.props.EnumProperty(
+        name="Level Direction",
+        description="Change order of collection level",
+        items=[
+            ("UP", "up", "Level Up"),
+            ("DOWN", "down", "Level Down"),
+            ("TOP", "top", "Level Top"),
+            ("BOTTOM", "bottom", "Level bottom"),
+        ],
+    )
+
+
 class AconSceneProperty(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):
@@ -438,7 +465,6 @@ class AconMeshProperty(bpy.types.PropertyGroup):
 
 
 class AconObjectGroupProperty(bpy.types.PropertyGroup):
-
     name: bpy.props.StringProperty(name="Group", description="Group", default="")
 
 
@@ -463,6 +489,11 @@ class AconObjectProperty(bpy.types.PropertyGroup):
         del bpy.types.Object.ACON_prop
 
     group: bpy.props.CollectionProperty(type=AconObjectGroupProperty)
+
+    group_list: bpy.props.EnumProperty(
+        name="View",
+        items=objects.add_group_list_from_collection,
+    )
 
     constraint_to_camera_rotation_z: bpy.props.BoolProperty(
         # name="Look at me",
@@ -502,6 +533,7 @@ class AconObjectProperty(bpy.types.PropertyGroup):
 classes = (
     AconWindowManagerProperty,
     CollectionLayerExcludeProperties,
+    AconSceneSelectedGroupProperty,
     AconSceneProperty,
     AconMaterialProperty,
     AconMeshProperty,

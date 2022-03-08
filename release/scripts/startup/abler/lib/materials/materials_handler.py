@@ -89,8 +89,9 @@ def toggleTexture(self, context: Context) -> None:
     toggle_texture: BoolProperty = context.scene.ACON_prop.toggle_texture
     textureFactorValue: int = int(not toggle_texture)
 
-    for image in context.scene.camera.data.background_images:
-        image.show_background_image = toggle_texture
+    if context.scene.camera:
+        for image in context.scene.camera.data.background_images:
+            image.show_background_image = toggle_texture
 
     node_group: Optional[NodeTree] = bpy.data.node_groups.get(
         "ACON_nodeGroup_combinedToon"
@@ -123,6 +124,9 @@ def toggleShading(self, context: Context) -> None:
 
 def toggleEachShading(self, context: Context) -> None:
 
+    if not context:
+        context = bpy.context
+
     if "object" not in dir(context):
         return
 
@@ -143,6 +147,9 @@ def toggleEachShading(self, context: Context) -> None:
 
 
 def toggleEachShadow(self, context: Context) -> None:
+
+    if not context:
+        context = bpy.context
 
     if "object" not in dir(context):
         return
@@ -350,10 +357,6 @@ def changeToonShadingBrightness(self, context: Context) -> None:
     if not node_group:
         return
 
-    node_outline: Optional[Node] = node_group.nodes.get("ACON_nodeGroup_toonFace")
-    if not node_outline:
-        return
-    inputs: List[NodeSocket] = node_outline.inputs
 
     prop: PropertyGroup = context.scene.ACON_prop
     value_1: FloatProperty = prop.toon_shading_brightness_1

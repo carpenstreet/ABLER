@@ -31,6 +31,10 @@ class EventKind(enum.Enum):
     background_images_off = "Background Images Off"
     bloom_on = "Bloom On"
     bloom_off = "Bloom Off"
+    group_navigate_bottom = "Group Navigate Bottom"
+    group_navigate_top = "Group Navigate Top"
+    group_navigate_down = "Group Navigate Down"
+    group_navigate_up = "Group Navigate Up"
 
 
 def accumulate(interval=0):
@@ -190,6 +194,18 @@ class Tracker(metaclass=ABCMeta):
 
     def bloom_off(self):
         self._track(EventKind.bloom_off.value)
+
+    def group_navigate_bottom(self):
+        self._track(EventKind.group_navigate_bottom.value)
+
+    def group_navigate_top(self):
+        self._track(EventKind.group_navigate_top.value)
+
+    def group_navigate_down(self):
+        self._track(EventKind.group_navigate_down.value)
+
+    def group_navigate_up(self):
+        self._track(EventKind.group_navigate_up.value)
 
 
 class DummyTracker(Tracker):
