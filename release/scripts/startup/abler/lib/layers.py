@@ -170,7 +170,9 @@ def group_navigate_up(
         except Exception as e:
             print(e)
             return selectByGroup("TOP")
-    while len(selection.all_objects) <= 1:
+    for _ in range(5):
+        if len(selection.all_objects) > 1:
+            break
         selection = up(ordered_ancester_collections, selection)
     selected_group_prop.current_group = selection.name
     for obj in selection.all_objects:
