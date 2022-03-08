@@ -262,7 +262,6 @@ classes = (
     FileOpenOperator,
     FlyOperator,
     ImportFBXOperator,
-    ApplyToonStyleOperator,
 )
 
 
