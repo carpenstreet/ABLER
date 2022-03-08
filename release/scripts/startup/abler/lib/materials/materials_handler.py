@@ -54,6 +54,7 @@ def toggleToonEdge(self, context: Context) -> None:
 
     node.outputs[0].default_value = toonEdgeFactorValue
 
+
 def toggleEachEdge(self, context: Context) -> None:
     if not context:
         context = bpy.context
@@ -130,7 +131,6 @@ def toggleShading(self, context: Context) -> None:
 
     toggle_shading: BoolProperty = context.scene.ACON_prop.toggle_shading
     shadingFactorValue: int = int(toggle_shading)
-
 
     node_group: Optional[NodeTree] = bpy.data.node_groups.get(
         "ACON_nodeGroup_combinedToon"
@@ -209,7 +209,6 @@ def changeToonDepth(self, context: Context) -> None:
 
     toonFaceFactorValue: int = int(context.scene.ACON_prop.toon_shading_depth == "3")
 
-
     node: Optional[Node] = node_group.nodes.get("ACON_nodeGroup_toonFace")
     if not node:
         return
@@ -283,7 +282,6 @@ def changeImageAdjustBrightness(self, context: Context) -> None:
         return
     inputs: List[NodeSocket] = bright.inputs
 
-
     prop: PropertyGroup = context.scene.ACON_prop
     value: FloatProperty = prop.image_adjust_brightness
 
@@ -333,7 +331,6 @@ def changeImageAdjustColor(self, context: Context) -> None:
         return
     inputs: List[NodeSocket] = brightContrast.inputs
 
-
     prop: PropertyGroup = context.scene.ACON_prop
     r: FloatProperty = prop.image_adjust_color_r
     g: FloatProperty = prop.image_adjust_color_g
@@ -365,7 +362,6 @@ def changeImageAdjustHue(self, context: Context) -> None:
     prop: PropertyGroup = context.scene.ACON_prop
     value: FloatProperty = prop.image_adjust_hue
 
-
     inputs[0].default_value = value
 
 
@@ -387,7 +383,6 @@ def changeImageAdjustSaturation(self, context: Context) -> None:
     if not hueSaturation:
         return
     inputs: List[NodeSocket] = hueSaturation.inputs
-
 
     prop: PropertyGroup = context.scene.ACON_prop
     value: FloatProperty = prop.image_adjust_saturation
@@ -414,7 +409,6 @@ def changeLineProps(self, context: Context) -> None:
         return
     inputs: List[NodeSocket] = node_outline.inputs
 
-
     prop: PropertyGroup = context.scene.ACON_prop
     min_value: FloatProperty = prop.edge_min_line_width
     max_value: FloatProperty = prop.edge_max_line_width
@@ -438,7 +432,8 @@ def changeToonShadingBrightness(self, context: Context) -> None:
 
     if not node_group:
         return
-
+    node_outline = node_group.nodes.get("ACON_nodeGroup_toonFace")
+    inputs = node_outline.inputs
 
     prop: PropertyGroup = context.scene.ACON_prop
     value_1: FloatProperty = prop.toon_shading_brightness_1
