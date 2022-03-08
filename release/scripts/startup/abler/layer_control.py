@@ -75,54 +75,6 @@ class Acon3dCreateGroupOperator(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class Acon3dGroupSelectionOperator(bpy.types.Operator):
-    """Operator which runs its self from a timer"""
-
-    bl_idname = "acon3d.group_selection"
-    bl_label = "Modal group selection operator"
-
-    click = False
-    current_depth = 0
-    current_root_collection = None
-
-    def renew_collection_flag(self):
-        collection_familytree = layers.get_root_collections_from_object(
-            bpy.context.active_object
-        )
-        selected_group = bpy.context.scene.ACON_selected_group
-        if (
-            collection_familytree
-            and selected_group.current_root_group != collection_familytree[-1].name
-        ):
-            selected_group.current_root_group = collection_familytree[-1]
-            selected_group.current_depth = 0
-        return collection_familytree
-
-    def modal(self, context, event):
-        selected_group = bpy.context.scene.ACON_selected_group
-
-        if event.type in {"LEFTMOUSE"} and event.value in {"RELEASE"}:
-            if not event.ctrl and not event.shift:
-                selected_group.direction = "TOP"
-            elif event.ctrl and not event.shift:
-                selected_group.direction = "DOWN"
-            elif not event.ctrl:
-                selected_group.direction = "UP"
-            else:
-                selected_group.direction = "BOTTOM"
-
-        return {"PASS_THROUGH"}
-
-    def invoke(self, context, event):
-        self.execute(context)
-        return {"RUNNING_MODAL"}
-
-    def execute(self, context):
-        wm = context.window_manager
-        wm.modal_handler_add(self)
-        return {"RUNNING_MODAL"}
-
-
 class Acon3dExplodeGroupOperator(bpy.types.Operator):
     """Explode Group"""
 
@@ -237,7 +189,6 @@ class Acon3dLayerPanel(bpy.types.Panel):
 
 
 classes = (
-    Acon3dGroupSelectionOperator,
     Acon3dCreateGroupOperator,
     Acon3dExplodeGroupOperator,
     Acon3dLayerPanel,
@@ -250,8 +201,7 @@ def register():
     for cls in classes:
         register_class(cls)
 
-    layers.subscribeToGroupedObjects()
-    layers.subscribeToDoubleClick()
+    # layers.subscribeToGroupedObjects()
 
 
 def unregister():
@@ -260,5 +210,4 @@ def unregister():
     for cls in reversed(classes):
         unregister_class(cls)
 
-    layers.clearDoubleClickSubscribers()
-    layers.clearSubscribers()
+    # layers.clearSubscribers()

@@ -47,7 +47,8 @@ def handleLayerVisibilityOnSceneChange(oldScene, newScene):
 def get_ancester_collections(collection: Collection, parents: List[Collection]) -> None:
     for parent_collection in bpy.data.collections:
         if collection.name in parent_collection.children.keys():
-            parents.append(parent_collection)
+            if not is_component_collection(parent_collection):
+                parents.append(parent_collection)
             get_ancester_collections(parent_collection, parents)
             return
 
@@ -64,6 +65,13 @@ def is_ancester_collection(a: Collection, b: Collection) -> bool:
     parents = []
     get_ancester_collections(a, parents)
     return b in parents
+
+
+def is_component_collection(collection: Collection) -> bool:
+    return (
+        collection.name in bpy.data.collections.get("Components").children.keys()
+        or collection.name == "Components"
+    )
 
 
 def quick_sort_by_hierarchy(
@@ -92,7 +100,6 @@ def get_ordered_ancester_collections(
 ) -> List[Collection]:
     parents = []
     get_ancester_collections(collection, parents)
-    parents.pop()
     ret_list = list(reversed(quick_sort_by_hierarchy(parents)))
     ret_list.append(collection)
     return ret_list
@@ -123,10 +130,7 @@ def up(group_list: List[Collection], group_item: Collection) -> Optional[Collect
     """
     try:
         idx: int = group_list.index(group_item)
-        if idx > 0:
-            return group_list[idx - 1]
-        else:
-            return group_list[0]
+        return group_list[idx - 1] if idx > 0 else group_list[0]
     except:
         return None
 
@@ -140,10 +144,7 @@ def down(
     """
     try:
         idx: int = group_list.index(group_item)
-        if idx < len(group_list) - 1:
-            return group_list[idx + 1]
-        else:
-            return "object"
+        return group_list[idx + 1] if idx < len(group_list) - 1 else "object"
     except:
         return None
 
@@ -153,16 +154,27 @@ def group_navigate_up(
     root_ancester_collection: Collection,
     ordered_ancester_collections: List[Collection],
 ) -> None:
-    if selected_group_prop.current_root_group == root_ancester_collection.name:
+    if selected_group_prop.current_root_group != root_ancester_collection.name:
+        return
+    if selected_group_prop.current_group == "":
+        selection = ordered_ancester_collections[-1]
+    else:
         selection = up(
             ordered_ancester_collections,
             bpy.data.collections[selected_group_prop.current_group],
         )
-        if not selection:
+    if not selection:
+        try:
+            selection = ordered_ancester_collections[-1]
+            selected_group_prop.current_group = selection.name
+        except Exception as e:
+            print(e)
             return selectByGroup("TOP")
-        selected_group_prop.current_group = selection.name
-        for obj in selection.all_objects:
-            obj.select_set(True)
+    while len(selection.all_objects) <= 1:
+        selection = up(ordered_ancester_collections, selection)
+    selected_group_prop.current_group = selection.name
+    for obj in selection.all_objects:
+        obj.select_set(True)
 
 
 def group_navigate_top(
@@ -180,18 +192,28 @@ def group_navigate_down(
     root_ancester_collection: Collection,
     ordered_ancester_collections: List[Collection],
 ) -> None:
-    if selected_group_prop.current_root_group == root_ancester_collection.name:
+    if selected_group_prop.current_root_group != root_ancester_collection.name:
+        return
+    if selected_group_prop.current_group == "":
+        selection = "object"
+    else:
         selection = down(
             ordered_ancester_collections,
             bpy.data.collections[selected_group_prop.current_group],
         )
-        if not selection:
-            return selectByGroup("TOP")
-        if selection == "object":
-            return
-        selected_group_prop.current_group = selection.name
-        for obj in selection.all_objects:
-            obj.select_set(True)
+    if not selection:
+        return selectByGroup("BOTTOM")
+    slctd_objs = bpy.context.selected_objects.copy()
+    if selection == "object":
+        selected_group_prop.current_group = ""
+        for obj in slctd_objs:
+            if obj != bpy.context.active_object:
+                obj.select_set(False)
+        return
+    selected_group_prop.current_group = selection.name
+    for obj in slctd_objs:
+        if obj.name not in selection.all_objects:
+            obj.select_set(False)
 
 
 def group_navigate_bottom(
@@ -200,7 +222,11 @@ def group_navigate_bottom(
     ordered_ancester_collections: List[Collection],
 ):
     # Put last group in prop
-    selected_group_prop.current_group = ordered_ancester_collections[-1].name
+    selected_group_prop.current_group = ""
+    slctd_objs = bpy.context.selected_objects.copy()
+    for obj in slctd_objs:
+        if obj != bpy.context.active_object:
+            obj.select_set(False)
 
 
 def init_group_navigation(
@@ -208,23 +234,25 @@ def init_group_navigation(
 ) -> Optional[Tuple[Any, Collection, List[Collection]]]:
     selected_object: Object = bpy.context.active_object
     selected_group_prop = bpy.context.scene.ACON_selected_group
-
     if not selected_object:
         selected_group_prop.current_root_group = ""
         selected_group_prop.current_group = ""
         return
 
     group_props = selected_object.ACON_prop.group
-
     group_length = len(group_props)
     if not group_length:
         return
-
-    last_group_prop = group_props[-1]
+    last_group_prop = group_props[0]
+    ordered_group_list = [
+        bpy.data.collections[item.name]
+        for item in reversed(group_props)
+        if item.name in bpy.data.collections.keys()
+    ]
 
     selected_group = bpy.data.collections.get(last_group_prop.name)
-    ordered_ancester_collections = get_ordered_ancester_collections(selected_group)
-    if len(ordered_ancester_collections) > 0:
+    ordered_ancester_collections = ordered_group_list
+    if ordered_ancester_collections:
         root_ancester_collection: Collection = ordered_ancester_collections[0]
     else:
         return
@@ -233,6 +261,7 @@ def init_group_navigation(
         return selectByGroup(direction)
     # Put root group in prop
     selected_group_prop.current_root_group = root_ancester_collection.name
+
     return selected_group_prop, root_ancester_collection, ordered_ancester_collections
 
 
@@ -242,7 +271,8 @@ def selectByGroup(direction: str) -> None:
         root_ancester_collection,
         ordered_ancester_collections,
     ) = init_group_navigation(direction)
-
+    if bpy.context.active_object is None:
+        return
     if direction == "BOTTOM":
         group_navigate_bottom(
             selected_group_prop, root_ancester_collection, ordered_ancester_collections
@@ -259,6 +289,14 @@ def selectByGroup(direction: str) -> None:
         group_navigate_up(
             selected_group_prop, root_ancester_collection, ordered_ancester_collections
         )
+
+
+def select_group_prop(name: str) -> None:
+    if name in bpy.data.collections.keys():
+        for obj in bpy.context.selected_objects:
+            obj.select_set(False)
+        for obj in bpy.data.collections.get(name).all_objects:
+            obj.select_set(True)
 
 
 @persistent
@@ -281,24 +319,3 @@ def checkObjectSelectionChange(dummy):
     ACON_prop.selected_objects_str = "".join(
         obj.name for obj in bpy.context.selected_objects
     )
-
-
-@persistent
-def initDoubleClick(dummy):
-    bpy.ops.acon3d.group_selection("INVOKE_DEFAULT")
-
-
-def subscribeToDoubleClick():
-    bpy.app.handlers.load_post.append(initDoubleClick)
-
-
-def clearDoubleClickSubscribers():
-    bpy.app.handlers.load_post.remove(initDoubleClick)
-
-
-def subscribeToGroupedObjects():
-    bpy.app.handlers.depsgraph_update_post.append(checkObjectSelectionChange)
-
-
-def clearSubscribers():
-    bpy.app.handlers.depsgraph_update_post.remove(checkObjectSelectionChange)

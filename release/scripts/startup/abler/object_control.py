@@ -33,6 +33,7 @@ bl_info = {
 
 import bpy
 from .lib import layers
+from .lib.tracker import tracker
 
 
 class GroupNavigateTopOperator(bpy.types.Operator):
@@ -47,6 +48,8 @@ class GroupNavigateTopOperator(bpy.types.Operator):
         return context.object
 
     def execute(self, context):
+        tracker.group_navigate_top()
+        layers.selectByGroup("TOP")
         return {"FINISHED"}
 
 
@@ -62,6 +65,8 @@ class GroupNavigateUpOperator(bpy.types.Operator):
         return context.object
 
     def execute(self, context):
+        tracker.group_navigate_up()
+        layers.selectByGroup("UP")
         return {"FINISHED"}
 
 
@@ -77,6 +82,8 @@ class GroupNavigateDownOperator(bpy.types.Operator):
         return context.object
 
     def execute(self, context):
+        tracker.group_navigate_down()
+        layers.selectByGroup("DOWN")
         return {"FINISHED"}
 
 
@@ -92,6 +99,8 @@ class GroupNavigateBottomOperator(bpy.types.Operator):
         return context.object
 
     def execute(self, context):
+        tracker.group_navigate_bottom()
+        layers.selectByGroup("BOTTOM")
         return {"FINISHED"}
 
 
@@ -220,11 +229,12 @@ class Acon3dGroupNavigaionPanel(bpy.types.Panel):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
-        obj = context.object
+        obj = context.active_object
         prop = obj.ACON_prop
         layout = self.layout
 
         row = layout.row(align=True)
+        row.enabled = "Groups" in context.collection.children.keys()
         row.prop(prop, "group_list", text="")
         row.operator("acon3d.group_navigate_top", text="", icon="TRIA_UP_BAR")
         row.operator("acon3d.group_navigate_up", text="", icon="TRIA_UP")
