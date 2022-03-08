@@ -31,6 +31,8 @@ class EventKind(enum.Enum):
     background_images_off = "Background Images Off"
     bloom_on = "Bloom On"
     bloom_off = "Bloom Off"
+    save = "save"
+    save_as = "save_as"
 
 
 def accumulate(interval=0):
@@ -190,6 +192,12 @@ class Tracker(metaclass=ABCMeta):
 
     def bloom_off(self):
         self._track(EventKind.bloom_off.value)
+
+    def save(self):
+        self._track(EventKind.save.value)
+
+    def save_as(self):
+        self._track(EventKind.save_as.value)
 
 
 class DummyTracker(Tracker):
