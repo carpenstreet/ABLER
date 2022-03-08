@@ -2732,15 +2732,17 @@ class WM_MT_splash(Menu):
                     row.prop(userInfo.ACON_prop, "password_shown")
                 else:
                     row.prop(userInfo.ACON_prop, "password")
+                column.separator()
                 row = column.row()
-                layout.prop(
+                row.prop(
                     userInfo.ACON_prop,
                     "remember_username",
-                    text="Remember Username",
+                    text="",
                     icon="CHECKBOX_HLT",
                     emboss=False,
                     invert_checkbox=True,
                 )
+                row.label(text="Remember Username")
 
                 column = row_outside.column()
                 column.separator()
@@ -2869,6 +2871,12 @@ class WM_OT_drop_blend_file(Operator):
         props.filepath = self.filepath
         props.display_file_selector = False
         props.load_ui = False
+
+        col = layout.column()
+        col.operator_context = "EXEC_DEFAULT"
+        col.operator(
+            "acon3d.import_blend", text="Import", icon="IMPORT"
+        ).filepath = self.filepath
 
         layout.separator()
         col = layout.column()

@@ -17,32 +17,71 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+from typing import List, Tuple, Optional
 import bpy
+from bpy.types import Scene, Context
 from . import shadow, layers, objects
 from .materials import materials_handler
 from math import radians
+from .tracker import tracker
 
 
-def genSceneName(name, i=1):
-    found = None
-    combinedName = name + str(i)
-
-    for scene in bpy.data.scenes:
-        if scene.name == combinedName:
-            found = True
-            break
-
-    if found:
-        return genSceneName(name, i + 1)
+def change_dof(self, context: Context) -> None:
+    prop = context.scene.ACON_prop
+    context.scene.camera.data.dof.use_dof = prop.use_dof
+    if prop.use_dof:
+        tracker.depth_of_field_on()
     else:
-        return combinedName
+        tracker.depth_of_field_off()
+
+
+def change_background_images(self, context: Context) -> None:
+    prop = context.scene.ACON_prop
+    context.scene.camera.data.show_background_images = prop.show_background_images
+    if prop.show_background_images:
+        tracker.background_images_on()
+    else:
+        tracker.background_images_off()
+
+
+def change_bloom(self, context: Context) -> None:
+    prop = context.scene.ACON_prop
+    context.scene.eevee.use_bloom = prop.use_bloom
+    if prop.use_bloom:
+        tracker.bloom_on()
+    else:
+        tracker.bloom_off()
+
+
+def genSceneName(name: str, i: int = 1) -> str:
+    combinedName: str = name + str(i)
+
+    found = any(scene.name == combinedName for scene in bpy.data.scenes)
+
+    return genSceneName(name, i + 1) if found else combinedName
+
+
+def refresh_look_at_me() -> None:
+
+    context = bpy.context
+    prev_active_object = context.active_object
+
+    bpy.ops.object.select_all(action="DESELECT")
+    for obj in bpy.data.objects:
+        if obj.ACON_prop.constraint_to_camera_rotation_z:
+            obj.select_set(True)
+            context.view_layer.objects.active = obj
+            obj.ACON_prop.constraint_to_camera_rotation_z = True
+            obj.select_set(False)
+
+    context.view_layer.objects.active = prev_active_object
 
 
 # scene_items should be a global variable due to a bug in EnumProperty
-scene_items = []
+scene_items: List[Tuple[str, str, str]] = []
 
 
-def add_scene_items(self, context):
+def add_scene_items(self, context: Context) -> List[Tuple[str, str, str]]:
     scene_items.clear()
     for scene in bpy.data.scenes:
         scene_items.append((scene.name, scene.name, ""))
@@ -50,7 +89,7 @@ def add_scene_items(self, context):
     return scene_items
 
 
-def loadScene(self, context):
+def loadScene(self, context: Context) -> None:
 
     if not context:
         context = bpy.context
@@ -58,8 +97,8 @@ def loadScene(self, context):
     if not self:
         self = context.window_manager.ACON_prop
 
-    newScene = bpy.data.scenes.get(self.scene)
-    oldScene = context.scene
+    newScene: Optional[Scene] = bpy.data.scenes.get(self.scene)
+    oldScene: Optional[Scene] = context.scene
     context.window.scene = newScene
 
     materials_handler.toggleToonEdge(self, context)
@@ -82,11 +121,11 @@ def loadScene(self, context):
     shadow.toggleShadow(self, context)
     shadow.changeSunRotation(self, context)
 
-    for obj in bpy.data.objects:
-        objects.setConstraintToCameraByObject(obj, context)
+    # refresh look_at_me
+    refresh_look_at_me()
 
 
-def createScene(old_scene, type, name):
+def createScene(old_scene: Scene, type: str, name: str) -> Optional[Scene]:
 
     new_scene = old_scene.copy()
     new_scene.name = name

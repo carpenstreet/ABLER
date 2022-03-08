@@ -3568,7 +3568,7 @@ msgstr "뷰포트에서 오브젝트의 앞에 이 이미지를 표시합니다"
 
 
 msgid "Background Source"
-msgstr "타입"
+msgstr "이미지 타입"
 
 
 msgid "Data source used for background"
@@ -3607,12 +3607,20 @@ msgid "Background Images"
 msgstr "배경 이미지"
 
 
+msgid "Add images to the front and rear of the model"
+msgstr "모델의 전후면에 이미지를 추가합니다"
+
+
 msgid "Collection of background images"
 msgstr "배경 이미지의 컬렉션"
 
 
 msgid "Depth of Field"
 msgstr "피사계 심도 (DOF)"
+
+
+msgid "Blur objects at a certain distance using the values set below"
+msgstr "아래에 설정된 값들을 이용해 특정 거리에 있는 물체들을 흐리게 합니다"
 
 
 msgid "Depth of Field settings"
@@ -3628,7 +3636,7 @@ msgstr "폴리곤의 보케에 대한 조리개에서 블래이드의 수 (최�
 
 
 msgid "F-Stop"
-msgstr "F-정지"
+msgstr "흐려짐 정도"
 
 
 msgid "F-Stop ratio (lower numbers give more defocus, higher numbers give a sharper image)"
@@ -12941,6 +12949,22 @@ msgid "Layer"
 msgstr "레이어"
 
 
+msgid "Layer Exclude"
+msgstr "레이어 보이기/숨기기"
+
+
+msgid "Make objects on the current layer invisible in the viewport"
+msgstr "현재 레이어에 있는 오브젝트들을 뷰포트에서 보이지 않도록 합니다"
+
+
+msgid "Layer Lock"
+msgstr "레이어 잠금/해제"
+
+
+msgid "Make objects on the current layer lock in the viewport"
+msgstr "현재 레이어에 있는 오브젝트들을 선택하지 못하도록 합니다"
+
+
 msgid "GPencil Sculpt Guide"
 msgstr "그리스 펜슬 스컬프트 가이드"
 
@@ -18406,6 +18430,10 @@ msgstr "사각형 스폿 라이트 셰이프를 캐스트"
 
 msgid "Sun Light"
 msgstr "햇빛"
+
+
+msgid "Express sunlight"
+msgstr "햇빛을 표현합니다"
 
 
 msgid "Constant direction parallel ray Light"
@@ -34035,6 +34063,10 @@ msgstr "키르슈"
 
 msgid "Shadow"
 msgstr "그림자"
+
+
+msgid "Express shadow"
+msgstr "그림자를 표현합니다"
 
 
 msgid "Flip X"
@@ -58958,9 +58990,12 @@ msgid "Add a new background image"
 msgstr "새 배경 이미지 추가"
 
 
-msgctxt "Operator"
 msgid "Remove Background Image"
-msgstr "배경 이미지를 제거"
+msgstr "배경 이미지 제거"
+
+
+msgid "Removes Current Background Image"
+msgstr "현재 배경 이미지를 제거합니다"
 
 
 msgid "Remove a background image from the 3D view"
@@ -59092,6 +59127,10 @@ msgstr "비행 네비게이션"
 
 msgid "Interactively fly around the scene"
 msgstr "W, A, S, D / Q, E / 방향키 / 마우스를 활용하여 뷰포트를 움직입니다"
+
+
+msgid "Move around the scene using WASD, QE, and mouse like FPS game"
+msgstr "FPS 게임에서 사용되는 W,A,S,D / Q,E / 마우스로 이동 가능한 비행 모드입니다"
 
 
 msgctxt "Operator"
@@ -62727,6 +62766,10 @@ msgstr "색상 매니지먼트"
 
 msgid "Bloom"
 msgstr "빛번짐 효과"
+
+
+msgid "Create a shining effect with high luminance pixels"
+msgstr "고휘도 픽셀로 빛나는 이펙트를 생성합니다"
 
 
 msgid "Indirect Lighting"
@@ -92976,6 +93019,9 @@ msgstr "면 설정"
 msgid "Toon Color Depth"
 msgstr "색 표현 수"
 
+msgid "Object Control"
+msgstr "오브젝트 설정"
+
 
 msgid "Image Adjustment"
 msgstr "이미지 보정"
@@ -93001,7 +93047,7 @@ msgid "Camera Control"
 msgstr "카메라"
 
 
-msgid "Fly (shift + `)"
+msgid "Fly Mode (shift + `)"
 msgstr "플라이 모드 (shift + `)"
 
 
@@ -93116,8 +93162,8 @@ msgstr "선택된 씬을 이 프로젝트에서 제거합니다"
 msgid "Change scene"
 msgstr "씬을 전환합니다"
 
-msgid "Toggle toon style edge expression"
-msgstr "만화스타일 모서리 표시하기 토글 버튼"
+msgid "Express toon style edge"
+msgstr "모델의 모서리 선이 만화 스타일로 표현됩니다"
 
 
 msgid "Import objects according to the current settings"
@@ -93136,16 +93182,16 @@ msgid "Amount of edges to be shown. (recommended: 1.2)"
 msgstr "보여질 모서리의 양을 조정합니다 (권장: 1.2)"
 
 
-msgid "Toggle toon style face expression"
-msgstr "만화스타일 면 표시하기 토글 버튼"
+msgid "Express toon style face"
+msgstr "모델의 면이 만화 스타일로 표현됩니다"
 
 
-msgid "Toggle material texture"
-msgstr "면 재질 표시하기 토글 버튼"
+msgid "Express material texture"
+msgstr "면 재질이 표현됩니다"
 
 
-msgid "Toggle shading"
-msgstr "음영 표시하기 토글 버튼"
+msgid "Express shading"
+msgstr "음영이 표현됩니다"
 
 
 msgid "Change number of colors used for shading"
@@ -93194,6 +93240,11 @@ msgstr "설정한 픽셀에 맞추어 선만 렌더합니다"
 
 msgid "Renders only shadow according to the set pixel"
 msgstr "설정한 픽셀에 맞추어 그림자만 렌더합니다"
+
+
+msgctxt "Operator"
+msgid "Clone Material"
+msgstr "재질 복사"
 
 
 msgid "Clone selected material"
@@ -93273,12 +93324,28 @@ msgid "File Open"
 msgstr "파일 열기"
 
 
+msgid "Open new file"
+msgstr "새로운 파일을 엽니다"
+
+
+msgid "Import FBX"
+msgstr "FBX 가져오기"
+
+
 msgid "Use Current Scene Settings"
 msgstr "현재 씬 설정을 그대로 사용"
 
 
 msgid "Look at me"
 msgstr "나만 바라보기"
+
+
+msgid "Set object to look camera"
+msgstr "설정된 오브젝트가 카메라를 바라보도록 합니다"
+
+
+msgid "Move object using the preset state information and the slider below"
+msgstr "오브젝트의 미리 설정된 상태정보와 아래 슬라이더를 이용해 물체를 움직입니다"
 
 
 msgid "Render Queue Finished"
@@ -93294,7 +93361,7 @@ msgstr "씬 연속 렌더"
 
 
 msgid "Render all scenes with full render settings"
-msgstr "모든 씬을 고급렌더 설정으로 렌더합니다."
+msgstr "모든 씬을 고급렌더 설정으로 렌더합니다"
 
 
 msgid "Snip Render"
@@ -93302,7 +93369,7 @@ msgstr "오려내기 렌더"
 
 
 msgid "Render selected objects isolatedly from background"
-msgstr "선택한 오브젝트들을 오려낸 렌더 이미지를 전체 렌더 이미지와 함께 저장합니다."
+msgstr "선택한 오브젝트들을 오려낸 렌더 이미지를 전체 렌더 이미지와 함께 저장합니다"
 
 
 msgid "Show in folder on completion"
@@ -93310,6 +93377,37 @@ msgstr "완료 후 폴더 열기"
 
 
 msgctxt "Operator"
-msgid "New Camera"
-msgstr "새로운 카메라"
+msgid "Create Camera"
+msgstr "카메라 추가"
 
+
+msgid "Creates New Camera"
+msgstr "카메라를 추가합니다"
+
+
+msgid "Delete Camera"
+msgstr "카메라 제거"
+
+
+msgid "Deletes Current Camera"
+msgstr "현재 카메라를 제거합니다"
+
+
+msgid "Use State"
+msgstr "상태정보 사용하기"
+
+
+msgid "State Slider"
+msgstr "상태정보 슬라이더"
+
+
+msgid "Update State"
+msgstr "상태정보 업데이트"
+
+
+msgid "Move between begin and end of the state"
+msgstr "상태정보의 시작과 끝 사이에서 이동합니다"
+
+
+msgid "Save object's current location / rotation / scale values to state data"
+msgstr "오브젝트의 현재 위치 / 회전 / 스케일 값을 상태정보에 저장합니다"

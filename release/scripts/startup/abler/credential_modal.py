@@ -22,13 +22,16 @@ import ctypes
 import platform
 from bpy.app.handlers import persistent
 import requests, webbrowser, pickle, os
+from .lib.post_open import tracker_file_open
 from .lib.remember_username import (
     delete_remembered_username,
     read_remembered_checkbox,
     remember_username,
     read_remembered_username,
 )
+from .lib.login import is_first_open
 from .lib.tracker import tracker
+from .lib.async_task import AsyncTask
 
 
 class Acon3dAlertOperator(bpy.types.Operator):
@@ -150,8 +153,7 @@ class Acon3dModalOperator(bpy.types.Operator):
         def char2key(c):
             result = ctypes.windll.User32.VkKeyScanW(ord(c))
             shift_state = (result & 0xFF00) >> 8
-            vk_key = result & 0xFF
-            return vk_key
+            return result & 0xFF
 
         if userInfo and userInfo.ACON_prop.login_status == "SUCCESS":
             return {"FINISHED"}
@@ -184,29 +186,32 @@ class Acon3dModalOperator(bpy.types.Operator):
         return {"RUNNING_MODAL"}
 
 
-def requestLogin():
+class LoginTask(AsyncTask):
+    cookies_final = None
 
-    userInfo = bpy.data.meshes.get("ACON_userInfo")
-    prop = userInfo.ACON_prop
+    def __init__(self):
+        super().__init__(timeout=10)
 
-    try:
+        self.prop = bpy.data.meshes.get("ACON_userInfo").ACON_prop
+        self.username = self.prop.username
+        self.password = self.prop.password
 
-        path = bpy.utils.resource_path("USER")
-        path_cookiesFolder = os.path.join(path, "cookies")
-        path_cookiesFile = os.path.join(path_cookiesFolder, "acon3d_session")
+    def request_login(self):
+        prop = self.prop
 
         if prop.show_password:
             prop.password = prop.password_shown
         else:
             prop.password_shown = prop.password
 
-        cookies_godo = ""
-        response_godo = None
+        prop.login_status = "LOADING"
+        self.start()
 
+    def _task(self):
         try:
             response_godo = requests.post(
                 "https://www.acon3d.com/api/login.php",
-                data={"loginId": prop.username, "loginPwd": prop.password},
+                data={"loginId": self.username, "loginPwd": self.password},
             )
         except:
             response_godo = None
@@ -223,61 +228,65 @@ def requestLogin():
 
         response = requests.post(
             "https://api-v2.acon3d.com/auth/acon3d/signin",
-            data={"account": prop.username, "password": prop.password},
+            data={"account": self.username, "password": self.password},
             cookies=cookies_godo,
         )
 
-        cookie_final = response.cookies
+        self.cookie_final = response.cookies
 
         if response_godo is not None:
-            cookie_final = requests.cookies.merge_cookies(
+            self.cookie_final = requests.cookies.merge_cookies(
                 cookies_godo, response.cookies
             )
 
-        if response.status_code == 200:
-            tracker.logged_in(prop.username)
-            prop.login_status = "SUCCESS"
+        if response.status_code != 200:
+            raise Exception("status code is not 200")
 
-            cookiesFile = open(path_cookiesFile, "wb")
-            pickle.dump(cookie_final, cookiesFile)
-            cookiesFile.close()
+    def _on_success(self):
+        tracker.login(self.username)
 
-            if prop.remember_username:
-                remember_username(prop.username)
-            else:
-                delete_remembered_username()
+        prop = self.prop
+        path = bpy.utils.resource_path("USER")
+        path_cookiesFolder = os.path.join(path, "cookies")
+        path_cookiesFile = os.path.join(path_cookiesFolder, "acon3d_session")
 
-            prop.username = ""
-            prop.password = ""
-            prop.password_shown = ""
+        with open(path_cookiesFile, "wb") as cookies_file:
+            pickle.dump(self.cookie_final, cookies_file)
 
+        if prop.remember_username:
+            remember_username(prop.username)
         else:
+            delete_remembered_username()
 
-            prop.login_status = "FAIL"
+        prop.login_status = "SUCCESS"
+        prop.username = ""
+        prop.password = ""
+        prop.password_shown = ""
 
-    except Exception as e:
+        window = bpy.context.window
+        width = window.width
+        height = window.height
+        window.cursor_warp(width / 2, height / 2)
 
+        def moveMouse():
+            window.cursor_warp(width / 2, (height / 2) - 150)
+
+        bpy.app.timers.register(moveMouse, first_interval=0.1)
+        bpy.context.window.cursor_set("DEFAULT")
+
+    def _on_failure(self, e: BaseException):
+        tracker.login_fail()
+
+        self.prop.login_status = "FAIL"
         print("Login request has failed.")
         print(e)
 
-    window = bpy.context.window
-    width = window.width
-    height = window.height
-    window.cursor_warp(width / 2, height / 2)
-
-    if prop.login_status != "SUCCESS":
         bpy.ops.acon3d.alert(
             "INVOKE_DEFAULT",
             title="Login failed",
             message_1="If this happens continuously",
             message_2='please contact us at "cs@acon3d.com".',
         )
-
-    def moveMouse():
-        window.cursor_warp(width / 2, (height / 2) - 150)
-
-    bpy.app.timers.register(moveMouse, first_interval=0.1)
-    bpy.context.window.cursor_set("DEFAULT")
 
 
 class Acon3dLoginOperator(bpy.types.Operator):
@@ -286,10 +295,8 @@ class Acon3dLoginOperator(bpy.types.Operator):
     bl_translation_context = "*"
 
     def execute(self, context):
-        userInfo = bpy.data.meshes.get("ACON_userInfo")
-        userInfo.ACON_prop.login_status = "LOADING"
         context.window.cursor_set("WAIT")
-        bpy.app.timers.register(requestLogin, first_interval=0.1)
+        LoginTask().request_login()
         return {"FINISHED"}
 
 
@@ -308,6 +315,9 @@ class Acon3dAnchorOperator(bpy.types.Operator):
 
 @persistent
 def open_credential_modal(dummy):
+
+    fileopen = tracker_file_open()
+
     prefs = bpy.context.preferences
     prefs.view.show_splash = True
 
@@ -327,17 +337,16 @@ def open_credential_modal(dummy):
             raise
         prop.remember_username = read_remembered_checkbox()
 
-        cookiesFile = open(path_cookiesFile, "rb")
-        cookies = pickle.load(cookiesFile)
-        cookiesFile.close()
+        with open(path_cookiesFile, "rb") as cookiesFile:
+            cookies = pickle.load(cookiesFile)
         response = requests.get(
             "https://api-v2.acon3d.com/auth/acon3d/refresh", cookies=cookies
         )
 
         responseData = response.json()
-        token = responseData["accessToken"]
-
-        if token:
+        if token := responseData["accessToken"]:
+            if not fileopen and is_first_open():
+                tracker.login_auto()
             prop.login_status = "SUCCESS"
 
     except:

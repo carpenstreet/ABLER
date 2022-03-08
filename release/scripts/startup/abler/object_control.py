@@ -32,22 +32,21 @@ bl_info = {
 
 
 import bpy
-from .lib import objects
 
 
 class Acon3dStateUpdateOperator(bpy.types.Operator):
-    """Update object's state using current state position and location / rotation / scale values"""
+    """Save object's current location / rotation / scale values to state data"""
 
     bl_idname = "acon3d.state_update"
     bl_label = "Update State"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return context.selected_objects
 
     def execute(self, context):
-
-        x = context.object.ACON_prop.state_slider
-
-        if not 0 < x <= 1:
-            return {"FINISHED"}
 
         for obj in context.selected_objects:
 
@@ -58,10 +57,10 @@ class Acon3dStateUpdateOperator(bpy.types.Operator):
 
             for att in ["location", "rotation_euler", "scale"]:
 
-                vector_begin = getattr(prop.state_begin, att)
-                vector_mid = getattr(obj, att)
-                vector_end = objects.step(vector_begin, vector_mid, 1 / x)
-                setattr(prop.state_end, att, vector_end)
+                vector = getattr(obj, att)
+                setattr(prop.state_end, att, vector)
+
+        context.object.ACON_prop.state_slider = 1
 
         return {"FINISHED"}
 
@@ -72,6 +71,7 @@ class Acon3dStateActionOperator(bpy.types.Operator):
     bl_idname = "acon3d.state_action"
     bl_label = "Move State"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     step: bpy.props.FloatProperty(name="Toggle Mode", default=0.25)
 
@@ -87,9 +87,7 @@ class Acon3dStateActionOperator(bpy.types.Operator):
             else:
                 x += self.step
 
-            if x > 1:
-                x = 1
-
+            x = min(x, 1)
             prop.state_slider = x
 
         return {"FINISHED"}
@@ -114,8 +112,14 @@ class Acon3dObjectPanel(bpy.types.Panel):
         col.scale_x = 3
         col.separator()
         col = row.column()
-        row = col.row()
-        row.prop(context.object.ACON_prop, "constraint_to_camera_rotation_z")
+
+        if context.object:
+            row = col.row()
+            row.prop(
+                context.object.ACON_prop,
+                "constraint_to_camera_rotation_z",
+                text="Look at me",
+            )
 
 
 class ObjectSubPanel(bpy.types.Panel):
@@ -128,11 +132,11 @@ class ObjectSubPanel(bpy.types.Panel):
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw_header(self, context):
-        obj = context.object
-        layout = self.layout
-        layout.active = bool(len(context.selected_objects))
-        layout.enabled = layout.active
-        layout.prop(obj.ACON_prop, "use_state", text="")
+        if obj := context.object:
+            layout = self.layout
+            layout.active = bool(len(context.selected_objects))
+            layout.enabled = layout.active
+            layout.prop(obj.ACON_prop, "use_state", text="")
 
     def draw(self, context):
         layout = self.layout

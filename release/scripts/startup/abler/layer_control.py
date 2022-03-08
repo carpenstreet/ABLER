@@ -41,6 +41,7 @@ class Acon3dCreateGroupOperator(bpy.types.Operator):
     bl_idname = "acon3d.create_group"
     bl_label = "Create Group"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         collection = bpy.data.collections.get("Groups")
@@ -52,8 +53,22 @@ class Acon3dCreateGroupOperator(bpy.types.Operator):
 
         col_group = bpy.data.collections.new("ACON_group")
         collection.children.link(col_group)
+
         for obj in context.selected_objects:
-            col_group.objects.link(obj)
+            group_props = obj.ACON_prop.group
+            last_group = None
+            if len(group_props):
+                last_group_prop = group_props[-1]
+                last_group = bpy.data.collections.get(last_group_prop.name)
+
+            if last_group:
+                if last_group.name in collection.children.keys():
+                    collection.children.unlink(last_group)
+                if last_group.name not in col_group.children.keys():
+                    col_group.children.link(last_group)
+            else:
+                col_group.objects.link(obj)
+
             new_group_prop = obj.ACON_prop.group.add()
             new_group_prop.name = col_group.name
 
@@ -66,6 +81,7 @@ class Acon3dExplodeGroupOperator(bpy.types.Operator):
     bl_idname = "acon3d.explode_group"
     bl_label = "Explode Group"
     bl_translation_context = "*"
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
 
@@ -76,10 +92,18 @@ class Acon3dExplodeGroupOperator(bpy.types.Operator):
             if not len(group_props):
                 continue
 
-            last_group_prop = group_props[len(group_props) - 1]
+            last_group_prop = group_props[-1]
 
-            selected_group = bpy.data.collections.get(last_group_prop.name)
-            if selected_group:
+            root_group = bpy.data.collections.get("Groups")
+            if not root_group:
+                root_group = bpy.data.collections.new("Groups")
+                context.scene.collection.children.link(root_group)
+                layer_collection = context.view_layer.layer_collection
+                layer_collection.children.get("Groups").exclude = True
+
+            if selected_group := bpy.data.collections.get(last_group_prop.name):
+                for child in selected_group.children:
+                    root_group.children.link(child)
                 bpy.data.collections.remove(selected_group)
 
             group_props.remove(len(group_props) - 1)
@@ -108,16 +132,20 @@ class Acon3dLayerPanel(bpy.types.Panel):
         for child in collection.children:
             index += 1
 
-            target = bpy.context.scene.l_exclude[findex]
+            if child.name == "Layer0":
+                findex += 1
+                continue
+
+            l_exclude = bpy.context.scene.l_exclude
+
+            if findex > len(l_exclude) - 1:
+                break
+
+            target = l_exclude[findex]
 
             icon = "OUTLINER_COLLECTION"
-            icon_vis = "HIDE_ON"
-            if target.value:
-                icon_vis = "HIDE_OFF"
-            icon_lock = "LOCKED"
-            if not target.lock:
-                icon_lock = "UNLOCKED"
-
+            icon_vis = "HIDE_OFF" if target.value else "HIDE_ON"
+            icon_lock = "UNLOCKED" if not target.lock else "LOCKED"
             row = layout.row()
             row.use_property_decorate = False
             sub = row.split(factor=0.98)

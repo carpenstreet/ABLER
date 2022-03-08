@@ -1,11 +1,12 @@
 import threading
-from typing import Optional
+from typing import Optional, Any
 import os
 from uuid import uuid4
 import threading
 
 from mixpanel import Mixpanel, BufferedConsumer
 import bpy
+
 from ._tracker import Tracker
 
 
@@ -45,7 +46,6 @@ class MixpanelResource:
             self.tid = "anonymous"
 
         self.flush_repeatedly()
-        print(f"Mixpanel Initialized")
 
     def flush_repeatedly(self):
         # 현재는 cleanup 로직을 두지 않음
@@ -61,22 +61,21 @@ class MixpanelTracker(Tracker):
     _r: Optional[MixpanelResource] = None
     _mixpanel_token: str
 
-    def __init__(self):
+    def __init__(self, mixpanel_token: str):
         super().__init__()
-        mixpanel_token_path = os.path.join(os.path.dirname(__file__), "mixpanel_token")
-        with open(mixpanel_token_path, "r") as f:
-            self._mixpanel_token = f.readline()
+        self._mixpanel_token = mixpanel_token
 
     def _ensure_resource(self):
         if self._r is None:
             self._r = MixpanelResource(self._mixpanel_token)
 
     @_nonblock
-    def _enqueue_event(self, event_name: str):
+    def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
         self._ensure_resource()
-        self._r.mp.track(self._r.tid, event_name)
+        self._r.mp.track(self._r.tid, event_name, properties)
 
     @_nonblock
     def _enqueue_email_update(self, email: str):
         self._ensure_resource()
         self._r.mp.people_set_once(self._r.tid, {"$email": email})
+        self._r.mp.alias(self._r.tid, email)

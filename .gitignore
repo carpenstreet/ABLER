@@ -76,3 +76,4 @@ build/AblerLauncher
 dist
 
 /.vscode
+.env
