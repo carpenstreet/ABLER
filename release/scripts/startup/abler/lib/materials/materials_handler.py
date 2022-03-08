@@ -226,6 +226,12 @@ def setMaterialParametersByType(mat: Material) -> None:
     if type == "Clear":
         mat.blend_method = "BLEND"
         mat.ACON_prop.toggle_shadow = False
+        # WORKAROUND:
+        # 렌더 시 필요에 따라 mat.shadow_method = "OPAQUE" 대입을 하는 경우가 있는데,
+        # 렌더가 끝난 후 머티리얼 관련 뒷처리를 할 때
+        # toggle_shadow = False 을 통해 shadow_method 가 원상복구 되기를 기대했으나,
+        # 기대대로 동작하지 않고 "OPAQUE" 상태로 남아서 직접 "NONE" 대입해서 처리
+        mat.shadow_method = "NONE"
         toonNode.inputs[1].default_value = 1
         toonNode.inputs[3].default_value = 1
     elif type == "Diffuse":
