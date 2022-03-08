@@ -7,6 +7,8 @@ def toggleConstraintToCamera(self, context):
 
     cameras.makeSureCameraExists()
 
+    # repr returns canonical string representation of the object.
+    # For many object types, including most builtins, eval(repr(obj)) == obj
     obj = eval(repr(self).rsplit(".", 1)[0])
 
     look_at_me = obj.ACON_prop.constraint_to_camera_rotation_z
