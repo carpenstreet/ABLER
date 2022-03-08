@@ -35,6 +35,7 @@ def change_dof(self, context: Context) -> None:
         tracker.depth_of_field_off()
 
 
+
 def change_background_images(self, context: Context) -> None:
     prop = context.scene.ACON_prop
     context.scene.camera.data.show_background_images = prop.show_background_images
@@ -90,7 +91,6 @@ def add_scene_items(self, context: Context) -> List[Tuple[str, str, str]]:
 
 
 def loadScene(self, context: Context) -> None:
-
     if not context:
         context = bpy.context
 

@@ -23,6 +23,7 @@ from bpy.types import Object, Light, Context
 
 
 def changeSunRotation(self, context: Context) -> None:
+
     acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()
@@ -56,6 +57,7 @@ def changeSunStrength(self, context: Context) -> None:
 
 
 def toggleShadow(self, context: Context) -> None:
+
     acon_sun: Optional[Object] = bpy.data.objects.get("ACON_sun")
     if not acon_sun:
         acon_sun = createAconSun()

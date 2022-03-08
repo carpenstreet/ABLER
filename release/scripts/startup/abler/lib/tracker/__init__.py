@@ -1,4 +1,5 @@
 import os
+import sys
 
 from ._tracker import Tracker, DummyTracker, AggregateTracker
 
@@ -17,5 +18,11 @@ if not disable_track and (not sentry_dsn or not mixpanel_token):
     raise RuntimeError("You must set both SENTRY_DSN and MIXPANEL_TOKEN")
 
 tracker: Tracker = (
-    DummyTracker() if disable_track else _remote_tracker(mixpanel_token, sentry_dsn)
+    DummyTracker()
+    if (
+        os.environ.get("DISABLE_TRACK")
+        or "--background" in sys.argv
+        or "-b" in sys.argv
+    )
+    else _remote_tracker()
 )

@@ -254,6 +254,20 @@ class ApplyToonStyleOperator(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class ApplyToonStyleOperator(bpy.types.Operator):
+    """Apply Toon Style"""
+
+    bl_idname = "acon3d.apply_toon_style"
+    bl_label = "Apply Toon Style"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        materials_setup.applyAconToonStyle()
+        scenes.loadScene(None, None)
+
+        return {"FINISHED"}
+
+
 classes = (
     Acon3dImportPanel,
     ToggleToolbarOperator,
