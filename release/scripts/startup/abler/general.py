@@ -218,7 +218,9 @@ class SaveOperator(bpy.types.Operator):
             bpy.ops.wm.save_mainfile()
 
         else:
-            bpy.ops.wm.save_as_mainfile("INVOKE_DEFAULT")
+            bpy.ops.wm.save_mainfile({"dict": "override"}, "INVOKE_DEFAULT")
+
+        self.report({"INFO"}, "File saved")
 
         return {"FINISHED"}
 
@@ -233,7 +235,8 @@ class SaveAsOperator(bpy.types.Operator):
     def execute(self, context):
         tracker.save_as()
 
-        bpy.ops.wm.save_as_mainfile("INVOKE_DEFAULT")
+        bpy.ops.wm.save_as_mainfile({"dict": "override"}, "INVOKE_DEFAULT")
+        self.report({"INFO"}, "File saved")
 
         return {"FINISHED"}
 
