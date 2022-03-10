@@ -214,7 +214,11 @@ class SaveOperator(bpy.types.Operator):
     def execute(self, context):
         tracker.save()
 
-        bpy.ops.wm.save_mainfile()
+        if bpy.data.is_saved:
+            bpy.ops.wm.save_mainfile()
+
+        else:
+            bpy.ops.wm.save_as_mainfile("INVOKE_DEFAULT")
 
         return {"FINISHED"}
 
