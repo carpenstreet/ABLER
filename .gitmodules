@@ -13,15 +13,9 @@
 	url = https://github.com/blender/blender-dev-tools.git
 	branch = blender-v2.93-release
 	ignore = all
-
 [submodule "launcher_qt"]
 	path = launcher_qt
 	url = https://github.com/ACON3D/QT-Launcher.git
 	branch = main
 	ignore = all
 
-[submodule "release/scripts/addons_abler/io_skp"]
-	path = release/scripts/addons_abler/io_skp
-	url = https://github.com/ACON3D/SKP_Converter.git
-	branch = main
-	ignore = all
