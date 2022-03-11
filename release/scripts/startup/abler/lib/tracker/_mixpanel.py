@@ -46,7 +46,6 @@ class MixpanelResource:
             self.tid = "anonymous"
 
         self.flush_repeatedly()
-        print("Mixpanel Initialized")
 
     def flush_repeatedly(self):
         # 현재는 cleanup 로직을 두지 않음

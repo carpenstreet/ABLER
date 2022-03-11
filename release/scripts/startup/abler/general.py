@@ -34,6 +34,7 @@ bl_info = {
 import os
 import bpy
 from bpy_extras.io_utils import ImportHelper
+from .lib import scenes
 from .lib.materials import materials_setup
 from .lib.tracker import tracker
 
@@ -173,7 +174,7 @@ class ToggleToolbarOperator(bpy.types.Operator):
 
 
 class FileOpenOperator(bpy.types.Operator, ImportHelper):
-    """File Open"""
+    """Open new file"""
 
     bl_idname = "acon3d.file_open"
     bl_label = "File Open"
@@ -189,10 +190,10 @@ class FileOpenOperator(bpy.types.Operator, ImportHelper):
 
 
 class FlyOperator(bpy.types.Operator):
-    """Fly Mode"""
+    """Move around the scene using WASD, QE, and mouse like FPS game"""
 
     bl_idname = "acon3d.fly_mode"
-    bl_label = "Fly (shift + `)"
+    bl_label = "Fly Mode (shift + `)"
     bl_translation_context = "*"
 
     def execute(self, context):
@@ -239,10 +240,25 @@ class Acon3dImportPanel(bpy.types.Panel):
         row.operator("acon3d.fly_mode")
 
 
+class ApplyToonStyleOperator(bpy.types.Operator):
+    """Apply Toon Style"""
+
+    bl_idname = "acon3d.apply_toon_style"
+    bl_label = "Apply Toon Style"
+    bl_translation_context = "*"
+
+    def execute(self, context):
+        materials_setup.applyAconToonStyle()
+        scenes.loadScene(None, None)
+
+        return {"FINISHED"}
+
+
 classes = (
     Acon3dImportPanel,
     ToggleToolbarOperator,
     ImportOperator,
+    ApplyToonStyleOperator,
     FileOpenOperator,
     FlyOperator,
     ImportFBXOperator,
