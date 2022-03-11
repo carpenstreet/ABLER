@@ -58,7 +58,7 @@ def openDirectory(path):
 
 
 class Acon3dCameraViewOperator(bpy.types.Operator):
-    """Fit Camera Region to Viewport"""
+    """Fit render region to viewport"""
 
     bl_idname = "acon3d.camera_view"
     bl_label = "Camera View"

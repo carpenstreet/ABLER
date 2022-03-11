@@ -242,7 +242,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     sun_strength: bpy.props.FloatProperty(
         # name="Strength",
         name="",
-        description="Sunlight strength in watts per meter squared (W/m^2)",
+        description="Control the strength of sunlight",
         subtype="FACTOR",
         default=1,
         min=0,
@@ -282,7 +282,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     image_adjust_brightness: bpy.props.FloatProperty(
         # name="Brightness",
         name="",
-        description="Adjust brightness of general image (Range: -1 ~ 1)",
+        description="Adjust the overall brightness (Range: -1 ~ 1)",
         subtype="FACTOR",
         default=0,
         min=-1,
@@ -294,7 +294,7 @@ class AconSceneProperty(bpy.types.PropertyGroup):
     image_adjust_contrast: bpy.props.FloatProperty(
         # name="Contrast",
         name="",
-        description="Adjust contrast of general image (Range: -1 ~ 1)",
+        description="Adjust the overall contrast (Range: -1 ~ 1)",
         subtype="FACTOR",
         default=0,
         min=-1,
@@ -517,7 +517,7 @@ class AconObjectProperty(bpy.types.PropertyGroup):
 
     state_slider: bpy.props.FloatProperty(
         name="State Slider",
-        description="Move between begin and end of the state",
+        description="",
         default=0,
         min=0,
         max=1,
