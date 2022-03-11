@@ -213,6 +213,7 @@ class Tracker(metaclass=ABCMeta):
 
     def remove_all(self):
         self._track(EventKind.remove_all.value)
+
     def group_navigate_bottom(self):
         self._track(EventKind.group_navigate_bottom.value)
 
