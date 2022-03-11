@@ -125,8 +125,6 @@ class RemoveAllOperator(bpy.types.Operator):
 
         bpy.ops.object.delete()
 
-        # Delete layers?
-
         return {"FINISHED"}
 
 
@@ -165,6 +163,7 @@ class Acon3dCubeLocationPanel(bpy.types.Panel):
     bl_category = "ACON3D"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
+    bl_options = {"DEFAULT_CLOSED"}
 
     @classmethod
     def poll(cls, context):
@@ -173,7 +172,6 @@ class Acon3dCubeLocationPanel(bpy.types.Panel):
                 return context.selected_objects
 
     def draw(self, context):
-        # Meaning?
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
@@ -195,6 +193,7 @@ class Acon3dCubeScalePanel(bpy.types.Panel):
     bl_category = "ACON3D"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
+    bl_options = {"DEFAULT_CLOSED"}
 
     @classmethod
     def poll(cls, context):
@@ -203,7 +202,6 @@ class Acon3dCubeScalePanel(bpy.types.Panel):
                 return context.selected_objects
 
     def draw(self, context):
-        # Meaning?
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
