@@ -67,7 +67,7 @@ class CubeMakeOperator(bpy.types.Operator):
                     # Re-name mesh cube with "Simple Cube"
                     cube_obj = bpy.data.objects[obj_name]
                     cube_obj.name = "Simple Cube"
-                    cube_obj.location = (2, -2, 3)
+                    cube_obj.location = (0, 0, 0)
                     cube_obj.scale = (1, 1, 1)
 
                     break
@@ -99,37 +99,9 @@ class CubeRemoveOperator(bpy.types.Operator):
             bpy.ops.object.delete()
 
         else:
-            print("'Simple Cube' doesn't exist. Make a 'Simple Cube'")
-
-        return {"FINISHED"}
-
-
-class GetCubeObjectOperator(bpy.types.Operator):
-    """Get 'Simple Cube' object'"""
-
-    bl_idname = "acon3d.get_cube_object"
-    bl_label = "Get Cube Object"
-    bl_translation_context = "*"
-
-    def execute(self, context):
-        tracker.get_cube_object()
-
-        cube_obj = bpy.data.objects.get("Simple Cube")
-
-        if cube_obj != None:
-            print("Selected 'Simple Cube'")
-            print("Location : (" + str(cube_obj.location) + ")")
-            print("Scale : (" + str(cube_obj.scale) + ")")
-
-            if bpy.context.object.mode == "EDIT":
-                bpy.ops.object.mode_set(mode="OBJECT")
-
-            # Select only "Simple Cube"
-            bpy.ops.object.select_all(action="DESELECT")
-            bpy.data.objects["Simple Cube"].select_set(True)
-
-        else:
-            print("'Simple Cube' doesn't exists. Make a 'Simple Cube'")
+            self.report(
+                {"WARNING"}, "'Simple Cube' doesn't exist. Make a 'Simple Cube'"
+            )
 
         return {"FINISHED"}
 
@@ -166,25 +138,10 @@ class Acon3dCubeControlPanel(bpy.types.Panel):
     bl_category = "ACON3D"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_options = {"DEFAULT_CLOSED"}
 
     def draw_header(self, context):
         layout = self.layout
         layout.label(icon="CUBE")
-
-    def draw(self, context):
-        return
-
-
-class Acon3dCubeObjectPanel(bpy.types.Panel):
-    """Cube Object Maker"""
-
-    bl_idname = "ACON3D_PT_cube_object"
-    bl_label = "Cube Object"
-    bl_parent_id = "ACON3D_PT_cube_control"
-    bl_category = "ACON3D"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
 
     def draw(self, context):
         layout = self.layout
@@ -194,8 +151,6 @@ class Acon3dCubeObjectPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("acon3d.make_cube", text="Make Cube")
         row.operator("acon3d.remove_cube", text="Remove Cube")
-        row = layout.row()
-        row.operator("acon3d.get_cube_object", text="Get Cube Object")
         row = layout.row()
         row.operator("acon3d.remove_all", text="Remove All Objects")
 
@@ -209,6 +164,12 @@ class Acon3dCubeLocationPanel(bpy.types.Panel):
     bl_category = "ACON3D"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
+
+    @classmethod
+    def poll(cls, context):
+        for obj in bpy.context.selected_objects:
+            if obj.name == "Simple Cube":
+                return context.selected_objects
 
     def draw(self, context):
         # Meaning?
@@ -234,6 +195,12 @@ class Acon3dCubeScalePanel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
 
+    @classmethod
+    def poll(cls, context):
+        for obj in bpy.context.selected_objects:
+            if obj.name == "Simple Cube":
+                return context.selected_objects
+
     def draw(self, context):
         # Meaning?
         layout = self.layout
@@ -250,10 +217,8 @@ class Acon3dCubeScalePanel(bpy.types.Panel):
 
 classes = (
     Acon3dCubeControlPanel,
-    Acon3dCubeObjectPanel,
     CubeMakeOperator,
     CubeRemoveOperator,
-    GetCubeObjectOperator,
     RemoveAllOperator,
     Acon3dCubeLocationPanel,
     Acon3dCubeScalePanel,
