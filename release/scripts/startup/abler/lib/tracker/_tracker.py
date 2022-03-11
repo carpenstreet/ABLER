@@ -31,6 +31,10 @@ class EventKind(enum.Enum):
     background_images_off = "Background Images Off"
     bloom_on = "Bloom On"
     bloom_off = "Bloom Off"
+    group_navigate_bottom = "Group Navigate Bottom"
+    group_navigate_top = "Group Navigate Top"
+    group_navigate_down = "Group Navigate Down"
+    group_navigate_up = "Group Navigate Up"
 
     # Cube Control
     make_cube = "Make Cube"
@@ -74,12 +78,19 @@ class Tracker(metaclass=ABCMeta):
     def __init__(self):
         self._agreed = True
         self._default_properties = {}
+        self._enabled = True
 
         if v := get_version():
             major, minor, patch = v
             self._default_properties["version"] = f"{major}.{minor}.{patch}"
         else:
             self._default_properties["version"] = "development"
+
+    def turn_on(self):
+        self._enabled = True
+
+    def turn_off(self):
+        self._enabled = False
 
     @abstractmethod
     def _enqueue_event(self, event_name: str, properties: dict[str, Any]):
@@ -102,6 +113,8 @@ class Tracker(metaclass=ABCMeta):
     def _track(
         self, event_name: str, properties: Optional[dict[str, Any]] = None
     ) -> bool:
+        if not self._enabled:
+            return False
         if not self._agreed:
             return False
 
@@ -111,7 +124,6 @@ class Tracker(metaclass=ABCMeta):
             next_properties.update(properties)
         try:
             self._enqueue_event(event_name, next_properties)
-            print(f"TRACKING: {event_name}")
         except Exception as e:
             print(e)
             return False
@@ -201,6 +213,17 @@ class Tracker(metaclass=ABCMeta):
 
     def remove_all(self):
         self._track(EventKind.remove_all.value)
+    def group_navigate_bottom(self):
+        self._track(EventKind.group_navigate_bottom.value)
+
+    def group_navigate_top(self):
+        self._track(EventKind.group_navigate_top.value)
+
+    def group_navigate_down(self):
+        self._track(EventKind.group_navigate_down.value)
+
+    def group_navigate_up(self):
+        self._track(EventKind.group_navigate_up.value)
 
 
 class DummyTracker(Tracker):

@@ -33,10 +33,10 @@ bl_info = {
 
 # Main imports
 import bpy
+import sys
 from types import ModuleType
 
 from . import custom_properties
-from . import credential_modal
 from . import general
 from . import scene_control
 from . import edge_control
@@ -49,6 +49,7 @@ from . import layer_control
 from . import render_control
 from . import pref
 from . import cube_control
+from . import operators
 from .lib.tracker import tracker
 
 
@@ -58,7 +59,6 @@ from .lib.tracker import tracker
 
 importedLibrary = [
     custom_properties,
-    credential_modal,
     general,
     scene_control,
     edge_control,
@@ -71,7 +71,12 @@ importedLibrary = [
     render_control,
     pref,
     cube_control,
+    operators,
 ]
+if "--background" not in sys.argv and "-b" not in sys.argv:
+    from . import credential_modal
+
+    importedLibrary.append(credential_modal)
 
 
 def register():
