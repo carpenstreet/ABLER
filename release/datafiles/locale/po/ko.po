@@ -54422,7 +54422,7 @@ msgstr "뷰포트 렌더"
 
 
 msgid "Take a snapshot of the active viewport"
-msgstr "뷰포트에 보이는 그대로 빠르게 렌더합니다"
+msgstr "화면에 보이는 그대로 빠르게 렌더합니다"
 
 
 msgid "Render files from the animation range of this scene"
