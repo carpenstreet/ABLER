@@ -17858,6 +17858,10 @@ msgid "Packed File"
 msgstr "포장된 파일"
 
 
+msgid "Packed File, click to unpack"
+msgstr "포장된 파일을 포장 해제합니다"
+
+
 msgid "First packed file of the image"
 msgstr "이미지의 첫 번째 포장된 파일"
 
@@ -17868,6 +17872,10 @@ msgstr "포장된 파일"
 
 msgid "Collection of packed images"
 msgstr "포장된 이미지의 컬렉션"
+
+
+msgid "Unlink data-block (Shift + Click to set users to zero, data will then not be saved)"
+msgstr "데이터 블록을 연결 해제합니다 (Shift + 클릭시 유저가 없어지며, 데이터는 저장되지 않습니다)"
 
 
 msgid "Pixels"
@@ -44301,6 +44309,11 @@ msgstr "왼쪽과 오른쪽 뷰와 함께 이미지를 생성"
 
 msgid "Image width"
 msgstr "이미지 폭"
+
+
+msgctxt "Operator"
+msgid "Open Image"
+msgstr "이미지 열기"
 
 
 msgid "Open image"
