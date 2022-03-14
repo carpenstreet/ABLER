@@ -44,7 +44,9 @@ def init_setting(dummy):
 def load_handler(dummy):
     tracker.turn_off()
     try:
+        print("1!!")
         init_setting(None)
+        print("2!!")
         cameras.makeSureCameraExists()
         cameras.switchToRendredView()
         cameras.turnOnCameraView(False)
@@ -54,6 +56,7 @@ def load_handler(dummy):
         for scene in bpy.data.scenes:
             scene.view_settings.view_transform = "Standard"
 
+        print("3!!")
         scenes.refresh_look_at_me()
         change_and_reset_value()
     finally:
