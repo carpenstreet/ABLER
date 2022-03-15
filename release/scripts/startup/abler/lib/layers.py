@@ -44,85 +44,6 @@ def handleLayerVisibilityOnSceneChange(oldScene, newScene):
                 objs.hide_select = newProp.lock
 
 
-def get_ancester_collections(collection: Collection, parents: List[Collection]) -> None:
-    for parent_collection in bpy.data.collections:
-        if collection.name in parent_collection.children.keys():
-            if not is_component_collection(parent_collection):
-                parents.append(parent_collection)
-            get_ancester_collections(parent_collection, parents)
-            return
-
-
-def get_parent_collection(
-    collection: Collection,
-) -> Collection:
-    for parent_collection in bpy.data.collections:
-        if collection.name in parent_collection.children.keys():
-            return parent_collection
-
-
-def is_ancester_collection(a: Collection, b: Collection) -> bool:
-    parents = []
-    get_ancester_collections(a, parents)
-    return b in parents
-
-
-def is_component_collection(collection: Collection) -> bool:
-    return (
-        collection.name in bpy.data.collections.get("Components").children.keys()
-        or collection.name == "Components"
-    )
-
-
-def quick_sort_by_hierarchy(
-    arr: List[Collection],
-) -> List[Collection]:
-    if len(arr) <= 1:
-        return arr
-    pivot = arr[len(arr) // 2]
-    lesser_arr, equal_arr, greater_arr = [], [], []
-    for col in arr:
-        if is_ancester_collection(col, pivot):
-            lesser_arr.append(col)
-        elif is_ancester_collection(pivot, col):
-            greater_arr.append(col)
-        else:
-            equal_arr.append(col)
-    return (
-        quick_sort_by_hierarchy(lesser_arr)
-        + equal_arr
-        + quick_sort_by_hierarchy(greater_arr)
-    )
-
-
-def get_ordered_ancester_collections(
-    collection: Collection,
-) -> List[Collection]:
-    parents = []
-    get_ancester_collections(collection, parents)
-    ret_list = list(reversed(quick_sort_by_hierarchy(parents)))
-    ret_list.append(collection)
-    return ret_list
-
-
-def get_ordered_ancester_collections_from_object(
-    obj: Object,
-) -> List[Collection]:
-    if not obj or not obj.ACON_prop or not obj.ACON_prop.group:
-        return
-
-    group_props = obj.ACON_prop.group
-
-    group_length = len(group_props)
-    if not group_length:
-        return
-
-    last_group_prop = group_props[-1]
-
-    selected_group = bpy.data.collections.get(last_group_prop.name)
-    return get_ordered_ancester_collections(selected_group)
-
-
 def up(group_list: List[Collection], group_item: Collection) -> Optional[Collection]:
     """
     group_list: List of ancester collections
@@ -255,16 +176,19 @@ def init_group_navigation(
         for item in reversed(group_props)
         if item.name in bpy.data.collections.keys()
     ]
+    # skip component-defined groups when navigating
+    selected_group = None
+    g_index = 0
+    while selected_group is None and g_index < group_length:
+        selected_group = bpy.data.collections.get(group_props[g_index].name)
+        g_index += 1
 
-    selected_group = bpy.data.collections.get(last_group_prop.name)
     ordered_ancester_collections = ordered_group_list
     if ordered_ancester_collections:
         root_ancester_collection: Collection = ordered_ancester_collections[0]
     else:
         return
-    if not selected_group:
-        group_props.remove(group_length - 1)
-        return selectByGroup(direction)
+
     # Put root group in prop
     selected_group_prop.current_root_group = root_ancester_collection.name
 
@@ -272,13 +196,16 @@ def init_group_navigation(
 
 
 def selectByGroup(direction: str) -> None:
+    if bpy.context.active_object is None:
+        return
+    init_val = init_group_navigation(direction)
+    if init_val is None:
+        return
     (
         selected_group_prop,
         root_ancester_collection,
         ordered_ancester_collections,
-    ) = init_group_navigation(direction)
-    if bpy.context.active_object is None:
-        return
+    ) = init_val
     if direction == "BOTTOM":
         group_navigate_bottom(
             selected_group_prop, root_ancester_collection, ordered_ancester_collections
@@ -325,3 +252,86 @@ def checkObjectSelectionChange(dummy):
     ACON_prop.selected_objects_str = "".join(
         obj.name for obj in bpy.context.selected_objects
     )
+
+
+# -----------------------------------------------------------------------------
+# Not used for now
+
+
+# def get_ordered_ancester_collections_from_object(
+#     obj: Object,
+# ) -> List[Collection]:
+#     if not obj or not obj.ACON_prop or not obj.ACON_prop.group:
+#         return
+
+#     group_props = obj.ACON_prop.group
+
+#     group_length = len(group_props)
+#     if not group_length:
+#         return
+
+#     last_group_prop = group_props[-1]
+
+#     selected_group = bpy.data.collections.get(last_group_prop.name)
+#     return get_ordered_ancester_collections(selected_group)
+
+
+# def get_ordered_ancester_collections(
+#     collection: Collection,
+# ) -> List[Collection]:
+#     parents = []
+#     get_ancester_collections(collection, parents)
+#     ret_list = list(reversed(quick_sort_by_hierarchy(parents)))
+#     ret_list.append(collection)
+#     return ret_list
+
+
+# def is_ancester_collection(a: Collection, b: Collection) -> bool:
+#     parents = []
+#     get_ancester_collections(a, parents)
+#     return b in parents
+
+
+# def get_ancester_collections(collection: Collection, parents: List[Collection]) -> None:
+#     for parent_collection in bpy.data.collections:
+#         if collection.name in parent_collection.children.keys():
+#             if not is_component_collection(parent_collection):
+#                 parents.append(parent_collection)
+#             get_ancester_collections(parent_collection, parents)
+#             return
+
+
+# def get_parent_collection(
+#     collection: Collection,
+# ) -> Collection:
+#     for parent_collection in bpy.data.collections:
+#         if collection.name in parent_collection.children.keys():
+#             return parent_collection
+
+
+# def is_component_collection(collection: Collection) -> bool:
+#     return (
+#         collection.name in bpy.data.collections.get("Components").children.keys()
+#         or collection.name == "Components"
+#     )
+
+
+# def quick_sort_by_hierarchy(
+#     arr: List[Collection],
+# ) -> List[Collection]:
+#     if len(arr) <= 1:
+#         return arr
+#     pivot = arr[len(arr) // 2]
+#     lesser_arr, equal_arr, greater_arr = [], [], []
+#     for col in arr:
+#         if is_ancester_collection(col, pivot):
+#             lesser_arr.append(col)
+#         elif is_ancester_collection(pivot, col):
+#             greater_arr.append(col)
+#         else:
+#             equal_arr.append(col)
+#     return (
+#         quick_sort_by_hierarchy(lesser_arr)
+#         + equal_arr
+#         + quick_sort_by_hierarchy(greater_arr)
+#     )
