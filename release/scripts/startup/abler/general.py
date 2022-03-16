@@ -40,7 +40,7 @@ from .lib.tracker import tracker
 
 
 class ImportOperator(bpy.types.Operator, ImportHelper):
-    """Import objects according to the current settings"""
+    """Import file according to the current settings"""
 
     bl_idname = "acon3d.import_blend"
     bl_label = "Import"
@@ -106,7 +106,7 @@ class ImportOperator(bpy.types.Operator, ImportHelper):
 
 
 class ImportFBXOperator(bpy.types.Operator, ImportHelper):
-    """Import objects according to the current settings"""
+    """Import FBX file according to the current settings"""
 
     bl_idname = "acon3d.import_fbx"
     bl_label = "Import FBX"

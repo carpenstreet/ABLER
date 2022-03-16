@@ -105,7 +105,7 @@ class GroupNavigateBottomOperator(bpy.types.Operator):
 
 
 class Acon3dStateUpdateOperator(bpy.types.Operator):
-    """Save object's current location / rotation / scale values to state data"""
+    """Save newly adjusted state data of the object"""
 
     bl_idname = "acon3d.state_update"
     bl_label = "Update State"

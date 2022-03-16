@@ -37,7 +37,7 @@ from .lib.tracker import tracker
 
 
 class CreateSceneOperator(bpy.types.Operator):
-    """Create a new scene with current settings"""
+    """Create a new scene with a new preset"""
 
     bl_idname = "acon3d.create_scene"
     bl_label = "New Scene"
@@ -81,7 +81,7 @@ class CreateSceneOperator(bpy.types.Operator):
 
 
 class DeleteSceneOperator(bpy.types.Operator):
-    """Remove current scene from project"""
+    """Remove current scene from this file"""
 
     bl_idname = "acon3d.delete_scene"
     bl_label = "Remove Scene"

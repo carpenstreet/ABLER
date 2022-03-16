@@ -3452,7 +3452,7 @@ msgstr "불투명도"
 
 
 msgid "Image opacity to blend the image against the background color"
-msgstr "배경 색상에 이미지를 혼합하는 이미지 불투명도"
+msgstr "배경 이미지의 투명도를 조절합니다"
 
 
 msgid "MovieClip"
@@ -3476,7 +3476,7 @@ msgstr "깊이"
 
 
 msgid "Display under or over everything"
-msgstr "모든 항목 표시 또는 모두 표시"
+msgstr "배경 이미지를 배치합니다"
 
 
 msgid "Back"
@@ -3492,7 +3492,7 @@ msgstr "프레임 방식"
 
 
 msgid "How the image fits in the camera frame"
-msgstr "카메라 프레임에서 이미지 끼워 맞추는 방법"
+msgstr "렌더 영역에서 이미지 끼워 맞추는 방법"
 
 
 msgid "Stretch"
@@ -3532,7 +3532,7 @@ msgstr "회전"
 
 
 msgid "Rotation for the background image (ortho view only)"
-msgstr "배경 이미지의 회전 (정사 보기 전용)"
+msgstr "배경 이미지를 회전시킵니다 (정사 보기 전용)"
 
 
 msgid "Scale"
@@ -3540,7 +3540,7 @@ msgstr "스케일"
 
 
 msgid "Scale the background image"
-msgstr "배경 이미지 크기를 조정"
+msgstr "배경 이미지 크기를 조정합니다"
 
 
 msgid "Show Background Image"
@@ -3592,7 +3592,7 @@ msgstr "수평으로 뒤집기"
 
 
 msgid "Flip the background image horizontally"
-msgstr "배경 이미지를 수평으로 뒤집기"
+msgstr "배경 이미지를 좌우로 반전시킵니다"
 
 
 msgid "Flip Vertically"
@@ -3600,7 +3600,7 @@ msgstr "수직으로 뒤집기"
 
 
 msgid "Flip the background image vertically"
-msgstr "배경 이미지를 수직으로 뒤집기"
+msgstr "배경 이미지를 상하로 반전시킵니다"
 
 
 msgid "Background Images"
@@ -3616,7 +3616,7 @@ msgstr "배경 이미지의 컬렉션"
 
 
 msgid "Depth of Field"
-msgstr "피사계 심도 (DOF)"
+msgstr "아웃포커싱 (DOF)"
 
 
 msgid "Blur objects at a certain distance using the values set below"
@@ -3660,7 +3660,7 @@ msgstr "초점 거리"
 
 
 msgid "Distance to the focus point for depth of field"
-msgstr "피사계 심도의 초점 거리"
+msgstr "아웃포커싱의 거리를 조절합니다"
 
 
 msgid "Focus Object"
@@ -12954,7 +12954,7 @@ msgstr "레이어 보이기/숨기기"
 
 
 msgid "Make objects on the current layer invisible in the viewport"
-msgstr "현재 레이어에 있는 오브젝트들을 뷰포트에서 보이지 않도록 합니다"
+msgstr "현재 레이어에 있는 오브젝트들을 화면에서 보이지 않도록 합니다"
 
 
 msgid "Layer Lock"
@@ -16018,16 +16018,12 @@ msgid "Apparent size of the Camera object in the 3D View"
 msgstr "3D 뷰에서 카메라 오브젝트의 외관상 크기"
 
 
-msgid "Depth Of Field"
-msgstr "피사계 심도 (DOF)"
-
-
 msgid "Focal Length"
 msgstr "초점의 길이"
 
 
 msgid "Perspective Camera lens value in millimeters"
-msgstr "초점의 길이를 조정합니다. 초점이 짧을수록 광각, 초점이 길수록 평행투영에 가까워집니다"
+msgstr "초점의 길이가 짧아지면 촬영 범위가 넓어지고, 길어지면 촬영 범위가 좁아지며 피사체는 커지게 됩니다"
 
 
 msgid "Lens Unit"
@@ -17862,6 +17858,10 @@ msgid "Packed File"
 msgstr "포장된 파일"
 
 
+msgid "Packed File, click to unpack"
+msgstr "포장된 파일을 포장 해제합니다"
+
+
 msgid "First packed file of the image"
 msgstr "이미지의 첫 번째 포장된 파일"
 
@@ -17872,6 +17872,10 @@ msgstr "포장된 파일"
 
 msgid "Collection of packed images"
 msgstr "포장된 이미지의 컬렉션"
+
+
+msgid "Unlink data-block (Shift + Click to set users to zero, data will then not be saved)"
+msgstr "데이터 블록을 연결 해제합니다 (Shift + 클릭시 유저가 없어지며, 데이터는 저장되지 않습니다)"
 
 
 msgid "Pixels"
@@ -44309,11 +44313,11 @@ msgstr "이미지 폭"
 
 msgctxt "Operator"
 msgid "Open Image"
-msgstr "이미지를 열기"
+msgstr "이미지 열기"
 
 
 msgid "Open image"
-msgstr "이미지를 열기"
+msgstr "이미지를 엽니다"
 
 
 msgid "Detect Sequences"
@@ -54418,7 +54422,7 @@ msgstr "뷰포트 렌더"
 
 
 msgid "Take a snapshot of the active viewport"
-msgstr "뷰포트에 보이는 그대로 빠르게 렌더합니다"
+msgstr "화면에 보이는 그대로 빠르게 렌더합니다"
 
 
 msgid "Render files from the animation range of this scene"
@@ -58987,7 +58991,7 @@ msgstr "배경 이미지 추가"
 
 
 msgid "Add a new background image"
-msgstr "새 배경 이미지 추가"
+msgstr "새 배경 이미지를 추가합니다"
 
 
 msgid "Remove Background Image"
@@ -62769,7 +62773,7 @@ msgstr "빛번짐 효과"
 
 
 msgid "Create a shining effect with high luminance pixels"
-msgstr "고휘도 픽셀로 빛나는 이펙트를 생성합니다"
+msgstr "빛번짐 효과를 생성합니다"
 
 
 msgid "Indirect Lighting"
@@ -68905,11 +68909,11 @@ msgstr "렌더링 해상도에 대한 비율 스케일"
 
 
 msgid "Number of horizontal pixels in the rendered image"
-msgstr "렌더된 이미지에서 수평 픽셀의 수"
+msgstr "렌더된 이미지의 수평 픽셀의 수를 의미합니다"
 
 
 msgid "Number of vertical pixels in the rendered image"
-msgstr "렌더된 이미지에서 수직 픽셀의 수"
+msgstr "렌더된 이미지의 수직 픽셀의 수를 의미합니다"
 
 
 msgid "Sequencer Preview Shading"
@@ -70157,7 +70161,7 @@ msgstr "빛번짐 효과의 픽셀이 가질 수 있는 최대 강도 (0에서 �
 
 
 msgid "Color applied to the bloom effect"
-msgstr "빛번짐 효과에 적용된 색상"
+msgstr "빛번짐 효과에 적용될 색상을 선택합니다"
 
 
 msgid "Blend factor"
@@ -93147,16 +93151,16 @@ msgid "Create Scene"
 msgstr "씬 생성"
 
 
-msgid "Create a new scene with current settings"
-msgstr "현재 설정을 이용하여 새로운 씬을 만듭니다"
+msgid "Create a new scene with a new preset"
+msgstr "새로운 프리셋을 추가하여 새로운 씬을 만듭니다"
 
 
 msgid "Remove Scene"
 msgstr "씬 제거"
 
 
-msgid "Remove current scene from project"
-msgstr "선택된 씬을 이 프로젝트에서 제거합니다"
+msgid "Remove current scene from this file"
+msgstr "선택된 씬을 이 파일에서 제거합니다"
 
 
 msgid "Change scene"
@@ -93166,8 +93170,12 @@ msgid "Express toon style edge"
 msgstr "모델의 모서리 선이 만화 스타일로 표현됩니다"
 
 
-msgid "Import objects according to the current settings"
-msgstr "현재 설정에 맞추어 모델을 가져옵니다"
+msgid "Import file according to the current settings"
+msgstr "현재 설정에 맞추어 파일을 가져옵니다"
+
+
+msgid "Import FBX file according to the current settings"
+msgstr "현재 설정에 맞추어 FBX 파일을 가져옵니다"
 
 
 msgid "Adjust the thickness of minimum depth edges"
@@ -93202,12 +93210,12 @@ msgid "Change shading brightness (Range: 0 ~ 10)"
 msgstr "음영 표현의 밝기를 조정합니다 (범위: 0 ~ 10)"
 
 
-msgid "Adjust brightness of general image (Range: -1 ~ 1)"
-msgstr "전반적인 이미지의 밝기를 조정합니다 (범위: -1 ~ 1)"
+msgid "Adjust the overall brightness (Range: -1 ~ 1)"
+msgstr "전반적인 밝기를 조정합니다 (범위: -1 ~ 1)"
 
 
-msgid "Adjust contrast of general image (Range: -1 ~ 1)"
-msgstr "전반적인 이미지의 대비를 조정합니다 (범위: -1 ~ 1)"
+msgid "Adjust the overall contrast (Range: -1 ~ 1)"
+msgstr "전반적인 대비를 조정합니다 (범위: -1 ~ 1)"
 
 
 msgid "Adjust color balance (Range: 0 ~ 2)"
@@ -93264,8 +93272,8 @@ msgid "Camera View"
 msgstr "카메라 뷰"
 
 
-msgid "Fit Camera Region to Viewport"
-msgstr "카메라 영역을 뷰포트 크기에 맞도록 조정합니다"
+msgid "Fit render region to viewport"
+msgstr "렌더 영역을 화면의 크기에 맞도록 조절합니다"
 
 
 msgid "Toggle Toolbar"
@@ -93280,8 +93288,8 @@ msgid "ABLER Guide"
 msgstr "ABLER 가이드"
 
 
-msgid "Sunlight strength in watts per meter squared (W/m^2)"
-msgstr "제곱미터당 와트수로 나타낸 태양의 강도 (W/m^2)"
+msgid "Control the strength of sunlight"
+msgstr "햇빛의 강도를 조절합니다"
 
 
 msgid "Indoor Daytime"
@@ -93411,6 +93419,10 @@ msgstr "상태정보의 시작과 끝 사이에서 이동합니다"
 
 msgid "Save object's current location / rotation / scale values to state data"
 msgstr "오브젝트의 현재 위치 / 회전 / 스케일 값을 상태정보에 저장합니다."
+
+
+msgid "Save newly adjusted state data of the object"
+msgstr "특정 오브젝트의 새롭게 조절된 상태정보를 저장합니다"
 
 
 msgid "Group Navigation"
