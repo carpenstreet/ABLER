@@ -105,7 +105,7 @@ def setupBackgroundImagesCompositor(node_left=None, node_right=None, scene=None)
             background_image.offset[0] * scene.render.resolution_x
         )
         node_transform.inputs[2].default_value = (
-            background_image.offset[1] * scene.render.resolution_y
+            background_image.offset[1] * scene.render.resolution_x * 9 / 8
         )
         node_transform.inputs[3].default_value = -1 * background_image.rotation
         node_transform.inputs[4].default_value = background_image.scale
