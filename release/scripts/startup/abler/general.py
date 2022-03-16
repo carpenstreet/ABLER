@@ -221,6 +221,9 @@ class SaveOperator(bpy.types.Operator):
         else:
             bpy.ops.wm.save_mainfile({"dict": "override"}, "INVOKE_DEFAULT")
 
+            if os.path.isfile(bpy.data.filepath):
+                self.report({"WARNING"}, "File already exists")
+
         self.report({"INFO"}, "File saved")
 
         return {"FINISHED"}
@@ -237,6 +240,10 @@ class SaveAsOperator(bpy.types.Operator):
         tracker.save_as()
 
         bpy.ops.wm.save_as_mainfile({"dict": "override"}, "INVOKE_DEFAULT")
+
+        if os.path.isfile(bpy.data.filepath):
+            self.report({"WARNING"}, "File already exists")
+
         self.report({"INFO"}, "File saved")
 
         return {"FINISHED"}
@@ -271,7 +278,6 @@ class Acon3dImportPanel(bpy.types.Panel):
         row.operator("acon3d.import_fbx", text="Import FBX")
 
         row = layout.row()
-
         prefs = context.preferences
         view = prefs.view
 
