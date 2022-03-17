@@ -100,6 +100,15 @@ def setupBackgroundImagesCompositor(node_left=None, node_right=None, scene=None)
 
             tree.links.new(node_scale.outputs[0], node_conditional.inputs[0])
 
+        node_transform = nodes.new("CompositorNodeTransform")
+
+        node_transform.inputs[1].default_value = (
+            background_image.offset[0] * scene.render.resolution_x
+        )
+        node_transform.inputs[3].default_value = -1 * background_image.rotation
+        node_transform.inputs[4].default_value = background_image.scale
+        tree.links.new(node_conditional.outputs[0], node_transform.inputs[0])
+
         node_translate = nodes.new("CompositorNodeTranslate")
         node_translate.use_relative = True
 
@@ -109,26 +118,17 @@ def setupBackgroundImagesCompositor(node_left=None, node_right=None, scene=None)
         node_translate.inputs[2].default_value = (
             background_image.offset[1] / background_r
         )
-        tree.links.new(node_conditional.outputs[0], node_translate.inputs[0])
-
-        node_transform = nodes.new("CompositorNodeTransform")
-
-        node_transform.inputs[1].default_value = (
-            background_image.offset[0] * scene.render.resolution_x
-        )
-        node_transform.inputs[3].default_value = -1 * background_image.rotation
-        node_transform.inputs[4].default_value = background_image.scale
-        tree.links.new(node_translate.outputs[0], node_transform.inputs[0])
+        tree.links.new(node_transform.outputs[0], node_translate.inputs[0])
 
         node_alphaOver = nodes.new("CompositorNodeAlphaOver")
         tree.links.new(node_alphaOver.outputs[0], node_right)
 
         if background_image.display_depth == "BACK":
-            tree.links.new(node_transform.outputs[0], node_alphaOver.inputs[1])
+            tree.links.new(node_translate.outputs[0], node_alphaOver.inputs[1])
             tree.links.new(node_left, node_alphaOver.inputs[2])
             node_left = node_alphaOver.outputs[0]
         else:
-            tree.links.new(node_transform.outputs[0], node_alphaOver.inputs[2])
+            tree.links.new(node_translate.outputs[0], node_alphaOver.inputs[2])
             tree.links.new(node_left, node_alphaOver.inputs[1])
             node_right = node_alphaOver.inputs[1]
 
