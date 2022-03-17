@@ -10629,6 +10629,10 @@ msgid "Save"
 msgstr "저장"
 
 
+msgid "Save As..."
+msgstr "다른 이름으로 저장..."
+
+
 msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "이 경로는 북마크에서 저장되는지 여부, 또는 OS로부터 생성되는지"
 

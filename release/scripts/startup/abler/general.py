@@ -224,8 +224,6 @@ class SaveOperator(bpy.types.Operator):
             if os.path.isfile(bpy.data.filepath):
                 self.report({"WARNING"}, "File already exists")
 
-        self.report({"INFO"}, "File saved")
-
         return {"FINISHED"}
 
 
@@ -243,8 +241,6 @@ class SaveAsOperator(bpy.types.Operator):
 
         if os.path.isfile(bpy.data.filepath):
             self.report({"WARNING"}, "File already exists")
-
-        self.report({"INFO"}, "File saved")
 
         return {"FINISHED"}
 
