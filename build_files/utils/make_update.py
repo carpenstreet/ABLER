@@ -214,7 +214,7 @@ if __name__ == "__main__":
     # Test if we are building a specific release version.
     branch = make_utils.git_branch(args.git_command)
     tag = make_utils.git_tag(args.git_command)
-    release_version = make_utils.git_branch_release_version(branch, tag)
+    release_version = make_utils.git_branch_release_version(branch, tag, args.git_command)
 
     if not args.no_libraries:
         svn_update(args, release_version)
