@@ -214,7 +214,7 @@ if __name__ == "__main__":
     # Test if we are building a specific release version.
     branch = make_utils.git_branch(args.git_command)
     tag = make_utils.git_tag(args.git_command)
-    release_version = make_utils.git_branch_release_version(branch, tag)
+    release_version = make_utils.git_branch_release_version(branch, tag, args.git_command)
 
     if not args.no_libraries:
         svn_update(args, release_version)
@@ -225,7 +225,9 @@ if __name__ == "__main__":
         else:
             blender_update(args)
     if not args.no_submodules:
-        submodules_skip_msg = submodules_update(args, release_version, branch)
+        # ABLER에서는 고정된 서브모듈 브랜치 사용
+        # submodules_skip_msg = submodules_update(args, release_version, branch)
+        call([args.git_command, "submodule", "update", "--init", "--recursive", "--remote"])
 
     # Report any skipped repositories at the end, so it's not as easy to miss.
     skip_msg = blender_skip_msg + submodules_skip_msg
